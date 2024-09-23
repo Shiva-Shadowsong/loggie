@@ -156,8 +156,12 @@ func toOriginal() -> LoggieMsg:
 	return self
 
 ## Wraps the current content of this message in the given color.
-func color(color : Color) -> LoggieMsg:
-	self.content = "[color=%s]%s[/color]" % [color.to_html(), self.content]
+## The [param color] can be provided as a [Color], a recognized Godot color name (String, e.g. "red"), or a color hex code (String, e.g. "#ff0000").
+func color(_color : Variant) -> LoggieMsg:
+	if _color is Color:
+		_color = _color.to_html()
+	
+	self.content = "[color=%s]%s[/color]" % [_color, self.content]
 	return self
 
 ## Stylizes the current content of this message as a header.
@@ -229,8 +233,8 @@ func space(amount : int = 1) -> LoggieMsg:
 
 ## Sets this message to belong to the domain with the given name.
 ## If it attempts to be outputted, but the domain is disabled, it won't be outputted.
-func domain(dname : String) -> LoggieMsg:
-	self.domain_name = dname
+func domain(_domain_name : String) -> LoggieMsg:
+	self.domain_name = _domain_name
 	return self
 
 ## Prepends the given prefix string to the start of the message with the provided separator.
