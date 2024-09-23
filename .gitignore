@@ -16,3 +16,6 @@ mono_crash.*.json
 
 # Vs-code ignores
 .vscode/
+
+# Builds
+builds/*
