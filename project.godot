@@ -15,9 +15,18 @@ TerminalMode=2
 [application]
 
 config/name="Loggie"
+config/name_localized={
+"en": "Loggie"
+}
+config/description="Loggie is a basic logging utility for those who could use a couple of improvements and more control over how console and logfile output is styled and handled. It makes it a breeze to compose and print messages with all the extra data you need to have helpful logs.
+
+Loggie takes care that your logs always look clean in release builds, while allowing you to use extra styling for console targeted output. ANSI-compatible, and friendly both for solo developers and developers in a team (externally loaded settings for each developer).
+
+If you need something simple but effective, Loggie is your guy."
+config/version="1.0"
 run/main_scene="res://test/test.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
-config/icon="res://icon.svg"
+config/icon="res://icon.png"
 
 [autoload]
 
