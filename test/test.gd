@@ -1,10 +1,14 @@
-extends Node2D
+extends Control
 
 func _ready() -> void:
+	$Label.text = "Loggie {version}".format({"version": Loggie.VERSION})
 	test()
-	pass
 
 func test() -> void:
+	
+	# Test outputting a box header.
+	Loggie.msg("Box Header Test").color("red").box().info()
+	
 	# Test outputting a header, with a newline and a 30 character long horizontal separator.
 	Loggie.msg("Header").header().nl().hseparator(30).info()
 
