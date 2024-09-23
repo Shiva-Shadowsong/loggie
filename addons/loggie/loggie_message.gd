@@ -256,8 +256,10 @@ func suffix(suffix : String, separator : String = "") -> LoggieMsg:
 	return self
 
 ## Appends a horizontal separator with the given length to the message.
-func hseparator(size : int = 16):
-	self.content += (Loggie.settings.h_separator_symbol.repeat(size))
+## If [param alternative_symbol] is provided, it should be a String, and it will be used as the symbol for the separator instead of the default one.
+func hseparator(size : int = 16, alternative_symbol : Variant = null) -> LoggieMsg:
+	var symbol = Loggie.settings.h_separator_symbol if alternative_symbol == null else str(alternative_symbol)
+	self.content += (symbol.repeat(size))
 	return self
 
 ## Sets whether this message should be preprocessed and potentially modified with prefixes and suffixes during [method output].
