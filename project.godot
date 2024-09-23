@@ -1,0 +1,28 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[Loggie]
+
+TerminalMode=2
+
+[application]
+
+config/name="Loggie"
+run/main_scene="res://test/test.tscn"
+config/features=PackedStringArray("4.3", "Forward Plus")
+config/icon="res://icon.svg"
+
+[autoload]
+
+Loggie="*res://addons/loggie/loggie.gd"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/loggie/plugin.cfg")
