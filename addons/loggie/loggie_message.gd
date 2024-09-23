@@ -166,7 +166,8 @@ func header() -> LoggieMsg:
 	return self
 
 ## Constructs a decorative box with the given horizontal padding around the current content
-## of this message.
+## of this message. Messages containing a box are not going to be preprocessed, so they are best
+## used only as a special header or decoration.
 func box(h_padding : int = 4):
 	var stripped_content = LoggieTools.remove_BBCode(self.content).strip_edges(true, true)
 	var content_length = stripped_content.length()
@@ -197,6 +198,8 @@ func box(h_padding : int = 4):
 		"middle_row" : middle_row_design,
 		"bottom_row" : bottom_row_design
 	})
+	
+	self.preprocessed(false)
 
 	return self
 
@@ -214,14 +217,14 @@ func append(msg : String, arg1 = null, arg2 = null, arg3 = null, arg4 = null, ar
 	self.content = self.content + LoggieTools.concatenate_msg_and_args(msg, arg1, arg2, arg3, arg4, arg5)
 	return self
 
-## Adds a newline to the end of this message.
-func nl() -> LoggieMsg:
-	self.content += "\n"
+## Adds a newline to the nl()end of this message.
+func nl(amount : int = 1) -> LoggieMsg:
+	self.content += "\n".repeat(amount)
 	return self
 
 ## Adds a space to the end of this message.
-func space() -> LoggieMsg:
-	self.content += " "
+func space(amount : int = 1) -> LoggieMsg:
+	self.content += " ".repeat(amount)
 	return self
 
 ## Sets this message to belong to the domain with the given name.
@@ -254,8 +257,9 @@ func hseparator(size : int = 16):
 	return self
 
 ## Sets whether this message should be preprocessed and potentially modified with prefixes and suffixes during [method output].
-## Whether preprocess is set to true doesn't affect the final conversion from RICH to ANSI or PLAIN, which always happens based
-## on other settings and the environment.
+## If turned off, while outputting this message, Loggie will skip the steps where it appends the messaage domain, class name, timestamp, etc.
+## Whether preprocess is set to true doesn't affect the final conversion from RICH to ANSI or PLAIN, which always happens 
+## under some circumstances that based on other settings.
 func preprocessed(shouldPreprocess : bool) -> LoggieMsg:
 	self.preprocess = shouldPreprocess
 	return self
