@@ -34,23 +34,15 @@ func _ready() -> void:
 	
 	var uses_original_settings_file = true
 
-	if settings == null:
+	if self.settings == null:
 		if custom_settings_path != null and custom_settings_path != "":
-			var settings_resource = ResourceLoader.load(custom_settings_path)
-			var settings_instance
-	
-			if settings_resource != null:
-				settings_instance = settings_resource.new()
-	
-			if (settings_instance is LoggieSettings):
-				self.settings = settings_instance
+			var loadedSuccessfully = load_settings_from_path(custom_settings_path)
+			if loadedSuccessfully:
 				uses_original_settings_file = false
-			else:
-				push_error("Unable to instantiate a LoggieSettings object from the script at path custom_settings_path => {path}. Will use the default loggie_settings.gd instead.".format({"path": custom_settings_path}))
-				
+
 	if uses_original_settings_file:
-		settings = ResourceLoader.load(default_settings_path).new()
-		settings.load()
+		self.settings = ResourceLoader.load(default_settings_path).new()
+		self.settings.load()
 	
 	var bootMsg = msg("[color=orange]👀 Loggie {version} booted.[/color]".format({"version" : self.VERSION})).header().nl()
 	bootMsg.append("[b]Terminal Mode:[/b]", LoggieTools.TerminalMode.keys()[settings.terminal_mode]).suffix(" - ")
@@ -62,6 +54,24 @@ func _ready() -> void:
 	
 	if settings.show_system_specs:
 		LoggieSystemSpecsMsg.new().embed_specs().preprocessed(false).info()
+
+## Attempts to instantiate a LoggieSettings object from the script at the given [param path].
+## Returns true if successful, otherwise false and prints an error.
+func load_settings_from_path(path : String) -> bool:
+	var settings_resource = ResourceLoader.load(path)
+	var settings_instance
+
+	if settings_resource != null:
+		settings_instance = settings_resource.new()
+
+	if (settings_instance is LoggieSettings):
+		self.settings = settings_instance
+		self.settings.load()
+		return true
+	else:
+		push_error("Unable to instantiate a LoggieSettings object from the script at path {path}. Check that loggie.gd -> custom_settings_path is pointing to a valid .gd script that contains the class definition of a class that either extends LoggieSettings, or is LoggieSettings.".format({"path": custom_settings_path}))
+		return false
+		
 
 ## Checks if Loggie is running in production (release) mode of the game.
 ## While it is, every [LoggieMsg] will have plain output.
