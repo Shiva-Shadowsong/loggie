@@ -19,3 +19,6 @@ mono_crash.*.json
 
 # Builds
 builds/*
+
+# PSDs
+*.psd
