@@ -61,6 +61,7 @@ func output(level : LoggieTools.LogLevel, msg : String, domain : String = "") ->
 				className = Loggie.classNames[scriptPath]
 			else:
 				className = LoggieTools.extract_class_name_from_gd_script(scriptPath)
+				Loggie.classNames[scriptPath] = className
 			
 			msg = "[b]({className})[/b] {msg}".format({
 				"className" : className,

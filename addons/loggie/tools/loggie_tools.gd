@@ -129,8 +129,7 @@ static func get_current_stack_frame_data() -> Dictionary:
 static func extract_class_name_from_gd_script(path) -> String:
 	var file = FileAccess.open(path, FileAccess.READ)
 	if not file:
-		Loggie.classNames[path] = "File Open Error {filepath}".format({"filepath" : path})
-		return Loggie.classNames[path]
+		return "File Open Error {filepath}".format({"filepath" : path})
 
 	var _class_name: String = ""
 	var extends_from: String = ""
@@ -153,7 +152,6 @@ static func extract_class_name_from_gd_script(path) -> String:
 
 	file.close()
 
-	Loggie.classNames[path] = _class_name
 	return _class_name
 
 ## A dictionary of named colors matching the constants from [Color] used to help with rich text coloring.
