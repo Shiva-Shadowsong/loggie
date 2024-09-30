@@ -8,10 +8,6 @@
 
 config_version=5
 
-[Loggie]
-
-TerminalMode=2
-
 [application]
 
 config/name="Loggie"
