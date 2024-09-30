@@ -10,10 +10,6 @@ const VERSION : String = "v1.0"
 ## A reference to the settings of this Loggie. Read more about [LoggieSettings].
 var settings : LoggieSettings
 
-## The path to the script from which a LoggieSettings instance can be instantiated.
-## This is used by default if `CustomSettingsPath` is null.
-const default_settings_path : String = "res://addons/loggie/loggie_settings.gd"
-
 ## Holds a mapping between all registered domains (string keys) and bool values representing whether
 ## those domains are currently enabled. Enable domains with [method set_domain_enabled].
 ## You can then place [LoggieMsg] messages into a domain by calling [method LoggieMsg.domain].
@@ -26,8 +22,9 @@ var class_names : Dictionary = {}
 func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
-	
+
 	var uses_original_settings_file = true
+	var default_settings_path = get_script().get_path().get_base_dir().path_join("loggie_settings.gd")
 	var custom_settings_path = get_script().get_path().get_base_dir().path_join("custom_settings.gd")
 
 	if self.settings == null:
@@ -37,9 +34,14 @@ func _ready() -> void:
 				uses_original_settings_file = false
 
 	if uses_original_settings_file:
-		self.settings = ResourceLoader.load(default_settings_path).new()
-		self.settings.load()
-	
+		var _settings = ResourceLoader.load(default_settings_path)
+		if _settings != null:
+			self.settings = _settings.new()
+			self.settings.load()
+		else:
+			push_error("Loggie loaded neither a custom nor a default settings file. This will break the plugin. Make sure that a valid loggie_settings.gd is in the same directory where loggie.gd is.")
+			return
+
 	var bootMsg = msg("[color=orange]👀 Loggie {version} booted.[/color]".format({"version" : self.VERSION})).header().nl()
 	bootMsg.append("[b]Terminal Mode:[/b]", LoggieTools.TerminalMode.keys()[settings.terminal_mode]).suffix(" - ")
 	bootMsg.append("[b]Log Level:[/b]", LoggieTools.LogLevel.keys()[settings.log_level]).suffix(" - ")
