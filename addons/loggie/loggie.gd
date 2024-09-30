@@ -7,13 +7,8 @@ extends Node
 ## Stores a string describing the current version of Loggie.
 const VERSION : String = "v1.0"
 
-## A reference to the settings of this Loggie. Access and modify them through this variable.
+## A reference to the settings of this Loggie. Read more about [LoggieSettings].
 var settings : LoggieSettings
-
-## The path to the script from which a LoggieSettings instance can be instantiated.
-## You may override this to point at your custom loggie_settings.
-## If left as empty string, this is ignored.
-const custom_settings_path : String = "" # e.g. res://custom_loggie_settings.gd
 
 ## The path to the script from which a LoggieSettings instance can be instantiated.
 ## This is used by default if `CustomSettingsPath` is null.
@@ -33,6 +28,7 @@ func _ready() -> void:
 		return
 	
 	var uses_original_settings_file = true
+	var custom_settings_path = ProjectSettings.get_setting(LoggieEditorPlugin.project_settings.custom_settings_path.path, LoggieEditorPlugin.project_settings.custom_settings_path.default_value)
 
 	if self.settings == null:
 		if custom_settings_path != null and custom_settings_path != "":
@@ -69,7 +65,7 @@ func load_settings_from_path(path : String) -> bool:
 		self.settings.load()
 		return true
 	else:
-		push_error("Unable to instantiate a LoggieSettings object from the script at path {path}. Check that loggie.gd -> custom_settings_path is pointing to a valid .gd script that contains the class definition of a class that either extends LoggieSettings, or is LoggieSettings.".format({"path": custom_settings_path}))
+		push_error("Unable to instantiate a LoggieSettings object from the script at path {path}. Check that loggie.gd -> custom_settings_path is pointing to a valid .gd script that contains the class definition of a class that either extends LoggieSettings, or is LoggieSettings.".format({"path": path}))
 		return false
 		
 
