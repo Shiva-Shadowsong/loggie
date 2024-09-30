@@ -5,14 +5,6 @@ class_name LoggieEditorPlugin extends EditorPlugin
 ## relevant to loggie, particularly important for the default way of loading [LoggieSettings] and
 ## setting up Godot Project Settings related to Loggie.
 const project_settings = {
-	"custom_settings_path" = {
-		"path" : "loggie/custom_settings/custom_settings_path",
-		"default_value" : "",
-		"type" : TYPE_STRING,
-		"hint" : PROPERTY_HINT_NONE,
-		"hint_string" : "e.g. res://addons/loggie/custom_loggie_settings.gd",
-		"doc" : "The path to a custom .gd script that a valid LoggieSettings class instance (or an extension of that class) can be instantiated from."
-	},
 	"terminal_mode" = {
 		"path": "loggie/general/terminal_mode",
 		"default_value" : LoggieTools.TerminalMode.BBCODE,

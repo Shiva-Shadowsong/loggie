@@ -28,12 +28,12 @@ func _ready() -> void:
 		return
 	
 	var uses_original_settings_file = true
-	var custom_settings_path = ProjectSettings.get_setting(LoggieEditorPlugin.project_settings.custom_settings_path.path, LoggieEditorPlugin.project_settings.custom_settings_path.default_value)
+	var custom_settings_path = get_script().get_path().get_base_dir().path_join("custom_settings.gd")
 
 	if self.settings == null:
 		if custom_settings_path != null and custom_settings_path != "":
-			var loadedSuccessfully = load_settings_from_path(custom_settings_path)
-			if loadedSuccessfully:
+			var loaded_successfully = load_settings_from_path(custom_settings_path)
+			if loaded_successfully:
 				uses_original_settings_file = false
 
 	if uses_original_settings_file:
