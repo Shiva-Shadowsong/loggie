@@ -31,7 +31,7 @@ func _ready() -> void:
 	var custom_settings_path = get_script().get_path().get_base_dir().path_join("custom_settings.gd")
 
 	if self.settings == null:
-		if custom_settings_path != null and custom_settings_path != "":
+		if custom_settings_path != null and custom_settings_path != "" and ResourceLoader.exists(custom_settings_path):
 			var loaded_successfully = load_settings_from_path(custom_settings_path)
 			if loaded_successfully:
 				uses_original_settings_file = false

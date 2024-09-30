@@ -9,6 +9,100 @@
 ## Loggie calls [method load] on this class during its [method _ready] function.
 class_name LoggieSettings extends Node
 
+## The dictionary which is used to grab the defaults and other values associated with each setting
+## relevant to Loggie, particularly important for the default way of loading [LoggieSettings] and
+## setting up Godot Project Settings related to Loggie.
+const project_settings = {
+	"terminal_mode" = {
+		"path": "loggie/general/terminal_mode",
+		"default_value" : LoggieTools.TerminalMode.BBCODE,
+		"type" : TYPE_INT,
+		"hint" : PROPERTY_HINT_ENUM,
+		"hint_string" : "Plain:0,ANSI:1,BBCode:2",
+		"doc" : "Choose the terminal for which loggie should preprocess the output so that it displays as intended.[br][br]Use BBCode for Godot console.[br]Use ANSI for Powershell, Bash, etc.[br]Use PLAIN for log files.",
+	},
+	"log_level" = {
+		"path": "loggie/general/log_level",
+		"default_value" : LoggieTools.LogLevel.INFO,
+		"type" : TYPE_INT,
+		"hint" : PROPERTY_HINT_ENUM,
+		"hint_string" : "Error:0,Warn:1,Notice:2,Info:3,Debug:4",
+		"doc" : "Choose the level of messages which should be displayed. Loggie displays all messages that are outputted at the currently set level (or any lower level).",
+	},
+	"show_system_specs" = {
+		"path": "loggie/general/show_system_specs",
+		"default_value" : true,
+		"type" : TYPE_BOOL,
+		"hint" : PROPERTY_HINT_NONE,
+		"hint_string" : "",
+		"doc" : "Should Loggie log the system and device specs of the user as soon as it is booted?",
+	},
+	"output_timestamps" = {
+		"path": "loggie/timestamps/output_timestamps",
+		"default_value" : true,
+		"type" : TYPE_BOOL,
+		"hint" : PROPERTY_HINT_NONE,
+		"hint_string" : "",
+		"doc" : "Should Loggie output a timestamp prefix with each message, showing the exact moment when that log line was produced?",
+	},
+	"timestamps_use_utc" = {
+		"path": "loggie/timestamps/timestamps_use_utc",
+		"default_value" : true,
+		"type" : TYPE_BOOL,
+		"hint" : PROPERTY_HINT_NONE,
+		"hint_string" : "",
+		"doc" : "If 'Output Timestamps' is true, should those timestamps use the UTC time. If not, local system time is used instead.",
+	},
+	"output_errors_to_console" = {
+		"path": "loggie/preprocessing/output_errors_also_to_console",
+		"default_value" : true,
+		"type" : TYPE_BOOL,
+		"hint" : PROPERTY_HINT_NONE,
+		"hint_string" : "",
+		"doc" : "If true, errors printed by Loggie will also be visible through an additional print in the main output.",
+	},
+	"output_warnings_to_console" = {
+		"path": "loggie/preprocessing/output_warnings_also_to_console",
+		"default_value" : true,
+		"type" : TYPE_BOOL,
+		"hint" : PROPERTY_HINT_NONE,
+		"hint_string" : "",
+		"doc" : "If true, warnings printed by Loggie will also be visible through an additional print in the main output.",
+	},
+	"use_print_debug_for_debug_msgs" = {
+		"path": "loggie/preprocessing/use_print_debug_for_debug_msgs",
+		"default_value" : false,
+		"type" : TYPE_BOOL,
+		"hint" : PROPERTY_HINT_NONE,
+		"hint_string" : "",
+		"doc" : "If true, 'debug' level messages outputted by Loggie will be printed using Godot's 'print_debug' function, which is more verbose.",
+	},
+	"derive_and_display_class_names_from_scripts" = {
+		"path": "loggie/preprocessing/derive_and_display_class_names_from_scripts",
+		"default_value" : true,
+		"type" : TYPE_BOOL,
+		"hint" : PROPERTY_HINT_NONE,
+		"hint_string" : "",
+		"doc" : "If true, Loggie will attempt to find out the name of the main class from which the log line is coming and append it in front of the message.",
+	},
+	"output_message_domain" = {
+		"path": "loggie/preprocessing/output_message_domain",
+		"default_value" : true,
+		"type" : TYPE_BOOL,
+		"hint" : PROPERTY_HINT_NONE,
+		"hint_string" : "",
+		"doc" : "If true, logged messages will have the domain they are coming from prepended to them.",
+	},
+	"box_characters_mode" = {
+		"path": "loggie/preprocessing/box_characters_mode",
+		"default_value" : LoggieTools.BoxCharactersMode.COMPATIBLE,
+		"type" : TYPE_INT,
+		"hint" : PROPERTY_HINT_ENUM,
+		"hint_string" : "Compatible:0,Pretty:1",
+		"doc" : "There are two sets of box characters defined in LoggieSettings - one set contains prettier characters that produce a nicer looking box, but may not render correctly in the context of various terminals. The other set contains characters that produce a less pretty box, but are compatible with being shown in most terminals.",
+	}
+}
+
 ## The current terminal mode of Loggie.
 ## Terminal mode determines whether BBCode, ANSI or some other type of
 ## formatting is used to convey text effects, such as bold, italic, colors, etc.
@@ -120,18 +214,16 @@ var box_symbols_pretty = {
 ## [br][br]Extend this class and override this function to write your own logic for 
 ## how loggie should obtain these settings if you have a need for a different approach.
 func load():
-	const loggie_p_settings = LoggieEditorPlugin.project_settings
+	terminal_mode = ProjectSettings.get_setting(project_settings.terminal_mode.path, project_settings.terminal_mode.default_value)
+	log_level = ProjectSettings.get_setting(project_settings.log_level.path, project_settings.log_level.default_value)
+	show_system_specs = ProjectSettings.get_setting(project_settings.show_system_specs.path, project_settings.show_system_specs.default_value)
+	show_timestamps = ProjectSettings.get_setting(project_settings.output_timestamps.path, project_settings.output_timestamps.default_value)
+	timestamps_use_utc = ProjectSettings.get_setting(project_settings.timestamps_use_utc.path, project_settings.timestamps_use_utc.default_value)
 
-	terminal_mode = ProjectSettings.get_setting(loggie_p_settings.terminal_mode.path, loggie_p_settings.terminal_mode.default_value)
-	log_level = ProjectSettings.get_setting(loggie_p_settings.log_level.path, loggie_p_settings.log_level.default_value)
-	show_system_specs = ProjectSettings.get_setting(loggie_p_settings.show_system_specs.path, loggie_p_settings.show_system_specs.default_value)
-	show_timestamps = ProjectSettings.get_setting(loggie_p_settings.output_timestamps.path, loggie_p_settings.output_timestamps.default_value)
-	timestamps_use_utc = ProjectSettings.get_setting(loggie_p_settings.timestamps_use_utc.path, loggie_p_settings.timestamps_use_utc.default_value)
+	print_errors_to_console = ProjectSettings.get_setting(project_settings.output_errors_to_console.path, project_settings.output_errors_to_console.default_value)
+	print_warnings_to_console = ProjectSettings.get_setting(project_settings.output_warnings_to_console.path, project_settings.output_warnings_to_console.default_value)
+	use_print_debug_for_debug_msg = ProjectSettings.get_setting(project_settings.use_print_debug_for_debug_msgs.path, project_settings.use_print_debug_for_debug_msgs.default_value)
 
-	print_errors_to_console = ProjectSettings.get_setting(loggie_p_settings.output_errors_to_console.path, loggie_p_settings.output_errors_to_console.default_value)
-	print_warnings_to_console = ProjectSettings.get_setting(loggie_p_settings.output_warnings_to_console.path, loggie_p_settings.output_warnings_to_console.default_value)
-	use_print_debug_for_debug_msg = ProjectSettings.get_setting(loggie_p_settings.use_print_debug_for_debug_msgs.path, loggie_p_settings.use_print_debug_for_debug_msgs.default_value)
-
-	output_message_domain = ProjectSettings.get_setting(loggie_p_settings.output_message_domain.path, loggie_p_settings.output_message_domain.default_value)
-	derive_and_show_class_names = ProjectSettings.get_setting(loggie_p_settings.derive_and_display_class_names_from_scripts.path, loggie_p_settings.derive_and_display_class_names_from_scripts.default_value)
-	box_characters_mode = ProjectSettings.get_setting(loggie_p_settings.box_characters_mode.path, loggie_p_settings.box_characters_mode.default_value)
+	output_message_domain = ProjectSettings.get_setting(project_settings.output_message_domain.path, project_settings.output_message_domain.default_value)
+	derive_and_show_class_names = ProjectSettings.get_setting(project_settings.derive_and_display_class_names_from_scripts.path, project_settings.derive_and_display_class_names_from_scripts.default_value)
+	box_characters_mode = ProjectSettings.get_setting(project_settings.box_characters_mode.path, project_settings.box_characters_mode.default_value)

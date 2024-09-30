@@ -50,7 +50,7 @@ func test() -> void:
 	talker.say("Greetings!")
 
 func print_setting_values_from_project_settings():
-	for key in LoggieEditorPlugin.project_settings.keys():
+	for key in LoggieSettings.project_settings.keys():
 		print(key, " -> ", ProjectSettings.get_setting(key))
 
 func print_actual_current_settings():
