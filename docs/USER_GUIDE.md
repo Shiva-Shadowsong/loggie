@@ -41,8 +41,8 @@ All messages loggie works with are instances of `LoggieMsg`, a string wrapper cl
 
 To create a `LoggieMsg` and fill it with some starting content, we can use the `Loggie.msg(...)` helper method:
 
-```
-	Loggie.msg("Hello world.")
+```gdscript
+Loggie.msg("Hello world.")
 ```
 
 ## Styling a message
