@@ -172,7 +172,7 @@ func bold() -> LoggieMsg:
 
 ## Stylizes the current content of this message to be italic.
 func italic() -> LoggieMsg:
-	self.content = "[b]%s[/b]" % [self.content]
+	self.content = "[i]%s[/i]" % [self.content]
 	return self
 
 ## Stylizes the current content of this message as a header.
@@ -232,12 +232,12 @@ func append(msg : String, arg1 = null, arg2 = null, arg3 = null, arg4 = null, ar
 	self.content = self.content + LoggieTools.concatenate_msg_and_args(msg, arg1, arg2, arg3, arg4, arg5)
 	return self
 
-## Adds a newline to the nl()end of this message.
+## Adds a specified amount of newlines to the end of this message.
 func nl(amount : int = 1) -> LoggieMsg:
 	self.content += "\n".repeat(amount)
 	return self
 
-## Adds a space to the end of this message.
+## Adds a specified amount of spaces to the end of this message.
 func space(amount : int = 1) -> LoggieMsg:
 	self.content += " ".repeat(amount)
 	return self
