@@ -1,4 +1,4 @@
-## LoggieMsg represents a mutable object that holds a string message ([member content]), its original unmutated form ([member originalContent]), and
+## LoggieMsg represents a mutable object that holds a string message ([member content]), its original unmutated form ([member original_content]), and
 ## a bunch of helper methods that make it easy to manipulate the content and chain together additions and changes to it.
 ## [br][br]For example:
 ## [codeblock]
@@ -11,9 +11,9 @@
 class_name LoggieMsg extends RefCounted
 
 ## The original string content of this message, as it existed at the moment this message was instantiated.
-## This content can be accessed with [method getOriginal], or you can convert the current [member content] to its original form
-## by calling [method toOriginal].
-var originalContent : String = ""
+## This content can be accessed with [method get_original], or you can convert the current [member content] to its original form
+## by calling [method to_original].
+var original_content : String = ""
 
 ## The string content of this message. By calling various helper methods in this class, this content is further altered.
 ## You can then output it with methods like [method info], [method debug], etc.
@@ -31,7 +31,7 @@ var preprocess : bool = true
 
 func _init(msg = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> void:
 	self.content = LoggieTools.concatenate_msg_and_args(msg, arg1, arg2, arg3, arg4, arg5)
-	self.originalContent = self.content
+	self.original_content = self.content
 
 ## Outputs the given string [param msg] at the given output level to the standard output using either [method print_rich] or [method print].
 ## It also does a number of changes to the given [param msg] based on various Loggie settings.
@@ -53,18 +53,18 @@ func output(level : LoggieTools.LogLevel, msg : String, domain : String = "") ->
 		# We prepend the name of the class that called the function which resulted in this output being generated
 		# (if Loggie settings are configured to do so).
 		if Loggie.settings.derive_and_show_class_names == true:
-			var stackFrame : Dictionary = LoggieTools.get_current_stack_frame_data()
-			var className : String
+			var stack_frame : Dictionary = LoggieTools.get_current_stack_frame_data()
+			var _class_name : String
 
-			var scriptPath = stackFrame.source
-			if Loggie.classNames.has(scriptPath):
-				className = Loggie.classNames[scriptPath]
+			var scriptPath = stack_frame.source
+			if Loggie.class_names.has(scriptPath):
+				_class_name = Loggie.class_names[scriptPath]
 			else:
-				className = LoggieTools.extract_class_name_from_gd_script(scriptPath)
-				Loggie.classNames[scriptPath] = className
+				_class_name = LoggieTools.extract_class_name_from_gd_script(scriptPath)
+				Loggie.class_names[scriptPath] = _class_name
 			
-			msg = "[b]({className})[/b] {msg}".format({
-				"className" : className,
+			msg = "[b]({class_name})[/b] {msg}".format({
+				"class_name" : _class_name,
 				"msg" : msg
 			})
 
@@ -138,22 +138,22 @@ func string() -> String:
 	return self.content
 
 ## Converts the current content of this message to an ANSI compatible form.
-func toANSI() -> LoggieMsg:
+func to_ANSI() -> LoggieMsg:
 	self.content = LoggieTools.rich_to_ANSI(self.content)
 	return self
 
 ## Strips all the BBCode in the current content of this message.
-func stripBBCode() -> LoggieMsg:
+func strip_BBCode() -> LoggieMsg:
 	self.content = LoggieTools.remove_BBCode(self.content)
 	return self
 
 ## Returns the original version of this message (as it was in the moment when it was constructed).
-func getOriginal() -> String:
-	return self.originalContent
+func get_original() -> String:
+	return self.original_content
 
 ## Changes the content of this message to be equal to the original version of this message (as it was in the moment when it was constructed).
-func toOriginal() -> LoggieMsg:
-	self.content = self.originalContent
+func to_original() -> LoggieMsg:
+	self.content = self.original_content
 	return self
 
 ## Wraps the current content of this message in the given color.

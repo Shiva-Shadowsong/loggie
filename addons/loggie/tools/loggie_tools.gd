@@ -125,7 +125,7 @@ static func get_current_stack_frame_data() -> Dictionary:
 
 ## Opens a .gd script at the given path, reads the name of the class by checking
 ## if it has a "class_name" clause and what comes after it, then caches that result in the
-## [member Loggie.classNames] dictionary.
+## [member Loggie.class_names] dictionary.
 static func extract_class_name_from_gd_script(path) -> String:
 	var file = FileAccess.open(path, FileAccess.READ)
 	if not file:

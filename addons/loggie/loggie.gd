@@ -21,7 +21,7 @@ const default_settings_path : String = "res://addons/loggie/loggie_settings.gd"
 var domains : Dictionary = {}
 
 ## Holds a mapping between script paths and the names of the classes defined in those scripts.
-var classNames : Dictionary = {}
+var class_names : Dictionary = {}
 
 func _ready() -> void:
 	if Engine.is_editor_hint():
