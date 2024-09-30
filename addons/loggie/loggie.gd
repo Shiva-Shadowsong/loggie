@@ -67,7 +67,6 @@ func load_settings_from_path(path : String) -> bool:
 	else:
 		push_error("Unable to instantiate a LoggieSettings object from the script at path {path}. Check that loggie.gd -> custom_settings_path is pointing to a valid .gd script that contains the class definition of a class that either extends LoggieSettings, or is LoggieSettings.".format({"path": path}))
 		return false
-		
 
 ## Checks if Loggie is running in production (release) mode of the game.
 ## While it is, every [LoggieMsg] will have plain output.

@@ -1,21 +1,15 @@
 @tool
 class_name LoggieEditorPlugin extends EditorPlugin
 
-## The global singleton name that will be used to refer to Loggie.
-## You may adjust it here if you prefer something "log", "logger", etc..
-## If you do that, disable the plugin -> go to Autoloads -> remove the previously added "Loggie" autoload,
-## and re-enable the plugin.
-const singleton_name : String = "Loggie"
-
 ## The dictionary which is used to derive the default values and other values associated to each setting
 ## relevant to loggie, particularly important for the default way of loading [LoggieSettings] and
 ## setting up Godot Project Settings related to Loggie.
 const project_settings = {
 	"custom_settings_path" = {
-		"path" : "loggie/custom_settings/custom_settings",
+		"path" : "loggie/custom_settings/custom_settings_path",
 		"default_value" : "",
 		"type" : TYPE_STRING,
-		"hint" : PROPERTY_HINT_TYPE_STRING,
+		"hint" : PROPERTY_HINT_NONE,
 		"hint_string" : "e.g. res://addons/loggie/custom_loggie_settings.gd",
 		"doc" : "The path to a custom .gd script that a valid LoggieSettings class instance (or an extension of that class) can be instantiated from."
 	},
@@ -110,13 +104,12 @@ const project_settings = {
 }
 
 func _enter_tree():
-	# Registers a new autload singleton with the given SingletonName as one connected to the main loggie script.
-	add_autoload_singleton(singleton_name, "res://addons/loggie/loggie.gd")
+	add_autoload_singleton("Loggie", "res://addons/loggie/loggie.gd")
 	add_loggie_project_settings()
 
 func _exit_tree() -> void:
 	remove_loggie_project_setings()
-	remove_autoload_singleton(singleton_name)
+	remove_autoload_singleton("Loggie")
 
 ## Adds new Loggie related ProjectSettings to Godot.
 func add_loggie_project_settings():
