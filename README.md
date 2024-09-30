@@ -8,7 +8,9 @@ Loggie takes care that your logs always look clean in release builds, while allo
 
 If you need something simple but effective, Loggie is your guy.
 
-* [Loggie Discord - Support & Development](https://discord.gg/XPdxpMqmcs)
+### [📚 User Guide](docs/USER_GUIDE.md)
+
+### [💬 Loggie Discord - Support & Development](https://discord.gg/XPdxpMqmcs)
 
 # Installation
 *(Loggie is not yet available on the Godot AssetLib.)*
@@ -20,6 +22,8 @@ If you need something simple but effective, Loggie is your guy.
 
 3. In Godot, go to Project -> Project Settings -> Plugins, and enable Loggie:
 ![LoggieProjSettings](https://i.imgur.com/suO2Itm.png)
+
+4. You're good to go. Have a peek at the [📚 User Guide](docs/USER_GUIDE.md) for more details.
 
 # Features
 
