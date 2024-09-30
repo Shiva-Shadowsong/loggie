@@ -1,0 +1,4 @@
+class_name CustomLoggieSettings extends LoggieSettings
+
+func _init() -> void:
+	pass
