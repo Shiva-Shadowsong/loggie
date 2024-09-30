@@ -39,7 +39,7 @@ const project_settings = {
 	},
 	"output_timestamps" = {
 		"path": "loggie/timestamps/output_timestamps",
-		"default_value" : true,
+		"default_value" : false,
 		"type" : TYPE_BOOL,
 		"hint" : PROPERTY_HINT_NONE,
 		"hint_string" : "",
@@ -79,7 +79,7 @@ const project_settings = {
 	},
 	"derive_and_display_class_names_from_scripts" = {
 		"path": "loggie/preprocessing/derive_and_display_class_names_from_scripts",
-		"default_value" : true,
+		"default_value" : false,
 		"type" : TYPE_BOOL,
 		"hint" : PROPERTY_HINT_NONE,
 		"hint_string" : "",
@@ -87,7 +87,7 @@ const project_settings = {
 	},
 	"output_message_domain" = {
 		"path": "loggie/preprocessing/output_message_domain",
-		"default_value" : true,
+		"default_value" : false,
 		"type" : TYPE_BOOL,
 		"hint" : PROPERTY_HINT_NONE,
 		"hint_string" : "",
