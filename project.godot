@@ -22,7 +22,7 @@ If you need something simple but effective, Loggie is your guy."
 config/version="1.0"
 run/main_scene="res://test/test.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
-config/icon="res://icon.png"
+config/icon="res://addons/loggie/assets/icon.png"
 
 [autoload]
 

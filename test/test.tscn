@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://2lnj7kmdncy0"]
 
 [ext_resource type="Script" path="res://test/test.gd" id="1_jlagr"]
-[ext_resource type="Texture2D" uid="uid://2fr6et0qni2y" path="res://icon.png" id="2_ukv03"]
+[ext_resource type="Texture2D" uid="uid://2fr6et0qni2y" path="res://addons/loggie/assets/icon.png" id="2_ukv03"]
 
 [node name="Test" type="Control"]
 layout_mode = 3
