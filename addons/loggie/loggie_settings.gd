@@ -132,12 +132,14 @@ var print_errors_to_console : bool
 var print_warnings_to_console : bool
 
 ## If true, instead of [method print], [method print_debug] will be 
-## used when printing messages with [method LogMsg.debug].
+## used when printing messages with [method LoggieMsg.debug].
 var use_print_debug_for_debug_msg : bool
 
 ## Whether Loggie should use the scripts from which it is being called to 
 ## figure out a class name for the class that called a loggie function,
 ## and display it at the start of each output message.
+## This only works in debug builds because it uses [method @GDScript.get_stack]. 
+## See that method's documentation to see why that can't be used in release builds.
 var derive_and_show_class_names
 
 ## Whether Loggie should prepend a timestamp to each output message.
