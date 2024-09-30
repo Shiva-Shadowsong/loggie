@@ -165,6 +165,16 @@ func color(_color : Variant) -> LoggieMsg:
 	self.content = "[color=%s]%s[/color]" % [_color, self.content]
 	return self
 
+## Stylizes the current content of this message to be bold.
+func bold() -> LoggieMsg:
+	self.content = "[b]%s[/b]" % [self.content]
+	return self
+
+## Stylizes the current content of this message to be italic.
+func italic() -> LoggieMsg:
+	self.content = "[b]%s[/b]" % [self.content]
+	return self
+
 ## Stylizes the current content of this message as a header.
 func header() -> LoggieMsg:
 	self.content = Loggie.settings.format_header % self.content
