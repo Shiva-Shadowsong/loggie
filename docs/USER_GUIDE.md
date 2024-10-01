@@ -6,8 +6,6 @@ Loggie allows you to compose and style messages then send them to the output, wh
 Let's explore some of the features.
 
 # TOC
-- [User Guide](#user-guide)
-- [TOC](#toc)
 - [Log Files and Storage](#log-files-and-storage)
 - [Composing Messages](#composing-messages)
 	- [Creating a message](#creating-a-message)
@@ -239,9 +237,11 @@ All LoggieMsgs, before being output, are preprocessed, unless `preprocessed(fals
 Terminal mode determines the way the final preprocessing step will go.
 Based on what the target terminal is, the content of the message will be converted so that it can render properly on that terminal.
 
+
 A setting allows you to change the terminal mode:
 	* LoggieSettings.terminal_mode
 	* Loggie Project Settings -> General -> Terminal Mode
+
 
 3 terminal modes exist:
 
@@ -255,8 +255,10 @@ While this mode is used, the generated `.log` files may still include unwanted B
 The use of this mode is recommended for users that are viewing the console output in a non-Godot console, such as Powershell, Bash, etc. If you are using VSCode or some other external editor to develop your project, use this.
 
 #### Plain
-Output will be raw plain text. Use this mode when you want to check how i
-Loggie automatically switched to this mode when it detects that it's running in a release build with Debug features disabled.
+Output will be raw plain text. Best for raw output that has to be stored in a `.log` file.
+Most likely, you won't use this mode by picking it manually. Instead - 
+Loggie automatically switches to this mode when it detects that it's running in a Release build with Debug features disabled.
+This is great because during local development, you can use the fancy modes (BBCode / ANSI), and not have to worry that style symbols will appear in the `.log` files on Release.
 
 # Custom Settings
 Loggie will, before loading the settings from the default settings script (`loggie_settings.gd`), attempt to look for a script called `custom_settings.gd` in the same folder where `loggie.gd` is located.
