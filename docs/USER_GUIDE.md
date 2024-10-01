@@ -237,8 +237,7 @@ All LoggieMsgs, before being output, are preprocessed, unless `preprocessed(fals
 Terminal mode determines the way the final preprocessing step will go.
 Based on what the target terminal is, the content of the message will be converted so that it can render properly on that terminal.
 
-
-A setting allows you to change the terminal mode:
+* A setting allows you to change the terminal mode:
 	* LoggieSettings.terminal_mode
 	* Loggie Project Settings -> General -> Terminal Mode
 
