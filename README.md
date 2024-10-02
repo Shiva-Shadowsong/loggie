@@ -93,7 +93,7 @@ func generate_loot_for(recipient : Creature):
 ```
 
 ## Class Name Extraction
-A neat feature pulled I from [LogDuck](https://github.com/ZeeWeasel/LogDuck "LogDuck") *(also a neat logging library worth checking out)*, which allows you to see the names of the classes that prompted Loggie to output something.* This only works when the engine debugger is connected, therefore it does not work in Release mode, and won't be shown in those logs.*
+A neat feature pulled I from [LogDuck](https://github.com/ZeeWeasel/LogDuck "LogDuck") *(also a cool logging library worth checking out)*, which allows you to see the names of the classes that prompted Loggie to output something.* This only works when the engine debugger is connected, therefore it does not work in Release mode, and won't be shown in those logs.*
 
 ![ClassNameExtraction](https://i.imgur.com/EWlcKnD.png)
 
