@@ -86,10 +86,10 @@ For example, you may want to print out every detail about how your Loot generato
 ```gdscript
 func generate_loot_for(recipient : Creature):
   var diagnostics_enabled = true
-	Loggie.set_domain_enabled("LootDiag", diagnostics_enabled)
+  Loggie.set_domain_enabled("LootDiag", diagnostics_enabled)
 
-	Loggie.msg("Generating loot for %s" % recipient.name).domain("LootDiag").info()
-	Loggie.msg("Rolling for rare items...").domain("LootDiag")..info()
+  Loggie.msg("Generating loot for %s" % recipient.name).domain("LootDiag").info()
+  Loggie.msg("Rolling for rare items...").domain("LootDiag")..info()
 ```
 
 ## Class Name Extraction
