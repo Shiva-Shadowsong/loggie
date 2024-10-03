@@ -45,11 +45,11 @@ func _ready() -> void:
 
 	var bootMsg = msg("[color=orange]👀 Loggie {version} booted.[/color]".format({"version" : self.VERSION}))
 	bootMsg.useLogger(self).header().nl()
-	bootMsg.append("[b]Terminal Mode:[/b]", LoggieTools.TerminalMode.keys()[settings.terminal_mode]).suffix(" - ")
-	bootMsg.append("[b]Log Level:[/b]", LoggieTools.LogLevel.keys()[settings.log_level]).suffix(" - ")
-	bootMsg.append("[b]Is in Production:[/b]", self.is_in_production()).suffix(" - ")
-	bootMsg.append("[b]Box Characters Mode:[/b]", LoggieTools.BoxCharactersMode.keys()[settings.box_characters_mode]).nl()
-	bootMsg.append("[b]Using Custom Settings File:[/b]", !uses_original_settings_file).nl()
+	bootMsg.add("[b]Terminal Mode:[/b]", LoggieTools.TerminalMode.keys()[settings.terminal_mode]).suffix(" - ")
+	bootMsg.add("[b]Log Level:[/b]", LoggieTools.LogLevel.keys()[settings.log_level]).suffix(" - ")
+	bootMsg.add("[b]Is in Production:[/b]", self.is_in_production()).suffix(" - ")
+	bootMsg.add("[b]Box Characters Mode:[/b]", LoggieTools.BoxCharactersMode.keys()[settings.box_characters_mode]).nl()
+	bootMsg.add("[b]Using Custom Settings File:[/b]", !uses_original_settings_file).nl()
 	bootMsg.preprocessed(false).info()
 	
 	if settings.show_system_specs:

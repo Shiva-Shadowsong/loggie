@@ -257,8 +257,8 @@ func merge(logmsg : LoggieMsg, separator : String = "") -> LoggieMsg:
 	})
 	return self
 	
-## Appends a new message to the end of this message.
-func append(msg : String, arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
+## Appends additional content to this message at the end of the current content and its stylings.
+func add(msg : String, arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
 	self.content = self.content + LoggieTools.concatenate_msg_and_args(msg, arg1, arg2, arg3, arg4, arg5)
 	return self
 
