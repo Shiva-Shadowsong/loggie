@@ -1,25 +1,49 @@
 
-# User Guide
+# 📚User Guide
 
 Loggie allows you to compose and style messages then send them to the output, where they will be preprocessed and amended with additional details (such as timestamps, class names, debug level indicators, etc.) - then pushed to the console.
 
 Let's explore some of the features.
 
-# TOC
+# 📋 TOC
+- [📚User Guide](#user-guide)
+- [📋 TOC](#-toc)
 - [Log Files and Storage](#log-files-and-storage)
 - [Composing Messages](#composing-messages)
 	- [Creating a message](#creating-a-message)
 	- [Styling a message](#styling-a-message)
+				- [bold()](#bold)
+				- [italic()](#italic)
+				- [header()](#header)
+				- [color(color : String | Color)](#colorcolor--string--color)
+				- [box(h\_padding: int = 4)](#boxh_padding-int--4)
+				- [nl(amount: int = 1)](#nlamount-int--1)
+				- [hseparator(size: int = 16, alternative\_symbol: Variant = null)](#hseparatorsize-int--16-alternative_symbol-variant--null)
+				- [add(...)](#add)
+				- [prefix(prefix : String, separator : String = "")](#prefixprefix--string-separator--string--)
+				- [suffix(suffix : String, separator : String = "")](#suffixsuffix--string-separator--string--)
 	- [Outputting a message](#outputting-a-message)
+			- [Extras](#extras)
 - [Adjusting Message Formats](#adjusting-message-formats)
 - [Preprocessing](#preprocessing)
-	- [Log Levels](#log-levels)
-	- [Domains](#domains)
-	- [Class Name Derivation](#class-name-derivation)
-	- [Timestamps](#timestamps)
-	- [Terminal Mode](#terminal-mode)
-- [Custom Settings File](#custom-settings)
+	- [Eligibility Checks:](#eligibility-checks)
+			- [Log Levels](#log-levels)
+			- [Domains](#domains)
+	- [Preprocess Features](#preprocess-features)
+		- [Terminal Mode](#terminal-mode)
+			- [• BBCode](#-bbcode)
+			- [• ANSI](#-ansi)
+			- [• Plain](#-plain)
+		- [Class Name Derivation](#class-name-derivation)
+		- [Timestamps](#timestamps)
+- [Custom Settings](#custom-settings)
+- [Using a custom singleton name](#using-a-custom-singleton-name)
+			- [• Step 1:](#-step-1)
+			- [• Step 2:](#-step-2)
+			- [• Step 3:](#-step-3)
 - [Notable Technicalities](#notable-technicalities)
+
+----------------------------------------
 
 # Log Files and Storage
 Loggie uses Godot's `print` (and other print-adjacent functions) for output. 
@@ -32,12 +56,13 @@ You can modify the properties for Godot's logging in the Project Settings -> Deb
 
 Hover over each setting for more information.
 
+----------------------------------------
 # Composing Messages
 
 ## Creating a message
 All messages loggie works with are instances of `LoggieMsg`, a string wrapper class that comes along with a bunch of extra utilities. These are the messages we'll be outputting.
 
-To create a `LoggieMsg` and fill it with some starting content, we can use the `Loggie.msg(...)` helper method:
+To create a `LoggieMsg` and fill it with some starting content, we should use the `Loggie.msg(...)` method:
 
 ```gdscript
 Loggie.msg("Hello world.")
@@ -141,6 +166,16 @@ Loggie.msg("Very important business.").header().nl().hseparator(20).info()
 
 ------------
 
+##### add(...)
+> Converts the provided arguments to strings and appends them to the end of the current content.
+> If an argument is a Dictionary, it will be converted with the pretty-print format. If an argument is LoggieMsg, that message's content will be merged into this message's content.
+
+```gdscript
+Loggie.msg("After").prefix("Before").info()
+```
+
+------------
+
 ##### prefix(prefix : String, separator : String = "")
 > Prepends the given prefix string to the start of the message with the provided separator.
 
@@ -159,7 +194,7 @@ Loggie.msg("Before").suffix("After").info()
 
 ## Outputting a message
 
-To output a message, we must chain one of the output methods as a final call on the constructed message.
+To output a message, we should chain one of the output methods as a final call on the constructed message.
 There are multiple methods, one for each Debug Level.
 The method which is used will dictate the debug level at which that message will be outputted.
 If Loggie is not configured to currently have that debug level enabled, the message will not be processed or output.
@@ -178,17 +213,23 @@ If Loggie is not configured to currently have that debug level enabled, the mess
 `debug()` messages can be also be configured there to be output using Godot's `print_debug` method instead of the regular `print` / `print_rich` that Loggie usually uses. This makes them show a full stack trace.
 
 # Adjusting Message Formats
-Adjusting message formats is currently not supported through the Loggie Project Settings. Instead, you have 2 options. You can either modify `loggie_settings.gd` directly (not recommended) - or use a 'Custom Settings' file, which is covered in the next chapter.
+Adjusting message formats is currently not supported through the Loggie Project Settings. 
 
-Once you're ready to modify the formats - have a look at `loggie_settings.gd` under the "Formats for prints" code region.
+Instead, you have 2 options. 
+
+You can either:
+* Use a 'Custom Settings' file, which is covered [here](#custom-settings).
+* Modify `loggie_settings.gd` directly (not recommended).
+
+Once you're ready to modify the formats - have a look at `loggie_settings.gd` under the "`Formats for prints`" code region.
 There, you will find all the variables responsible for setting up the default format for the messages.
 
-You can adjust these variables in your Custom Settings to your liking.
+You can set the values of these variables in your Custom Settings to your liking.
 
 # Preprocessing
-All LoggieMsgs, before being output, are preprocessed, unless `preprocessed(false)` is called on them. During the preprocess step, the messages are inspected for validity, and further altered in various ways.
+All LoggieMsgs, before being output, are preprocessed, unless `preprocessed(false)` is called on them. During the preprocess step, the messages are inspected for eligibility to be logged, and then possibly further altered in various ways which can be finetuned through settings.
 
-## Validity Checks:
+## Eligibility Checks:
 #### Log Levels
 * Messages that are coming from a log_level which is not currently enabled will not be further processed nor logged.
 * There are currently 5 log levels: ERROR, WARN, NOTICE, INFO, DEBUG.
@@ -215,7 +256,35 @@ All LoggieMsgs, before being output, are preprocessed, unless `preprocessed(fals
 * A setting allows you to change the format in which the domain is appended to the message:
 	* LoggieSettings.format_domain_prefix
 
-#### Class Name Derivation
+## Preprocess Features
+### Terminal Mode
+Terminal mode determines the way the final preprocessing step will go.
+Based on what the target terminal is, the content of the message will be converted so that it can render properly on that terminal.
+
+* A setting allows you to change the terminal mode:
+	* LoggieSettings.terminal_mode
+	* Loggie Project Settings -> General -> Terminal Mode
+
+3 terminal modes exist:
+
+#### • BBCode
+> The use of this terminal mode is assumed by default since Godot and its debug console use it.
+> Conversions will be done from BBCode to other formats.
+> Use this terminal mode if you are using Godot's console for previewing the output.
+> While this mode is used, the generated `.log` files may still include unwanted BBCode if proper care is not taken to use only `print_rich` compliant BBCode.
+
+#### • ANSI
+> The use of this mode is recommended for users that are viewing the console output in a non-Godot console, such as Powershell, Bash, etc. If you are using VSCode or some other external editor to develop your project, use this.
+
+#### • Plain
+> Output will be raw plain text. Best for raw output that has to be stored in a `.log` file.
+> Most likely, you won't use this mode by picking it manually. Instead - 
+> Loggie automatically switches to this mode when it detects that it's running in a Release build with Debug features disabled.
+> This is great because during local development, you can use the fancy modes (BBCode / ANSI), and not have to worry that style symbols will appear in the `.log` files on Release.
+
+----------------------------------------
+
+### Class Name Derivation
 * Loggie can sniff out the script from which a call to Loggie was made, and by reading its `class_name` clause, figure out the name of the class that called it.
 * This name can then be included in the log if the setting for it is enabled:
 	* LoggieSettings.derive_and_show_class_names
@@ -223,7 +292,9 @@ All LoggieMsgs, before being output, are preprocessed, unless `preprocessed(fals
 * This process may induce a small performance penalty if executed frequently, since it performs a FileAccess read.
 * **Warning**: This only works if there is a debugger connected to the project while it's running, so it will only be useful during development most of the time. This is because this uses the `get_stack` function, whose documentation explains why it depends on the debugger. Therefore, class name derivation is automatically disabled in non-debug builds.
 
-#### Timestamps
+----------------------------------------
+
+### Timestamps
 * Loggie can display timestamps for each logged message.
 * They may be either displayed in local system time, or UTC.
 * A setting allows you to change whether the timestamps are shown:
@@ -233,31 +304,7 @@ All LoggieMsgs, before being output, are preprocessed, unless `preprocessed(fals
 	* LoggieSettings.timestamps_use_utc
 	* Loggie Project Settings -> Timestamps -> Timestamps use UTC
 
-#### Terminal Mode
-Terminal mode determines the way the final preprocessing step will go.
-Based on what the target terminal is, the content of the message will be converted so that it can render properly on that terminal.
-
-* A setting allows you to change the terminal mode:
-	* LoggieSettings.terminal_mode
-	* Loggie Project Settings -> General -> Terminal Mode
-
-
-3 terminal modes exist:
-
-#### BBCode
-The use of this terminal mode is assumed by default since Godot and its debug console use it.
-Conversions will be done from BBCode to other formats.
-Use this terminal mode if you are using Godot's console for previewing the output.
-While this mode is used, the generated `.log` files may still include unwanted BBCode if proper care is not taken to use only `print_rich` compliant BBCode.
-
-#### ANSI
-The use of this mode is recommended for users that are viewing the console output in a non-Godot console, such as Powershell, Bash, etc. If you are using VSCode or some other external editor to develop your project, use this.
-
-#### Plain
-Output will be raw plain text. Best for raw output that has to be stored in a `.log` file.
-Most likely, you won't use this mode by picking it manually. Instead - 
-Loggie automatically switches to this mode when it detects that it's running in a Release build with Debug features disabled.
-This is great because during local development, you can use the fancy modes (BBCode / ANSI), and not have to worry that style symbols will appear in the `.log` files on Release.
+----------------------------------------
 
 # Custom Settings
 Loggie will, before loading the settings from the default settings script (`loggie_settings.gd`), attempt to look for a script called `custom_settings.gd` in the same folder where `loggie.gd` is located.
@@ -276,6 +323,26 @@ You can rename this to `custom_settings.gd`, change its contents to what you pre
 I recommend that you **gitignore** this file if you are using Git, so that each of your teammates can have their own `custom_settings.gd` which won't be committed or conflicted with anyone else's - allowing them to have their own Loggie customizations locally.
 
 This won't affect how Loggie works in production/release builds, because Loggie automatically switches to a release-friendly mode of output when it detects it's running in Release mode.
+
+----------------------------------------
+
+# Using a custom singleton name
+Perhaps you don't like having the autoload singleton of Loggie being called "Loggie", and you'd prefer something you're more used to, like "logger", "log", etc.
+
+You can change the name of the autoload by editing the value of the `loggie_singleton_name` variable in `loggie_settings.gd`.
+
+#### • Step 1:
+> Disable the plugin if it is enabled. This will trigger the plugin to automatically remove whichever autoload it added when it was enabled.
+> 
+> *If you don't disable the plugin and end up changing the singleton name, make sure to go to Project Settings -> Autoloads, and manually delete the previously created autoload with the old name).*
+
+#### • Step 2:
+> Change the value of the `loggie_singleton_name` variable.
+
+#### • Step 3:
+> Re-enable the plugin.
+
+----------------------------------------
 
 # Notable Technicalities
 Loggie, by default, assumes that all text it is processing is text which is supported by `print_rich` - so, BBCode content and support is assumed by default.

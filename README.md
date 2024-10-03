@@ -20,10 +20,12 @@ If you need something simple but effective, Loggie is your guy.
 
 2. Copy the `addons/loggie` folder and place it in your `res://addons/` directory in your Godot project (if you don't have that folder, create it first).
 
-3. In Godot, go to Project -> Project Settings -> Plugins, and enable Loggie:
+3. (Optional): Adjust the name of the Loggie singleton to something else if you don't want to use the default "Loggie" name. Read here how to do it: [📚 User Guide](docs/USER_GUIDE.md#using-a-custom-singleton-name). This is best done before first enabling the plugin.
+
+4. In Godot, go to Project -> Project Settings -> Plugins, and enable Loggie:
 ![LoggieProjSettings](https://i.imgur.com/suO2Itm.png)
 
-4. You're good to go. Have a peek at the [📚 User Guide](docs/USER_GUIDE.md) for more details.
+5. You're good to go. Have a peek at the [📚 User Guide](docs/USER_GUIDE.md) for more details.
 
 # Features
 
