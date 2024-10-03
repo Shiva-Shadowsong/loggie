@@ -1,11 +1,12 @@
 @tool
+
 ## Loggie is a basic logging utility for those who need common minor improvements and helpers around the basic [method print], [method print_rich]
 ## and other default Godot printing functions. Loggie creates instances of [LoggieMsg], which are a wrapper around a string that needs to manipulated,
 ## then uses them to properly format, arrange and present them in the console and .log files. Loggie uses the default Godot logging mechanism under the hood.
 extends Node
 
 ## Stores a string describing the current version of Loggie.
-const VERSION : String = "v1.0"
+const VERSION : String = "v1.1"
 
 ## A reference to the settings of this Loggie. Read more about [LoggieSettings].
 var settings : LoggieSettings
