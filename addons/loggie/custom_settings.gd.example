@@ -9,6 +9,7 @@ func load():
 	
 	self.terminal_mode = LoggieTools.TerminalMode.BBCODE
 	self.log_level = LoggieTools.LogLevel.INFO
+	self.show_loggie_specs = true
 	self.show_system_specs = true
 	self.output_message_domain = true
 	self.print_errors_to_console = true

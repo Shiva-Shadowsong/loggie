@@ -1,4 +1,5 @@
 @tool
+
 ## Defines a set of variables through which all the relevant settings of Loggie can have their
 ## values set, read and documented. An instance of this class is found in [member Loggie.settings], and that's where Loggie
 ## ultimately reads from when it's asking for the value of a setting. For user convenience, settings are (by default) exported
@@ -8,6 +9,12 @@
 ## 
 ## Loggie calls [method load] on this class during its [method _ready] function.
 class_name LoggieSettings extends Node
+
+## The name that will be used for the singleton referring to Loggie.
+## [br][br][i][b]Note:[/b] You may change this to something you're more used to, such as "log" or "logger".[/i]
+## When doing so, make sure to either do it while the Plugin is enabled, then disable and re-enable the plugin,
+## or that you manually clear out the previously created autoload (should be called "Loggie") in Project Settings -> Autoloads.
+static var loggie_singleton_name = "Loggie"
 
 ## The dictionary which is used to grab the defaults and other values associated with each setting
 ## relevant to Loggie, particularly important for the default way of loading [LoggieSettings] and
@@ -36,6 +43,14 @@ const project_settings = {
 		"hint" : PROPERTY_HINT_NONE,
 		"hint_string" : "",
 		"doc" : "Should Loggie log the system and device specs of the user as soon as it is booted?",
+	},
+	"show_loggie_specs" = {
+		"path": "loggie/general/show_loggie_specs",
+		"default_value" : true,
+		"type" : TYPE_BOOL,
+		"hint" : PROPERTY_HINT_NONE,
+		"hint_string" : "",
+		"doc" : "Should Loggie log its own specs when it is booted?",
 	},
 	"output_timestamps" = {
 		"path": "loggie/timestamps/output_timestamps",
@@ -115,6 +130,9 @@ var terminal_mode : LoggieTools.TerminalMode
 ## It determines which types of messages are allowed to be logged.
 ## Set this using [method setLogLevel].
 var log_level : LoggieTools.LogLevel
+
+## Whether or not Loggie should log the loggie specs on ready.
+var show_loggie_specs : bool
 
 ## Whether or not Loggie should log the system specs on ready.
 var show_system_specs : bool
@@ -218,6 +236,7 @@ var box_symbols_pretty = {
 func load():
 	terminal_mode = ProjectSettings.get_setting(project_settings.terminal_mode.path, project_settings.terminal_mode.default_value)
 	log_level = ProjectSettings.get_setting(project_settings.log_level.path, project_settings.log_level.default_value)
+	show_loggie_specs = ProjectSettings.get_setting(project_settings.show_loggie_specs.path, project_settings.show_loggie_specs.default_value)
 	show_system_specs = ProjectSettings.get_setting(project_settings.show_system_specs.path, project_settings.show_system_specs.default_value)
 	show_timestamps = ProjectSettings.get_setting(project_settings.output_timestamps.path, project_settings.output_timestamps.default_value)
 	timestamps_use_utc = ProjectSettings.get_setting(project_settings.timestamps_use_utc.path, project_settings.timestamps_use_utc.default_value)

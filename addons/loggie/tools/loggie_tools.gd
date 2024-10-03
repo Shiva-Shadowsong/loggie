@@ -1,6 +1,5 @@
 @tool
-extends Node
-class_name LoggieTools
+class_name LoggieTools extends Node
 
 ## Based on which log level is currently set to be used by the Loggie., attempting to log a message that's on
 ## a higher-than-configured log level will result in nothing happening.
@@ -36,7 +35,7 @@ static func remove_BBCode(text: String) -> String:
 	return stripped_text
 
 ## Concatenates all given args into one single string, in consecutive order starting with 'msg'.
-static func concatenate_msg_and_args(msg, arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null, arg6 = null) -> String:
+static func concatenate_msg_and_args(msg : Variant, arg1 : Variant = null, arg2 : Variant = null, arg3 : Variant = null, arg4 : Variant = null, arg5 : Variant = null, arg6 : Variant = null) -> String:
 	var final_msg = convert_to_string(msg)
 	var arguments = [arg1, arg2, arg3, arg4, arg5, arg6]
 	for arg in arguments:
@@ -51,6 +50,8 @@ static func convert_to_string(something : Variant) -> String:
 	var result : String
 	if something is Dictionary:
 		result = JSON.new().stringify(something, "  ", false, true)
+	elif something is LoggieMsg:
+		result = str(something.content)
 	else:
 		result = str(something)
 	return result
