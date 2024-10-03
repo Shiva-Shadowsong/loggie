@@ -1,6 +1,5 @@
 @tool
-extends Node
-class_name LoggieTools
+class_name LoggieTools extends Node
 
 ## Based on which log level is currently set to be used by the Loggie., attempting to log a message that's on
 ## a higher-than-configured log level will result in nothing happening.

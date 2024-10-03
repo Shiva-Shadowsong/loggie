@@ -43,7 +43,8 @@ func _ready() -> void:
 			push_error("Loggie loaded neither a custom nor a default settings file. This will break the plugin. Make sure that a valid loggie_settings.gd is in the same directory where loggie.gd is.")
 			return
 
-	var bootMsg = msg("[color=orange]👀 Loggie {version} booted.[/color]".format({"version" : self.VERSION})).header().nl()
+	var bootMsg = msg("[color=orange]👀 Loggie {version} booted.[/color]".format({"version" : self.VERSION}))
+	bootMsg.useLogger(self).header().nl()
 	bootMsg.append("[b]Terminal Mode:[/b]", LoggieTools.TerminalMode.keys()[settings.terminal_mode]).suffix(" - ")
 	bootMsg.append("[b]Log Level:[/b]", LoggieTools.LogLevel.keys()[settings.log_level]).suffix(" - ")
 	bootMsg.append("[b]Is in Production:[/b]", self.is_in_production()).suffix(" - ")
@@ -52,7 +53,8 @@ func _ready() -> void:
 	bootMsg.preprocessed(false).info()
 	
 	if settings.show_system_specs:
-		LoggieSystemSpecsMsg.new().embed_specs().preprocessed(false).info()
+		var systemSpecsMsg = LoggieSystemSpecsMsg.new().useLogger(self)
+		systemSpecsMsg.embed_specs().preprocessed(false).info()
 
 ## Attempts to instantiate a LoggieSettings object from the script at the given [param path].
 ## Returns true if successful, otherwise false and prints an error.
@@ -98,5 +100,7 @@ func is_domain_enabled(domain_name : String) -> bool:
 ## You may continue to modify the [LoggieMsg] with additional functions from that class, then when you are ready to output it, use methods like:
 ## [method LoggieMsg.info], [method LoggieMsg.warn], etc.
 func msg(msg = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
-	return LoggieMsg.new(msg, arg1, arg2, arg3, arg4, arg5)
+	var loggieMsg = LoggieMsg.new(msg, arg1, arg2, arg3, arg4, arg5)
+	loggieMsg.useLogger(self)
+	return loggieMsg
 

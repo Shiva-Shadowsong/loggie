@@ -1,4 +1,5 @@
 @tool
+
 ## Defines a set of variables through which all the relevant settings of Loggie can have their
 ## values set, read and documented. An instance of this class is found in [member Loggie.settings], and that's where Loggie
 ## ultimately reads from when it's asking for the value of a setting. For user convenience, settings are (by default) exported
@@ -8,6 +9,12 @@
 ## 
 ## Loggie calls [method load] on this class during its [method _ready] function.
 class_name LoggieSettings extends Node
+
+## The name that will be used for the singleton referring to Loggie.
+## [br][br][i][b]Note:[/b] You may change this to something you're more used to, such as "log" or "logger".[/i]
+## When doing so, make sure to either do it while the Plugin is enabled, then disable and re-enable the plugin,
+## or that you manually clear out the previously created autoload (should be called "Loggie") in Project Settings -> Autoloads.
+static var loggie_singleton_name = "Loggie"
 
 ## The dictionary which is used to grab the defaults and other values associated with each setting
 ## relevant to Loggie, particularly important for the default way of loading [LoggieSettings] and

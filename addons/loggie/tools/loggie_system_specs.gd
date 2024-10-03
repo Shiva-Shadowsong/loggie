@@ -1,3 +1,5 @@
+@tool
+
 ## LoggieSystemSpecs is a helper class that defines various functions on how to access data about the local machine and its specs
 ## and creates displayable strings out of them.
 class_name LoggieSystemSpecsMsg extends LoggieMsg
@@ -17,13 +19,15 @@ func embed_specs() -> LoggieSystemSpecsMsg:
 
 ## Adds data about the user's software to the content of this message.
 func embed_system_specs() -> LoggieSystemSpecsMsg:
-	var header = Loggie.msg("[color=orange]Operating System:[/color] {os}".format({"os": OS.get_name()})).box(4)
+	var loggie = getLogger()
+	var header = loggie.msg("[color=orange]Operating System:[/color] {os}".format({"os": OS.get_name()})).box(4)
 	self.add(header)
 	return self
 	
 ## Adds data about localization to the content of this message.
 func embed_localization_specs() -> LoggieSystemSpecsMsg:
-	var header = Loggie.msg("[color=orange]Localization:[/color] {localization}".format({
+	var loggie = getLogger()
+	var header = loggie.msg("[color=orange]Localization:[/color] {localization}".format({
 		"localization" : OS.get_locale()
 	})).box(7)
 	self.add(header)
@@ -31,7 +35,8 @@ func embed_localization_specs() -> LoggieSystemSpecsMsg:
 
 ## Adds data about the current date/time to the content of this message.
 func embed_date_data() -> LoggieSystemSpecsMsg:
-	var header = Loggie.msg("[color=orange]Date[/color]").box(15)
+	var loggie = getLogger()
+	var header = loggie.msg("[color=orange]Date[/color]").box(15)
 	self.add(header)
 	self.append("[b]Date and time (local):[/b]", Time.get_datetime_string_from_system(false, true)).nl()
 	self.append("[b]Date and time (UTC):[/b]", Time.get_datetime_string_from_system(true, true)).nl()
@@ -46,7 +51,8 @@ func embed_date_data() -> LoggieSystemSpecsMsg:
 
 ## Adds data about the user's hardware to the content of this message.
 func embed_hardware_specs() -> LoggieSystemSpecsMsg:
-	var header = Loggie.msg("[color=orange]Hardware[/color]").box(13)
+	var loggie = getLogger()
+	var header = loggie.msg("[color=orange]Hardware[/color]").box(13)
 	self.add(header)
 	self.append("[b]Model name:[/b]", OS.get_model_name()).nl()
 	self.append("[b]Processor name:[/b]", OS.get_processor_name()).nl()
@@ -54,7 +60,8 @@ func embed_hardware_specs() -> LoggieSystemSpecsMsg:
 
 ## Adds data about the video system to the content of this message.
 func embed_video_specs() -> LoggieSystemSpecsMsg:
-	var header = Loggie.msg("[color=orange]Video[/color]").box(14)
+	var loggie = getLogger()
+	var header = loggie.msg("[color=orange]Video[/color]").box(14)
 	self.add(header)
 	self.append("[b]Adapter name:[/b]", RenderingServer.get_video_adapter_name()).nl()
 	self.append("[b]Adapter vendor:[/b]", RenderingServer.get_video_adapter_vendor()).nl()
@@ -76,7 +83,8 @@ func embed_video_specs() -> LoggieSystemSpecsMsg:
 
 ## Adds data about the display to the content of this message.
 func embed_display_specs() -> LoggieSystemSpecsMsg:
-	var header = Loggie.msg("[color=orange]Display[/color]").box(13)
+	var loggie = getLogger()
+	var header = loggie.msg("[color=orange]Display[/color]").box(13)
 	self.add(header)
 	self.append("[b]Screen count:[/b]", DisplayServer.get_screen_count()).nl()
 	self.append("[b]DPI:[/b]", DisplayServer.screen_get_dpi()).nl()
@@ -99,7 +107,8 @@ func embed_display_specs() -> LoggieSystemSpecsMsg:
 
 ## Adds data about the audio system to the content of this message.
 func embed_audio_specs() -> LoggieSystemSpecsMsg:
-	var header = Loggie.msg("[color=orange]Audio[/color]").box(14)
+	var loggie = getLogger()
+	var header = loggie.msg("[color=orange]Audio[/color]").box(14)
 	self.add(header)
 	self.append("[b]Mix rate:[/b]", "%d Hz" % AudioServer.get_mix_rate()).nl()
 	self.append("[b]Output latency:[/b]", "%f ms" % (AudioServer.get_output_latency() * 1000)).nl()
@@ -109,7 +118,8 @@ func embed_audio_specs() -> LoggieSystemSpecsMsg:
 
 ## Adds data about the godot engine to the content of this message.
 func embed_engine_specs() -> LoggieSystemSpecsMsg:
-	var header = Loggie.msg("[color=orange]Engine[/color]").box(14)
+	var loggie = getLogger()
+	var header = loggie.msg("[color=orange]Engine[/color]").box(14)
 	self.add(header)
 	self.append("[b]Version:[/b]", Engine.get_version_info()["string"]).nl()
 	self.append("[b]Command-line arguments:[/b]", str(OS.get_cmdline_args())).nl()
@@ -119,7 +129,8 @@ func embed_engine_specs() -> LoggieSystemSpecsMsg:
 
 ## Adds data about the input device to the content of this message.
 func embed_input_specs() -> LoggieSystemSpecsMsg:
-	var header = Loggie.msg("[color=orange]Input[/color]").box(14)
+	var loggie = getLogger()
+	var header = loggie.msg("[color=orange]Input[/color]").box(14)
 	self.add(header)
 	self.append("[b]Device has touch screen:[/b]", DisplayServer.is_touchscreen_available()).nl()
 	var has_virtual_keyboard = DisplayServer.has_feature(DisplayServer.FEATURE_VIRTUAL_KEYBOARD)
