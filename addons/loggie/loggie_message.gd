@@ -247,15 +247,6 @@ func box(h_padding : int = 4):
 	self.preprocessed(false)
 
 	return self
-
-## Concatenates the content of another [LoggieMsg] to the end of this message (optionally with a separator string between them).
-func merge(logmsg : LoggieMsg, separator : String = "") -> LoggieMsg:
-	self.content = "{msg}{separator}{newContent}".format({
-		"msg" : self.content,
-		"separator" : separator,
-		"newContent" : logmsg.content
-	})
-	return self
 	
 ## Appends additional content to this message at the end of the current content and its stylings.
 func add(msg : Variant = null, arg1 : Variant = null, arg2 : Variant = null, arg3 : Variant = null, arg4 : Variant = null, arg5 : Variant = null) -> LoggieMsg:
