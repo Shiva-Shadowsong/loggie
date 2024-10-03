@@ -258,7 +258,7 @@ func merge(logmsg : LoggieMsg, separator : String = "") -> LoggieMsg:
 	return self
 	
 ## Appends additional content to this message at the end of the current content and its stylings.
-func add(msg : String, arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
+func add(msg : Variant = null, arg1 : Variant = null, arg2 : Variant = null, arg3 : Variant = null, arg4 : Variant = null, arg5 : Variant = null) -> LoggieMsg:
 	self.content = self.content + LoggieTools.concatenate_msg_and_args(msg, arg1, arg2, arg3, arg4, arg5)
 	return self
 
