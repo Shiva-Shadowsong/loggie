@@ -17,6 +17,15 @@ func embed_specs() -> LoggieSystemSpecsMsg:
 	self.embed_input_specs()
 	return self
 
+## Embeds data about the logger into the content of this message.
+func embed_logger_specs() -> LoggieSystemSpecsMsg:
+	var loggie = getLogger()
+	self.add(loggie.msg("Terminal Mode:").bold(), LoggieTools.TerminalMode.keys()[loggie.settings.terminal_mode]).suffix(" - ")
+	self.add(loggie.msg("Log Level:").bold(), LoggieTools.LogLevel.keys()[loggie.settings.log_level]).suffix(" - ")
+	self.add(loggie.msg("Is in Production:").bold(), loggie.is_in_production()).suffix(" - ")
+	self.add(loggie.msg("Box Characters Mode:").bold(), LoggieTools.BoxCharactersMode.keys()[loggie.settings.box_characters_mode]).nl()
+	return self
+
 ## Adds data about the user's software to the content of this message.
 func embed_system_specs() -> LoggieSystemSpecsMsg:
 	var loggie = getLogger()
@@ -36,14 +45,14 @@ func embed_date_data() -> LoggieSystemSpecsMsg:
 	var loggie = getLogger()
 	var header = loggie.msg("Date").color(Color.ORANGE).box(15)
 	self.add(header)
-	self.add(loggie.msg("Date and time (local): ").bold(), Time.get_datetime_string_from_system(false, true)).nl()
-	self.add(loggie.msg("Date and time (UTC): ").bold(), Time.get_datetime_string_from_system(true, true)).nl()
-	self.add(loggie.msg("Date (local): ").bold(), Time.get_date_string_from_system(false)).nl()
-	self.add(loggie.msg("Date (UTC): ").bold(), Time.get_date_string_from_system(true)).nl()
-	self.add(loggie.msg("Time (local): ").bold(), Time.get_time_string_from_system(false)).nl()
-	self.add(loggie.msg("Time (UTC): ").bold(), Time.get_time_string_from_system(true)).nl()
-	self.add(loggie.msg("Timezone: ").bold(), Time.get_time_zone_from_system()).nl()
-	self.add(loggie.msg("UNIX time: ").bold(), Time.get_unix_time_from_system()).nl()
+	self.add(loggie.msg("Date and time (local):").bold(), Time.get_datetime_string_from_system(false, true)).nl()
+	self.add(loggie.msg("Date and time (UTC):").bold(), Time.get_datetime_string_from_system(true, true)).nl()
+	self.add(loggie.msg("Date (local):").bold(), Time.get_date_string_from_system(false)).nl()
+	self.add(loggie.msg("Date (UTC):").bold(), Time.get_date_string_from_system(true)).nl()
+	self.add(loggie.msg("Time (local):").bold(), Time.get_time_string_from_system(false)).nl()
+	self.add(loggie.msg("Time (UTC):").bold(), Time.get_time_string_from_system(true)).nl()
+	self.add(loggie.msg("Timezone:").bold(), Time.get_time_zone_from_system()).nl()
+	self.add(loggie.msg("UNIX time:").bold(), Time.get_unix_time_from_system()).nl()
 	return self
 
 ## Adds data about the user's hardware to the content of this message.
@@ -51,7 +60,7 @@ func embed_hardware_specs() -> LoggieSystemSpecsMsg:
 	var loggie = getLogger()
 	var header = loggie.msg("Hardware").color(Color.ORANGE).box(13)
 	self.add(header)
-	self.add(loggie.msg("Model name: ").bold(), OS.get_model_name()).nl()
+	self.add(loggie.msg("Model name:").bold(), OS.get_model_name()).nl()
 	self.add(loggie.msg("Processor name:").bold(), OS.get_processor_name()).nl()
 	return self
 

@@ -44,6 +44,14 @@ const project_settings = {
 		"hint_string" : "",
 		"doc" : "Should Loggie log the system and device specs of the user as soon as it is booted?",
 	},
+	"show_loggie_specs" = {
+		"path": "loggie/general/show_loggie_specs",
+		"default_value" : true,
+		"type" : TYPE_BOOL,
+		"hint" : PROPERTY_HINT_NONE,
+		"hint_string" : "",
+		"doc" : "Should Loggie log its own specs when it is booted?",
+	},
 	"output_timestamps" = {
 		"path": "loggie/timestamps/output_timestamps",
 		"default_value" : false,
@@ -122,6 +130,9 @@ var terminal_mode : LoggieTools.TerminalMode
 ## It determines which types of messages are allowed to be logged.
 ## Set this using [method setLogLevel].
 var log_level : LoggieTools.LogLevel
+
+## Whether or not Loggie should log the loggie specs on ready.
+var show_loggie_specs : bool
 
 ## Whether or not Loggie should log the system specs on ready.
 var show_system_specs : bool
@@ -225,6 +236,7 @@ var box_symbols_pretty = {
 func load():
 	terminal_mode = ProjectSettings.get_setting(project_settings.terminal_mode.path, project_settings.terminal_mode.default_value)
 	log_level = ProjectSettings.get_setting(project_settings.log_level.path, project_settings.log_level.default_value)
+	show_loggie_specs = ProjectSettings.get_setting(project_settings.show_loggie_specs.path, project_settings.show_loggie_specs.default_value)
 	show_system_specs = ProjectSettings.get_setting(project_settings.show_system_specs.path, project_settings.show_system_specs.default_value)
 	show_timestamps = ProjectSettings.get_setting(project_settings.output_timestamps.path, project_settings.output_timestamps.default_value)
 	timestamps_use_utc = ProjectSettings.get_setting(project_settings.timestamps_use_utc.path, project_settings.timestamps_use_utc.default_value)

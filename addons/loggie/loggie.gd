@@ -43,15 +43,14 @@ func _ready() -> void:
 			push_error("Loggie loaded neither a custom nor a default settings file. This will break the plugin. Make sure that a valid loggie_settings.gd is in the same directory where loggie.gd is.")
 			return
 
-	var bootMsg = msg("[color=orange]👀 Loggie {version} booted.[/color]".format({"version" : self.VERSION}))
-	bootMsg.useLogger(self).header().nl()
-	bootMsg.add("[b]Terminal Mode:[/b]", LoggieTools.TerminalMode.keys()[settings.terminal_mode]).suffix(" - ")
-	bootMsg.add("[b]Log Level:[/b]", LoggieTools.LogLevel.keys()[settings.log_level]).suffix(" - ")
-	bootMsg.add("[b]Is in Production:[/b]", self.is_in_production()).suffix(" - ")
-	bootMsg.add("[b]Box Characters Mode:[/b]", LoggieTools.BoxCharactersMode.keys()[settings.box_characters_mode]).nl()
-	bootMsg.add("[b]Using Custom Settings File:[/b]", !uses_original_settings_file).nl()
-	bootMsg.preprocessed(false).info()
+	msg("👀 Loggie {version} booted.".format({"version" : self.VERSION})).color(Color.ORANGE).header().nl().info()
 	
+	if settings.show_loggie_specs:
+		var loggieSpecsMsg = LoggieSystemSpecsMsg.new().useLogger(self)
+		loggieSpecsMsg.embed_logger_specs()
+		loggieSpecsMsg.add(msg("Using Custom Settings File: ").bold(), !uses_original_settings_file).nl()
+		loggieSpecsMsg.preprocessed(false).info()
+
 	if settings.show_system_specs:
 		var systemSpecsMsg = LoggieSystemSpecsMsg.new().useLogger(self)
 		systemSpecsMsg.embed_specs().preprocessed(false).info()

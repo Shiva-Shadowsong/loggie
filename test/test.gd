@@ -56,6 +56,7 @@ func print_setting_values_from_project_settings():
 func print_actual_current_settings():
 	print("terminal_mode => ", Loggie.settings.terminal_mode)
 	print("log_level => ", Loggie.settings.log_level)
+	print("show_loggie_specs => ", Loggie.settings.show_loggie_specs)
 	print("show_system_specs => ", Loggie.settings.show_system_specs)
 	print("output_message_domain => ", Loggie.settings.output_message_domain)
 	print("print_errors_to_console => ", Loggie.settings.print_errors_to_console)
