@@ -249,7 +249,7 @@ func box(h_padding : int = 4):
 	return self
 
 ## Concatenates the content of another [LoggieMsg] to the end of this message (optionally with a separator string between them).
-func add(logmsg : LoggieMsg, separator : String = "") -> LoggieMsg:
+func merge(logmsg : LoggieMsg, separator : String = "") -> LoggieMsg:
 	self.content = "{msg}{separator}{newContent}".format({
 		"msg" : self.content,
 		"separator" : separator,

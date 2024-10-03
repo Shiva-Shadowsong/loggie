@@ -21,7 +21,7 @@ func embed_specs() -> LoggieSystemSpecsMsg:
 func embed_system_specs() -> LoggieSystemSpecsMsg:
 	var loggie = getLogger()
 	var header = loggie.msg("[color=orange]Operating System:[/color] {os}".format({"os": OS.get_name()})).box(4)
-	self.add(header)
+	self.merge(header)
 	return self
 	
 ## Adds data about localization to the content of this message.
@@ -30,14 +30,14 @@ func embed_localization_specs() -> LoggieSystemSpecsMsg:
 	var header = loggie.msg("[color=orange]Localization:[/color] {localization}".format({
 		"localization" : OS.get_locale()
 	})).box(7)
-	self.add(header)
+	self.merge(header)
 	return self
 
 ## Adds data about the current date/time to the content of this message.
 func embed_date_data() -> LoggieSystemSpecsMsg:
 	var loggie = getLogger()
 	var header = loggie.msg("[color=orange]Date[/color]").box(15)
-	self.add(header)
+	self.merge(header)
 	self.append("[b]Date and time (local):[/b]", Time.get_datetime_string_from_system(false, true)).nl()
 	self.append("[b]Date and time (UTC):[/b]", Time.get_datetime_string_from_system(true, true)).nl()
 	self.append("[b]Date and time (UTC):[/b]", Time.get_datetime_string_from_system(true, true)).nl()
@@ -53,7 +53,7 @@ func embed_date_data() -> LoggieSystemSpecsMsg:
 func embed_hardware_specs() -> LoggieSystemSpecsMsg:
 	var loggie = getLogger()
 	var header = loggie.msg("[color=orange]Hardware[/color]").box(13)
-	self.add(header)
+	self.merge(header)
 	self.append("[b]Model name:[/b]", OS.get_model_name()).nl()
 	self.append("[b]Processor name:[/b]", OS.get_processor_name()).nl()
 	return self
@@ -62,7 +62,7 @@ func embed_hardware_specs() -> LoggieSystemSpecsMsg:
 func embed_video_specs() -> LoggieSystemSpecsMsg:
 	var loggie = getLogger()
 	var header = loggie.msg("[color=orange]Video[/color]").box(14)
-	self.add(header)
+	self.merge(header)
 	self.append("[b]Adapter name:[/b]", RenderingServer.get_video_adapter_name()).nl()
 	self.append("[b]Adapter vendor:[/b]", RenderingServer.get_video_adapter_vendor()).nl()
 	self.append("[b]Adapter type:[/b]", [
@@ -85,7 +85,7 @@ func embed_video_specs() -> LoggieSystemSpecsMsg:
 func embed_display_specs() -> LoggieSystemSpecsMsg:
 	var loggie = getLogger()
 	var header = loggie.msg("[color=orange]Display[/color]").box(13)
-	self.add(header)
+	self.merge(header)
 	self.append("[b]Screen count:[/b]", DisplayServer.get_screen_count()).nl()
 	self.append("[b]DPI:[/b]", DisplayServer.screen_get_dpi()).nl()
 	self.append("[b]Scale factor:[/b]", DisplayServer.screen_get_scale()).nl()
@@ -109,7 +109,7 @@ func embed_display_specs() -> LoggieSystemSpecsMsg:
 func embed_audio_specs() -> LoggieSystemSpecsMsg:
 	var loggie = getLogger()
 	var header = loggie.msg("[color=orange]Audio[/color]").box(14)
-	self.add(header)
+	self.merge(header)
 	self.append("[b]Mix rate:[/b]", "%d Hz" % AudioServer.get_mix_rate()).nl()
 	self.append("[b]Output latency:[/b]", "%f ms" % (AudioServer.get_output_latency() * 1000)).nl()
 	self.append("[b]Output device list:[/b]", ", ".join(AudioServer.get_output_device_list())).nl()
@@ -120,7 +120,7 @@ func embed_audio_specs() -> LoggieSystemSpecsMsg:
 func embed_engine_specs() -> LoggieSystemSpecsMsg:
 	var loggie = getLogger()
 	var header = loggie.msg("[color=orange]Engine[/color]").box(14)
-	self.add(header)
+	self.merge(header)
 	self.append("[b]Version:[/b]", Engine.get_version_info()["string"]).nl()
 	self.append("[b]Command-line arguments:[/b]", str(OS.get_cmdline_args())).nl()
 	self.append("[b]Is debug build:[/b]", OS.is_debug_build()).nl()
@@ -131,7 +131,7 @@ func embed_engine_specs() -> LoggieSystemSpecsMsg:
 func embed_input_specs() -> LoggieSystemSpecsMsg:
 	var loggie = getLogger()
 	var header = loggie.msg("[color=orange]Input[/color]").box(14)
-	self.add(header)
+	self.merge(header)
 	self.append("[b]Device has touch screen:[/b]", DisplayServer.is_touchscreen_available()).nl()
 	var has_virtual_keyboard = DisplayServer.has_feature(DisplayServer.FEATURE_VIRTUAL_KEYBOARD)
 	self.append("[b]Device has virtual keyboard:[/b]", has_virtual_keyboard).nl()
