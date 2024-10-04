@@ -145,7 +145,7 @@ func generate_loot_for(recipient : Creature):
   Loggie.set_domain_enabled("LootDiag", diagnostics_enabled)
 
   Loggie.msg("Generating loot for %s" % recipient.name).domain("LootDiag").info()
-  Loggie.msg("Rolling for rare items...").domain("LootDiag")..info()
+  Loggie.msg("Rolling for rare items...").domain("LootDiag").info()
 ```
 
 ## Class Name Extraction
