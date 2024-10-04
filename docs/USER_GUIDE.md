@@ -5,25 +5,12 @@ Loggie allows you to compose and style messages then send them to the output, wh
 
 Let's explore some of the features.
 
-# 📋 TOC
-- [📚User Guide](#user-guide)
-- [📋 TOC](#-toc)
+# 📋 Table of Contents
 - [Log Files and Storage](#log-files-and-storage)
 - [Composing Messages](#composing-messages)
 	- [Creating a message](#creating-a-message)
 	- [Styling a message](#styling-a-message)
-				- [bold()](#bold)
-				- [italic()](#italic)
-				- [header()](#header)
-				- [color(color : String | Color)](#colorcolor--string--color)
-				- [box(h\_padding: int = 4)](#boxh_padding-int--4)
-				- [nl(amount: int = 1)](#nlamount-int--1)
-				- [hseparator(size: int = 16, alternative\_symbol: Variant = null)](#hseparatorsize-int--16-alternative_symbol-variant--null)
-				- [add(...)](#add)
-				- [prefix(prefix : String, separator : String = "")](#prefixprefix--string-separator--string--)
-				- [suffix(suffix : String, separator : String = "")](#suffixsuffix--string-separator--string--)
 	- [Outputting a message](#outputting-a-message)
-			- [Extras](#extras)
 - [Adjusting Message Formats](#adjusting-message-formats)
 - [Preprocessing](#preprocessing)
 	- [Eligibility Checks:](#eligibility-checks)
@@ -38,9 +25,6 @@ Let's explore some of the features.
 		- [Timestamps](#timestamps)
 - [Custom Settings](#custom-settings)
 - [Using a custom singleton name](#using-a-custom-singleton-name)
-			- [• Step 1:](#-step-1)
-			- [• Step 2:](#-step-2)
-			- [• Step 3:](#-step-3)
 - [Notable Technicalities](#notable-technicalities)
 
 ----------------------------------------
