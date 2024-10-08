@@ -32,6 +32,7 @@ var domain_name : String = ""
 var preprocess : bool = true
 
 ## Stores a reference to the logger that generated this message, from which we need to read settings and other data.
+## This variable should be set with [method useLogger] before an attempt is made to log this message out.
 var _logger : Variant
 
 func _init(msg = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> void:
@@ -39,8 +40,6 @@ func _init(msg = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = 
 	self.original_content = self.content
 
 ## Returns a reference to the logger object that created this message.
-## If the currently stored reference is null, an attempt will be made to automatically obtain the reference
-## for an autoloaded singleton named 'Loggie'.
 func getLogger() -> Variant:
 	return self._logger
 
@@ -101,7 +100,7 @@ func output(level : LoggieTools.LogLevel, msg : String, domain : String = "") ->
 	var usedTerminalMode = LoggieTools.TerminalMode.PLAIN if loggie.is_in_production() else loggie.settings.terminal_mode
 	match usedTerminalMode:
 		LoggieTools.TerminalMode.ANSI:
-			# We put the message through the rich_to_ANSI converted which takes care of converting BBCode
+			# We put the message through the rich_to_ANSI converter which takes care of converting BBCode
 			# to appropriate ANSI. (Only if the TerminalMode is set to ANSI).
 			# Godot claims to be already preparing BBCode output for ANSI, but it only works with a small
 			# predefined set of colors, and I think it totally strips stuff like [b], [i], etc.

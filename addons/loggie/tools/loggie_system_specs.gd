@@ -84,6 +84,7 @@ func embed_video_specs() -> LoggieSystemSpecsMsg:
 		self.add(loggie.msg("Adapter driver version:").bold(), video_adapter_driver_info[1]).nl()
 
 	return self
+
 ## Adds data about the display to the content of this message.
 func embed_display_specs() -> LoggieSystemSpecsMsg:
 	const screen_orientation_to_string = [
