@@ -16,6 +16,7 @@ func load():
 	self.print_warnings_to_console = true
 	self.use_print_debug_for_debug_msg = true
 	self.derive_and_show_class_names = true
+	self.nameless_class_name_proxy = LoggieTools.NamelessClassExtensionNameProxy.BASE_TYPE
 	self.show_timestamps = true
 	self.timestamps_use_utc = true
 
@@ -27,7 +28,7 @@ func load():
 	self.format_info_msg = "%s"
 	self.format_debug_msg = "[b][color=pink][DEBUG]:[/color][/b] %s"
 	self.h_separator_symbol = "-"
-	self.box_characters_mode = LoggieTools.BoxCharactersMode.COMPATIBLE
+	self.box_characters_mode = LoggieTools.BoxCharactersMode.COMPATIBLE	
 
 	self.box_symbols_compatible = {
 		"top_left" : "-",
