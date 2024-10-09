@@ -22,7 +22,7 @@ func remove_loggie_project_setings():
 		ProjectSettings.set_setting(setting["path"], null)
 	
 	var error: int = ProjectSettings.save()
-	if error: 
+	if error != OK: 
 		push_error("Loggie - Encountered error %d while saving project settings." % error)
 
 ## Adds a new project setting to Godot.
