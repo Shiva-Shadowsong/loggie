@@ -82,13 +82,14 @@ func output(level : LoggieTools.LogLevel, msg : String, domain : String = "") ->
 			if loggie.class_names.has(scriptPath):
 				_class_name = loggie.class_names[scriptPath]
 			else:
-				_class_name = LoggieTools.extract_class_name_from_gd_script(scriptPath)
+				_class_name = LoggieTools.get_class_name_from_script(load(scriptPath), loggie.settings.nameless_class_name_proxy)
 				loggie.class_names[scriptPath] = _class_name
 			
-			msg = "[b]({class_name})[/b] {msg}".format({
-				"class_name" : _class_name,
-				"msg" : msg
-			})
+			if _class_name != "":
+				msg = "[b]({class_name})[/b] {msg}".format({
+					"class_name" : _class_name,
+					"msg" : msg
+				})
 
 		# We prepend a timestamp to the message (if Loggie settings are configured to do so).
 		if loggie.settings.show_timestamps == true:

@@ -100,6 +100,14 @@ const project_settings = {
 		"hint_string" : "",
 		"doc" : "If true, Loggie will attempt to find out the name of the main class from which the log line is coming and append it in front of the message.",
 	},
+	"nameless_class_name_proxy" = {
+		"path": "loggie/preprocessing/nameless_class_name_proxy",
+		"default_value" : LoggieTools.NamelessClassExtensionNameProxy.BASE_TYPE,
+		"type" : TYPE_INT,
+		"hint" : PROPERTY_HINT_ENUM,
+		"hint_string" : "Nothing:0,ScriptName:1,BaseType:2",
+		"doc" : "If 'Derive and Display Class Names From Scripts' is enabled, and a script doesn't have a 'class_name', which text should we use as a substitute?",
+	},
 	"output_message_domain" = {
 		"path": "loggie/preprocessing/output_message_domain",
 		"default_value" : false,
@@ -158,13 +166,17 @@ var use_print_debug_for_debug_msg : bool
 ## and display it at the start of each output message.
 ## This only works in debug builds because it uses [method @GDScript.get_stack]. 
 ## See that method's documentation to see why that can't be used in release builds.
-var derive_and_show_class_names
+var derive_and_show_class_names : bool
+
+## Defines which text will be used as a substitute for the 'class_name' of scripts that do not have a 'class_name'.
+## Relevant only if [member derive_and_show_class_names] is enabled.
+var nameless_class_name_proxy : LoggieTools.NamelessClassExtensionNameProxy
 
 ## Whether Loggie should prepend a timestamp to each output message.
-var show_timestamps
+var show_timestamps : bool
 
 ## Whether the outputted timestamps (if [member show_timestamps] is enabled) use UTC or local machine time.
-var timestamps_use_utc
+var timestamps_use_utc : bool
 
 # ----------------------------------------------- #
 #region Formats for prints
@@ -247,4 +259,5 @@ func load():
 
 	output_message_domain = ProjectSettings.get_setting(project_settings.output_message_domain.path, project_settings.output_message_domain.default_value)
 	derive_and_show_class_names = ProjectSettings.get_setting(project_settings.derive_and_display_class_names_from_scripts.path, project_settings.derive_and_display_class_names_from_scripts.default_value)
+	nameless_class_name_proxy = ProjectSettings.get_setting(project_settings.nameless_class_name_proxy.path, project_settings.nameless_class_name_proxy.default_value)
 	box_characters_mode = ProjectSettings.get_setting(project_settings.box_characters_mode.path, project_settings.box_characters_mode.default_value)
