@@ -221,6 +221,18 @@ static func extract_class_name_from_gd_script(path_or_script : Variant, proxy : 
 
 	return _class_name
 
+## Prints out a bunch of useful data about a given script.
+## Useful for debugging.
+static func print_script_data(script : Script):
+	var msg = Loggie.msg("Script Data for:", script.get_path()).color("pink")
+	msg.add(":").nl()
+	msg.add(Loggie.msg("get_class():").color("slate_blue").bold()).add(script.get_class()).nl()
+	msg.add(Loggie.msg("get_global_name():").color("slate_blue").bold()).add(script.get_global_name()).nl()
+	msg.add(Loggie.msg("get_base_script():").color("slate_blue").bold()).add(script.get_base_script().resource_path if script.get_base_script() != null else "No base script.").nl()
+	msg.add(Loggie.msg("get_instance_base_type():").color("slate_blue").bold()).add(script.get_instance_base_type()).nl()
+	msg.add(Loggie.msg("get_script_property_list():").color("slate_blue").bold()).add(script.get_script_property_list()).nl()
+	msg.info()
+
 ## A dictionary of named colors matching the constants from [Color] used to help with rich text coloring.
 ## There may be a way to obtain these Color values without this dictionary if one can somehow check for the 
 ## existence and value of a constant on the Color class (since they're already there),
