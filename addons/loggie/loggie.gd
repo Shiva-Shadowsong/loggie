@@ -21,9 +21,6 @@ var domains : Dictionary = {}
 var class_names : Dictionary = {}
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
-		return
-
 	var uses_original_settings_file = true
 	var default_settings_path = get_script().get_path().get_base_dir().path_join("loggie_settings.gd")
 	var custom_settings_path = get_script().get_path().get_base_dir().path_join("custom_settings.gd")
@@ -42,6 +39,10 @@ func _ready() -> void:
 		else:
 			push_error("Loggie loaded neither a custom nor a default settings file. This will break the plugin. Make sure that a valid loggie_settings.gd is in the same directory where loggie.gd is.")
 			return
+
+	# Don't print Loggie boot messages if Loggie is running only from the editor.
+	if Engine.is_editor_hint():
+		return
 
 	msg("👀 Loggie {version} booted.".format({"version" : self.VERSION})).color(Color.ORANGE).header().nl().info()
 	
