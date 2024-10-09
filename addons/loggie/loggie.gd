@@ -6,7 +6,7 @@
 extends Node
 
 ## Stores a string describing the current version of Loggie.
-const VERSION : String = "v1.1"
+const VERSION : String = "v1.2"
 
 ## A reference to the settings of this Loggie. Read more about [LoggieSettings].
 var settings : LoggieSettings
