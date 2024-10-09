@@ -148,4 +148,3 @@ func embed_input_specs() -> LoggieSystemSpecsMsg:
 		self.add(loggie.msg("Virtual keyboard height:").bold(), DisplayServer.virtual_keyboard_get_height())
 
 	return self
-

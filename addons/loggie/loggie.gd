@@ -103,3 +103,32 @@ func msg(msg = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = nu
 	loggieMsg.useLogger(self)
 	return loggieMsg
 
+## A shortcut method that instantly creates a [LoggieMsg] with the given arguments and outputs it at the info level.
+## Can be used when you have no intention of customizing a LoggieMsg in any way using helper methods.
+## For customization, use [method msg] instead.
+func info(msg = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
+	return msg(msg, arg1, arg2, arg3, arg4, arg5).info()
+
+## A shortcut method that instantly creates a [LoggieMsg] with the given arguments and outputs it at the warn level.
+## Can be used when you have no intention of customizing a LoggieMsg in any way using helper methods.
+## For customization, use [method msg] instead.
+func warn(msg = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
+	return msg(msg, arg1, arg2, arg3, arg4, arg5).warn()
+
+## A shortcut method that instantly creates a [LoggieMsg] with the given arguments and outputs it at the error level.
+## Can be used when you have no intention of customizing a LoggieMsg in any way using helper methods.
+## For customization, use [method msg] instead.
+func error(msg = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
+	return msg(msg, arg1, arg2, arg3, arg4, arg5).error()
+
+## A shortcut method that instantly creates a [LoggieMsg] with the given arguments and outputs it at the debug level.
+## Can be used when you have no intention of customizing a LoggieMsg in any way using helper methods.
+## For customization, use [method msg] instead.
+func debug(msg = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
+	return msg(msg, arg1, arg2, arg3, arg4, arg5).debug()
+
+## A shortcut method that instantly creates a [LoggieMsg] with the given arguments and outputs it at the notice level.
+## Can be used when you have no intention of customizing a LoggieMsg in any way using helper methods.
+## For customization, use [method msg] instead.
+func notice(msg = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
+	return msg(msg, arg1, arg2, arg3, arg4, arg5).notice()

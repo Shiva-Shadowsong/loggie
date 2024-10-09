@@ -48,6 +48,13 @@ func test() -> void:
 	# If 'Loggie.settings.derive_and_show_class_names' is true, the name of the class should show up properly as prefix.
 	var talker = LoggieTalker.new()
 	talker.say("Greetings!")
+	
+	# Test shortcut wrappers.
+	Loggie.debug("Debug wrapper test.")
+	Loggie.info("Info wrapper test.")
+	Loggie.notice("Notice wrapper test.")
+	Loggie.warn("Warn wrapper test.")
+	Loggie.error("Error wrapper test.")
 
 func print_setting_values_from_project_settings():
 	for key in LoggieSettings.project_settings.keys():
