@@ -4,10 +4,12 @@ class_name LoggieEditorPlugin extends EditorPlugin
 func _enter_tree():
 	add_autoload_singleton(LoggieSettings.loggie_singleton_name, "res://addons/loggie/loggie.gd")
 	add_loggie_project_settings()
+	print("Loggie entered tree")
 
 func _exit_tree() -> void:
 	remove_loggie_project_setings()
 	remove_autoload_singleton(LoggieSettings.loggie_singleton_name)
+	print("Loggie exited tree")
 
 ## Adds new Loggie related ProjectSettings to Godot.
 func add_loggie_project_settings():
