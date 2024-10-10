@@ -7,23 +7,24 @@ class_name LoggieTestPlayground extends Control
 ## so that you can modify `Loggie.settings` on the fly during this script while having a backup of the original state.
 var original_settings : LoggieSettings
 
-const PATH_LOGGIE_TALKER = "res://test/testing_props/talkers/LoggieTalker.gd"
-const PATH_LOGGIE_TALKER_CHILD = "res://test/testing_props/talkers/LoggieTalkerChild.gd"
-const PATH_LOGGIE_TALKER_GRANDCHILD = "res://test/testing_props/talkers/LoggieTalkerGrandchild.gd"
-const PATH_LOGGIE_TALKER_NAMED_GRANDCHILD = "res://test/testing_props/talkers/LoggieTalkerNamedGrandchild.gd"
-const PATH_LOGGIE_TALKER_NAMED_CHILD = "res://test/testing_props/talkers/LoggieTalkerNamedChild.gd"
+const SCRIPT_LOGGIE_TALKER = preload("res://test/testing_props/talkers/LoggieTalker.gd")
+const SCRIPT_LOGGIE_TALKER_CHILD = preload("res://test/testing_props/talkers/LoggieTalkerChild.gd")
+const SCRIPT_LOGGIE_TALKER_GRANDCHILD = preload("res://test/testing_props/talkers/LoggieTalkerGrandchild.gd")
+const SCRIPT_LOGGIE_TALKER_NAMED_GRANDCHILD = preload("res://test/testing_props/talkers/LoggieTalkerNamedGrandchild.gd")
+const SCRIPT_LOGGIE_TALKER_NAMED_CHILD = preload("res://test/testing_props/talkers/LoggieTalkerNamedChild.gd")
 
 func _ready() -> void:
 	original_settings = Loggie.settings.duplicate()
 	setup_gui()
 
-	#print_setting_values_from_project_settings()
-	#print_actual_current_settings()
-	#print_talker_scripts_data()
-	#test_all_log_level_outputs()
-	#test_decors()
-	#test_output_from_classes_of_various_inheritances_and_origins()
-	#test_domains()
+	print_setting_values_from_project_settings()
+	print_actual_current_settings()
+	print_talker_scripts_data()
+	
+	test_all_log_level_outputs()
+	test_decors()
+	test_output_from_classes_of_various_inheritances_and_origins()
+	test_domains()
 
 func setup_gui():
 	$Label.text = "Loggie {version}".format({"version": Loggie.VERSION})
@@ -77,16 +78,16 @@ func test_output_from_classes_of_various_inheritances_and_origins():
 		talker.say_from_inner("This is an inner-class defined in that class.")
 
 		# Test how it looks when a script that has a `class_name` and extends LoggieTalker produces a log.
-		load(PATH_LOGGIE_TALKER_NAMED_CHILD).new().say("This is a named class that extends a named class and has its own implementation of a method.")
+		SCRIPT_LOGGIE_TALKER_NAMED_CHILD.new().say("This is a named class that extends a named class and has its own implementation of a method.")
 		
 		# Test how it looks when a script that has no `class_name` and extends LoggieTalker produces a log.
-		load(PATH_LOGGIE_TALKER_CHILD).new().say("This is an unnamed class that extends a named class and has its own implementation of a method'.")
+		SCRIPT_LOGGIE_TALKER_CHILD.new().say("This is an unnamed class that extends a named class and has its own implementation of a method'.")
 		
 		# Test how it looks when a script that has a `class_name` and extends a LoggieTalker extender produces a log.
-		load(PATH_LOGGIE_TALKER_NAMED_GRANDCHILD).new().say("This is a named class that extends a named class that extends a named class.")
+		SCRIPT_LOGGIE_TALKER_NAMED_GRANDCHILD.new().say("This is a named class that extends a named class that extends a named class.")
 		
 		# Test how it looks when a script that has no `class_name` and extends a LoggieTalker extender produces a log.
-		load(PATH_LOGGIE_TALKER_GRANDCHILD).new().say("This is an unnamed class that extends an unnamed class that extends a named class.")
+		SCRIPT_LOGGIE_TALKER_GRANDCHILD.new().say("This is an unnamed class that extends an unnamed class that extends a named class.")
 
 		print()
 	print()
@@ -138,15 +139,14 @@ func test_decors():
 
 ## Prints helpful data about some test-related scripts.
 func print_talker_scripts_data() -> void:
-	var paths = [
-		PATH_LOGGIE_TALKER, 
-		PATH_LOGGIE_TALKER_CHILD,
-		PATH_LOGGIE_TALKER_NAMED_CHILD, 
-		PATH_LOGGIE_TALKER_GRANDCHILD,
-		PATH_LOGGIE_TALKER_NAMED_GRANDCHILD
+	var scripts = [
+		SCRIPT_LOGGIE_TALKER, 
+		SCRIPT_LOGGIE_TALKER_CHILD,
+		SCRIPT_LOGGIE_TALKER_NAMED_CHILD, 
+		SCRIPT_LOGGIE_TALKER_GRANDCHILD,
+		SCRIPT_LOGGIE_TALKER_NAMED_GRANDCHILD
 	]
-	for path in paths:
-		var script : Script = load(path)
+	for script in scripts:
 		LoggieTools.print_script_data(script)
 
 ## Prints the values of all LoggieSettings settings obtained from Project Settings.
