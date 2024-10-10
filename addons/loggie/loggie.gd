@@ -47,14 +47,15 @@ func _ready() -> void:
 	msg("👀 Loggie {version} booted.".format({"version" : self.VERSION})).color(Color.ORANGE).header().nl().info()
 	
 	if settings.show_loggie_specs:
-		var loggieSpecsMsg = LoggieSystemSpecsMsg.new().useLogger(self)
-		loggieSpecsMsg.embed_logger_specs()
-		loggieSpecsMsg.add(msg("Using Custom Settings File: ").bold(), !uses_original_settings_file).nl()
-		loggieSpecsMsg.preprocessed(false).info()
+		var loggie_specs_msg = LoggieSystemSpecsMsg.new().use_logger(self)
+		loggie_specs_msg.embed_logger_specs()
+		loggie_specs_msg.add(msg("Using Custom Settings File: ").bold(), !uses_original_settings_file).nl()
+		loggie_specs_msg.preprocessed(false).info()
 
 	if settings.show_system_specs:
-		var systemSpecsMsg = LoggieSystemSpecsMsg.new().useLogger(self)
-		systemSpecsMsg.embed_specs().preprocessed(false).info()
+		var system_specs_msg = LoggieSystemSpecsMsg.new().use_logger(self)
+		system_specs_msg.embed_specs().preprocessed(false).info()
+
 
 ## Attempts to instantiate a LoggieSettings object from the script at the given [param path].
 ## Returns true if successful, otherwise false and prints an error.

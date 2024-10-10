@@ -19,7 +19,7 @@ func embed_specs() -> LoggieSystemSpecsMsg:
 
 ## Embeds data about the logger into the content of this message.
 func embed_logger_specs() -> LoggieSystemSpecsMsg:
-	var loggie = getLogger()
+	var loggie = get_logger()
 	self.add(loggie.msg("Terminal Mode:").bold(), LoggieTools.TerminalMode.keys()[loggie.settings.terminal_mode]).suffix(" - ")
 	self.add(loggie.msg("Log Level:").bold(), LoggieTools.LogLevel.keys()[loggie.settings.log_level]).suffix(" - ")
 	self.add(loggie.msg("Is in Production:").bold(), loggie.is_in_production()).suffix(" - ")
@@ -28,21 +28,21 @@ func embed_logger_specs() -> LoggieSystemSpecsMsg:
 
 ## Adds data about the user's software to the content of this message.
 func embed_system_specs() -> LoggieSystemSpecsMsg:
-	var loggie = getLogger()
+	var loggie = get_logger()
 	var header = loggie.msg("Operating System: ").color(Color.ORANGE).add(OS.get_name()).box(4)
 	self.add(header)
 	return self
 	
 ## Adds data about localization to the content of this message.
 func embed_localization_specs() -> LoggieSystemSpecsMsg:
-	var loggie = getLogger()
+	var loggie = get_logger()
 	var header = loggie.msg("Localization: ").color(Color.ORANGE).add(OS.get_locale()).box(7)
 	self.add(header)
 	return self
 
 ## Adds data about the current date/time to the content of this message.
 func embed_date_data() -> LoggieSystemSpecsMsg:
-	var loggie = getLogger()
+	var loggie = get_logger()
 	var header = loggie.msg("Date").color(Color.ORANGE).box(15)
 	self.add(header)
 	self.add(loggie.msg("Date and time (local):").bold(), Time.get_datetime_string_from_system(false, true)).nl()
@@ -57,7 +57,7 @@ func embed_date_data() -> LoggieSystemSpecsMsg:
 
 ## Adds data about the user's hardware to the content of this message.
 func embed_hardware_specs() -> LoggieSystemSpecsMsg:
-	var loggie = getLogger()
+	var loggie = get_logger()
 	var header = loggie.msg("Hardware").color(Color.ORANGE).box(13)
 	self.add(header)
 	self.add(loggie.msg("Model name:").bold(), OS.get_model_name()).nl()
@@ -69,7 +69,7 @@ func embed_video_specs() -> LoggieSystemSpecsMsg:
 	const adapter_type_to_string = ["Other (Unknown)", "Integrated", "Discrete", "Virtual", "CPU"]
 	var adapter_type_string = adapter_type_to_string[RenderingServer.get_video_adapter_type()]
 	var video_adapter_driver_info = OS.get_video_adapter_driver_info()
-	var loggie = getLogger()
+	var loggie = get_logger()
 
 	var header = loggie.msg("Video").color(Color.ORANGE).box(15)
 	self.add(header)
@@ -97,7 +97,7 @@ func embed_display_specs() -> LoggieSystemSpecsMsg:
 		"Defined by sensor",
 	]
 	var screen_orientation_string = screen_orientation_to_string[DisplayServer.screen_get_orientation()]
-	var loggie = getLogger()
+	var loggie = get_logger()
 
 	var header = loggie.msg("Display").color(Color.ORANGE).box(13)
 	self.add(header)
@@ -114,7 +114,7 @@ func embed_display_specs() -> LoggieSystemSpecsMsg:
 
 ## Adds data about the audio system to the content of this message.
 func embed_audio_specs() -> LoggieSystemSpecsMsg:
-	var loggie = getLogger()
+	var loggie = get_logger()
 	var header = loggie.msg("Audio").color(Color.ORANGE).box(14)
 	self.add(header)
 	self.add(loggie.msg("Mix rate:").bold(), "%d Hz" % AudioServer.get_mix_rate()).nl()
@@ -125,7 +125,7 @@ func embed_audio_specs() -> LoggieSystemSpecsMsg:
 
 ## Adds data about the godot engine to the content of this message.
 func embed_engine_specs() -> LoggieSystemSpecsMsg:
-	var loggie = getLogger()
+	var loggie = get_logger()
 	var header = loggie.msg("Engine").color(Color.ORANGE).box(14)
 	self.add(header)
 	self.add(loggie.msg("Version:").bold(), Engine.get_version_info()["string"]).nl()
@@ -137,7 +137,7 @@ func embed_engine_specs() -> LoggieSystemSpecsMsg:
 ## Adds data about the input device to the content of this message.
 func embed_input_specs() -> LoggieSystemSpecsMsg:
 	var has_virtual_keyboard = DisplayServer.has_feature(DisplayServer.FEATURE_VIRTUAL_KEYBOARD)
-	var loggie = getLogger()
+	var loggie = get_logger()
 
 	var header = loggie.msg("Input").color(Color.ORANGE).box(14)
 	self.add(header)
