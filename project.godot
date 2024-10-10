@@ -27,6 +27,7 @@ config/icon="res://addons/loggie/assets/icon.png"
 [autoload]
 
 Loggie="*res://addons/loggie/loggie.gd"
+LoggieAutoloadedTalker="*res://test/testing_props/autoloads/LoggieAutoloadedTalker.gd"
 
 [editor_plugins]
 
