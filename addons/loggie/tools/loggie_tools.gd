@@ -29,6 +29,13 @@ enum NamelessClassExtensionNameProxy {
 	BASE_TYPE, ## Use the name of the base type which the script extends (e.g. 'Node2D', 'Control', etc.)
 }
 
+## Defines a list of possible behaviors for the 'show_loggie_specs' setting.
+enum ShowLoggieSpecsMode {
+	DISABLED,
+	ESSENTIAL,
+	ADVANCED
+}
+
 ## Removes BBCode from the given text.
 static func remove_BBCode(text: String) -> String:
 	# The bbcode tags to remove.
@@ -115,6 +122,7 @@ static func rich_to_ANSI(text: String) -> String:
 
 	return text
 
+## Returns a dictionary of call stack data related to the stack the call to this function is a part of.
 static func get_current_stack_frame_data() -> Dictionary:
 	var stack = get_stack()
 	const callerIndex = 3

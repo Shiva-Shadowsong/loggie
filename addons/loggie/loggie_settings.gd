@@ -46,11 +46,11 @@ const project_settings = {
 	},
 	"show_loggie_specs" = {
 		"path": "loggie/general/show_loggie_specs",
-		"default_value" : true,
-		"type" : TYPE_BOOL,
-		"hint" : PROPERTY_HINT_NONE,
-		"hint_string" : "",
-		"doc" : "Should Loggie log its own specs when it is booted?",
+		"default_value" : LoggieTools.ShowLoggieSpecsMode.ESSENTIAL,
+		"type" : TYPE_INT,
+		"hint" : PROPERTY_HINT_ENUM,
+		"hint_string" : "Disabled:0,Essential:1,Advanced:2",
+		"doc" : "Defines which way Loggie should print its own specs when it is booted.",
 	},
 	"output_timestamps" = {
 		"path": "loggie/timestamps/output_timestamps",
@@ -140,7 +140,7 @@ var terminal_mode : LoggieTools.TerminalMode
 var log_level : LoggieTools.LogLevel
 
 ## Whether or not Loggie should log the loggie specs on ready.
-var show_loggie_specs : bool
+var show_loggie_specs : LoggieTools.ShowLoggieSpecsMode
 
 ## Whether or not Loggie should log the system specs on ready.
 var show_system_specs : bool

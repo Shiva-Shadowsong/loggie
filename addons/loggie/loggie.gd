@@ -44,12 +44,17 @@ func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
 
-	msg("👀 Loggie {version} booted.".format({"version" : self.VERSION})).color(Color.ORANGE).header().nl().info()
-	
-	if settings.show_loggie_specs:
+	if settings.show_loggie_specs != LoggieTools.ShowLoggieSpecsMode.DISABLED:
+		msg("👀 Loggie {version} booted.".format({"version" : self.VERSION})).color(Color.ORANGE).header().nl().info()
 		var loggie_specs_msg = LoggieSystemSpecsMsg.new().use_logger(self)
-		loggie_specs_msg.embed_logger_specs()
-		loggie_specs_msg.add(msg("Using Custom Settings File: ").bold(), !uses_original_settings_file).nl()
+		loggie_specs_msg.add(msg("|\t Using Custom Settings File: ").bold(), !uses_original_settings_file).nl().add("|\t ").hseparator(35).nl()
+		
+		match settings.show_loggie_specs:
+			LoggieTools.ShowLoggieSpecsMode.ESSENTIAL:
+				loggie_specs_msg.embed_essential_logger_specs()
+			LoggieTools.ShowLoggieSpecsMode.ADVANCED:
+				loggie_specs_msg.embed_advanced_logger_specs()
+
 		loggie_specs_msg.preprocessed(false).info()
 
 	if settings.show_system_specs:

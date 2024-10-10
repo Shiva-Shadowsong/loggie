@@ -17,13 +17,35 @@ func embed_specs() -> LoggieSystemSpecsMsg:
 	self.embed_input_specs()
 	return self
 
-## Embeds data about the logger into the content of this message.
-func embed_logger_specs() -> LoggieSystemSpecsMsg:
+## Embeds essential data about the logger into the content of this message.
+func embed_essential_logger_specs() -> LoggieSystemSpecsMsg:
 	var loggie = get_logger()
-	self.add(loggie.msg("Terminal Mode:").bold(), LoggieTools.TerminalMode.keys()[loggie.settings.terminal_mode]).suffix(" - ")
-	self.add(loggie.msg("Log Level:").bold(), LoggieTools.LogLevel.keys()[loggie.settings.log_level]).suffix(" - ")
-	self.add(loggie.msg("Is in Production:").bold(), loggie.is_in_production()).suffix(" - ")
-	self.add(loggie.msg("Box Characters Mode:").bold(), LoggieTools.BoxCharactersMode.keys()[loggie.settings.box_characters_mode]).nl()
+	self.add(loggie.msg("|\t Is in Production:").bold(), loggie.is_in_production()).nl()
+	self.add(loggie.msg("|\t Terminal Mode:").bold(), LoggieTools.TerminalMode.keys()[loggie.settings.terminal_mode]).nl()
+	self.add(loggie.msg("|\t Log Level:").bold(), LoggieTools.LogLevel.keys()[loggie.settings.log_level]).nl()
+	return self
+
+## Embeds advanced data about the logger into the content of this message.
+func embed_advanced_logger_specs() -> LoggieSystemSpecsMsg:
+	var loggie = get_logger()
+	
+	self.add(loggie.msg("|\t Is in Production:").bold(), loggie.is_in_production()).nl()
+	
+	var settings_dict = loggie.settings.to_dict()
+	for setting_var_name : String in settings_dict.keys():
+		var setting_value = settings_dict[setting_var_name]
+		var content_to_print = setting_value
+		
+		match setting_var_name:
+			"terminal_mode":
+				content_to_print = LoggieTools.TerminalMode.keys()[setting_value]
+			"log_level":
+				content_to_print = LoggieTools.LogLevel.keys()[setting_value]
+			"box_characters_mode":
+				content_to_print = LoggieTools.BoxCharactersMode.keys()[setting_value]
+
+		self.add(loggie.msg("|\t", setting_var_name.capitalize(), ":").bold(), content_to_print).nl()
+	
 	return self
 
 ## Adds data about the user's software to the content of this message.
