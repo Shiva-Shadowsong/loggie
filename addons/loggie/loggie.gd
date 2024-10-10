@@ -24,7 +24,7 @@ func _ready() -> void:
 	var uses_original_settings_file = true
 	var default_settings_path = get_script().get_path().get_base_dir().path_join("loggie_settings.gd")
 	var custom_settings_path = get_script().get_path().get_base_dir().path_join("custom_settings.gd")
-
+	
 	if self.settings == null:
 		if custom_settings_path != null and custom_settings_path != "" and ResourceLoader.exists(custom_settings_path):
 			var loaded_successfully = load_settings_from_path(custom_settings_path)
@@ -40,10 +40,13 @@ func _ready() -> void:
 			push_error("Loggie loaded neither a custom nor a default settings file. This will break the plugin. Make sure that a valid loggie_settings.gd is in the same directory where loggie.gd is.")
 			return
 
+	# Already cache the name of the singleton found at loggie's script path.
+	class_names[self.get_script().resource_path] = LoggieSettings.loggie_singleton_name
+
 	# Don't print Loggie boot messages if Loggie is running only from the editor.
 	if Engine.is_editor_hint():
 		return
-
+	
 	if settings.show_loggie_specs != LoggieTools.ShowLoggieSpecsMode.DISABLED:
 		msg("👀 Loggie {version} booted.".format({"version" : self.VERSION})).color(Color.ORANGE).header().nl().info()
 		var loggie_specs_msg = LoggieSystemSpecsMsg.new().use_logger(self)
