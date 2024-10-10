@@ -56,7 +56,6 @@ func _ready() -> void:
 		var system_specs_msg = LoggieSystemSpecsMsg.new().use_logger(self)
 		system_specs_msg.embed_specs().preprocessed(false).info()
 
-
 ## Attempts to instantiate a LoggieSettings object from the script at the given [param path].
 ## Returns true if successful, otherwise false and prints an error.
 func load_settings_from_path(path : String) -> bool:
@@ -102,7 +101,7 @@ func is_domain_enabled(domain_name : String) -> bool:
 ## [method LoggieMsg.info], [method LoggieMsg.warn], etc.
 func msg(msg = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
 	var loggieMsg = LoggieMsg.new(msg, arg1, arg2, arg3, arg4, arg5)
-	loggieMsg.useLogger(self)
+	loggieMsg.use_logger(self)
 	return loggieMsg
 
 ## A shortcut method that instantly creates a [LoggieMsg] with the given arguments and outputs it at the info level.
