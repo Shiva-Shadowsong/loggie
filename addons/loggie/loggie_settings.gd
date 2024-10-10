@@ -261,3 +261,19 @@ func load():
 	derive_and_show_class_names = ProjectSettings.get_setting(project_settings.derive_and_display_class_names_from_scripts.path, project_settings.derive_and_display_class_names_from_scripts.default_value)
 	nameless_class_name_proxy = ProjectSettings.get_setting(project_settings.nameless_class_name_proxy.path, project_settings.nameless_class_name_proxy.default_value)
 	box_characters_mode = ProjectSettings.get_setting(project_settings.box_characters_mode.path, project_settings.box_characters_mode.default_value)
+
+## Returns a dictionary where the indices are names of relevant variables in the LoggieSettings class,
+## and the values are their current values.
+func to_dict() -> Dictionary:
+	var dict = {}
+	var included = [
+		"terminal_mode", "log_level", "show_loggie_specs", "show_system_specs",
+		"output_message_domain", "print_errors_to_console", "print_warnings_to_console",
+		"use_print_debug_for_debug_msg", "derive_and_show_class_names", "nameless_class_name_proxy",
+		"show_timestamps", "timestamps_use_utc", "format_header", "format_domain_prefix", "format_error_msg",
+		"format_warning_msg", "format_notice_msg", "format_info_msg", "format_debug_msg",
+		"h_separator_symbol", "box_characters_mode", "box_symbols_compatible", "box_symbols_pretty",
+	]
+	for var_name in included:
+		dict[var_name] = Loggie.settings.get(var_name)
+	return dict
