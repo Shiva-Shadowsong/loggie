@@ -74,7 +74,7 @@ func output(level : LoggieTools.LogLevel, msg : String, domain : String = "") ->
 
 		# We prepend the name of the class that called the function which resulted in this output being generated
 		# (if Loggie settings are configured to do so).
-		if loggie.settings.derive_and_show_class_names == true:
+		if loggie.settings.derive_and_show_class_names == true and OS.has_feature("debug"):
 			var stack_frame : Dictionary = LoggieTools.get_current_stack_frame_data()
 			var _class_name : String
 
