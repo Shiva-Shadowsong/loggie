@@ -116,7 +116,6 @@ static func rich_to_ANSI(text: String) -> String:
 	return text
 
 static func get_current_stack_frame_data() -> Dictionary:
-	var data = {}
 	var stack = get_stack()
 	const callerIndex = 3
 	var targetIndex = callerIndex if stack.size() >= callerIndex else stack.size() - 1
@@ -129,7 +128,6 @@ static func get_current_stack_frame_data() -> Dictionary:
 			"line" : 0,
 			"function" : "UnknownFunction"
 		}
-	return data
 
 ## Returns the `class_name` of a script.
 ## [br][param path_or_script] should be either an absolute path to the script 
