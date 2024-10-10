@@ -147,6 +147,8 @@ static func get_class_name_from_script(path_or_script : Variant, proxy : Nameles
 	var _class_name = ""
 
 	if path_or_script is String or path_or_script is StringName:
+		if !ResourceLoader.exists(path_or_script, "Script"):
+			return _class_name
 		script = load(path_or_script)
 	elif path_or_script is Script:
 		script = path_or_script

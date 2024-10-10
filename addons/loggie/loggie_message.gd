@@ -74,7 +74,7 @@ func output(level : LoggieTools.LogLevel, msg : String, domain : String = "") ->
 
 		# We prepend the name of the class that called the function which resulted in this output being generated
 		# (if Loggie settings are configured to do so).
-		if loggie.settings.derive_and_show_class_names == true and OS.has_feature("debug"):
+		if loggie.settings.derive_and_show_class_names == true:
 			var stack_frame : Dictionary = LoggieTools.get_current_stack_frame_data()
 			var _class_name : String
 
@@ -82,7 +82,7 @@ func output(level : LoggieTools.LogLevel, msg : String, domain : String = "") ->
 			if loggie.class_names.has(scriptPath):
 				_class_name = loggie.class_names[scriptPath]
 			else:
-				_class_name = LoggieTools.get_class_name_from_script(load(scriptPath), loggie.settings.nameless_class_name_proxy)
+				_class_name = LoggieTools.get_class_name_from_script(scriptPath, loggie.settings.nameless_class_name_proxy)
 				loggie.class_names[scriptPath] = _class_name
 			
 			if _class_name != "":
@@ -98,8 +98,7 @@ func output(level : LoggieTools.LogLevel, msg : String, domain : String = "") ->
 				"msg" : msg
 			})
 
-	var usedTerminalMode = LoggieTools.TerminalMode.PLAIN if loggie.is_in_production() else loggie.settings.terminal_mode
-	match usedTerminalMode:
+	match loggie.settings.terminal_mode:
 		LoggieTools.TerminalMode.ANSI:
 			# We put the message through the rich_to_ANSI converter which takes care of converting BBCode
 			# to appropriate ANSI. (Only if the TerminalMode is set to ANSI).

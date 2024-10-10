@@ -36,6 +36,8 @@ func _ready() -> void:
 		if _settings != null:
 			self.settings = _settings.new()
 			self.settings.load()
+			if is_in_production():
+				self.settings.terminal_mode = LoggieTools.TerminalMode.PLAIN
 		else:
 			push_error("Loggie loaded neither a custom nor a default settings file. This will break the plugin. Make sure that a valid loggie_settings.gd is in the same directory where loggie.gd is.")
 			return
