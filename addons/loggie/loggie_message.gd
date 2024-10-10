@@ -52,7 +52,7 @@ func use_logger(logger_to_use : Variant) -> LoggieMsg:
 ## Outputs the given string [param msg] at the given output level to the standard output using either [method print_rich] or [method print].
 ## It also does a number of changes to the given [param msg] based on various Loggie settings.
 ## Designed to be called internally. You should consider using [method info], [method error], [method warn], [method notice], [method debug] instead.
-func output(level : LoggieTools.LogLevel, msg : String, domain : String = "") -> void:
+func output(level : LoggieEnums.LogLevel, msg : String, domain : String = "") -> void:
 	var loggie = get_logger()
 	
 	if loggie == null:
@@ -99,7 +99,7 @@ func output(level : LoggieTools.LogLevel, msg : String, domain : String = "") ->
 			})
 
 	match loggie.settings.terminal_mode:
-		LoggieTools.TerminalMode.ANSI:
+		LoggieEnums.TerminalMode.ANSI:
 			# We put the message through the rich_to_ANSI converter which takes care of converting BBCode
 			# to appropriate ANSI. (Only if the TerminalMode is set to ANSI).
 			# Godot claims to be already preparing BBCode output for ANSI, but it only works with a small
@@ -108,9 +108,9 @@ func output(level : LoggieTools.LogLevel, msg : String, domain : String = "") ->
 			# to support these features instead of having them stripped.
 			msg = LoggieTools.rich_to_ANSI(msg)
 			print_rich(msg)
-		LoggieTools.TerminalMode.BBCODE:
+		LoggieEnums.TerminalMode.BBCODE:
 			print_rich(msg)
-		LoggieTools.TerminalMode.PLAIN, _:
+		LoggieEnums.TerminalMode.PLAIN, _:
 			var plainMsg = LoggieTools.remove_BBCode(msg)
 			print(plainMsg)
 
@@ -119,8 +119,8 @@ func output(level : LoggieTools.LogLevel, msg : String, domain : String = "") ->
 func error() -> LoggieMsg:
 	var loggie = get_logger()
 	var msg = loggie.settings.format_error_msg % [self.content]
-	output(LoggieTools.LogLevel.ERROR, msg, self.domain_name)
-	if loggie.settings.print_errors_to_console and loggie.settings.log_level >= LoggieTools.LogLevel.ERROR:
+	output(LoggieEnums.LogLevel.ERROR, msg, self.domain_name)
+	if loggie.settings.print_errors_to_console and loggie.settings.log_level >= LoggieEnums.LogLevel.ERROR:
 		push_error(self.string())
 	return self
 
@@ -129,8 +129,8 @@ func error() -> LoggieMsg:
 func warn() -> LoggieMsg:
 	var loggie = get_logger()
 	var msg = loggie.settings.format_warning_msg % [self.content]
-	output(LoggieTools.LogLevel.WARN, msg, self.domain_name)
-	if loggie.settings.print_warnings_to_console and loggie.settings.log_level >= LoggieTools.LogLevel.WARN:
+	output(LoggieEnums.LogLevel.WARN, msg, self.domain_name)
+	if loggie.settings.print_warnings_to_console and loggie.settings.log_level >= LoggieEnums.LogLevel.WARN:
 		push_warning(self.string())
 	return self
 
@@ -139,7 +139,7 @@ func warn() -> LoggieMsg:
 func notice() -> LoggieMsg:
 	var loggie = get_logger()
 	var msg = loggie.settings.format_notice_msg % [self.content]
-	output(LoggieTools.LogLevel.NOTICE, msg, self.domain_name)
+	output(LoggieEnums.LogLevel.NOTICE, msg, self.domain_name)
 	return self
 
 ## Outputs this message from Loggie as an Info type message.
@@ -147,7 +147,7 @@ func notice() -> LoggieMsg:
 func info() -> LoggieMsg:
 	var loggie = get_logger()
 	var msg = loggie.settings.format_info_msg % [self.content]
-	output(LoggieTools.LogLevel.INFO, msg, self.domain_name)
+	output(LoggieEnums.LogLevel.INFO, msg, self.domain_name)
 	return self
 
 ## Outputs this message from Loggie as a Debug type message.
@@ -155,8 +155,8 @@ func info() -> LoggieMsg:
 func debug() -> LoggieMsg:
 	var loggie = get_logger()
 	var msg = loggie.settings.format_debug_msg % [self.content]
-	output(LoggieTools.LogLevel.DEBUG, msg, self.domain_name)
-	if loggie.settings.use_print_debug_for_debug_msg and loggie.settings.log_level >= LoggieTools.LogLevel.DEBUG:
+	output(LoggieEnums.LogLevel.DEBUG, msg, self.domain_name)
+	if loggie.settings.use_print_debug_for_debug_msg and loggie.settings.log_level >= LoggieEnums.LogLevel.DEBUG:
 		print_debug(self.string())
 	return self
 
@@ -216,7 +216,7 @@ func box(h_padding : int = 4):
 	var stripped_content = LoggieTools.remove_BBCode(self.content).strip_edges(true, true)
 	var content_length = stripped_content.length()
 	var h_fill_length = content_length + (h_padding * 2)
-	var box_character_source = loggie.settings.box_symbols_compatible if loggie.settings.box_characters_mode == LoggieTools.BoxCharactersMode.COMPATIBLE else loggie.settings.box_symbols_pretty
+	var box_character_source = loggie.settings.box_symbols_compatible if loggie.settings.box_characters_mode == LoggieEnums.BoxCharactersMode.COMPATIBLE else loggie.settings.box_symbols_pretty
 
 	var top_row_design = "{top_left_corner}{h_fill}{top_right_corner}".format({
 		"top_left_corner" : box_character_source.top_left,

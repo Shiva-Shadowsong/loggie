@@ -37,7 +37,7 @@ func _ready() -> void:
 			self.settings = _settings.new()
 			self.settings.load()
 			if is_in_production():
-				self.settings.terminal_mode = LoggieTools.TerminalMode.PLAIN
+				self.settings.terminal_mode = LoggieEnums.TerminalMode.PLAIN
 		else:
 			push_error("Loggie loaded neither a custom nor a default settings file. This will break the plugin. Make sure that a valid loggie_settings.gd is in the same directory where loggie.gd is.")
 			return
@@ -49,15 +49,15 @@ func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
 	
-	if settings.show_loggie_specs != LoggieTools.ShowLoggieSpecsMode.DISABLED:
+	if settings.show_loggie_specs != LoggieEnums.ShowLoggieSpecsMode.DISABLED:
 		msg("👀 Loggie {version} booted.".format({"version" : self.VERSION})).color(Color.ORANGE).header().nl().info()
 		var loggie_specs_msg = LoggieSystemSpecsMsg.new().use_logger(self)
 		loggie_specs_msg.add(msg("|\t Using Custom Settings File: ").bold(), !uses_original_settings_file).nl().add("|\t ").hseparator(35).nl()
 		
 		match settings.show_loggie_specs:
-			LoggieTools.ShowLoggieSpecsMode.ESSENTIAL:
+			LoggieEnums.ShowLoggieSpecsMode.ESSENTIAL:
 				loggie_specs_msg.embed_essential_logger_specs()
-			LoggieTools.ShowLoggieSpecsMode.ADVANCED:
+			LoggieEnums.ShowLoggieSpecsMode.ADVANCED:
 				loggie_specs_msg.embed_advanced_logger_specs()
 
 		loggie_specs_msg.preprocessed(false).info()

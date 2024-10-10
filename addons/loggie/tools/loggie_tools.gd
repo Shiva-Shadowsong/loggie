@@ -1,41 +1,6 @@
 @tool
 class_name LoggieTools extends Node
 
-## Based on which log level is currently set to be used by the Loggie., attempting to log a message that's on
-## a higher-than-configured log level will result in nothing happening.
-enum LogLevel {
-	ERROR, 	## Log level which includes only the logging of Error type messages.
-	WARN, 	## Log level which includes the logging of Error and Warning type messages.
-	NOTICE, ## Log level which includes the logging of Error, Warning and Notice type messages.
-	INFO,	## Log level which includes the logging of Error, Warning, Notice and Info type messages.
-	DEBUG	## Log level which includes the logging of Error, Warning, Notice, Info and Debug type messages.
-}
-
-enum TerminalMode {
-	PLAIN, ## Prints will be plain text.
-	ANSI,  ## Prints will be styled using the ANSI standard. Compatible with Powershell, Win CMD, etc.
-	BBCODE ## Prints will be styled using the Godot BBCode rules. Compatible with the Godot console.
-}
-
-enum BoxCharactersMode {
-	COMPATIBLE, ## Boxes are drawn using characters that compatible with any kind of terminal or text reader.
-	PRETTY ## Boxes are drawn using special unicode characters that create a prettier looking box which may not display properly in some terminals or text readers.
-}
-
-## Defines a list of possible approaches that can be taken to derive some kind of a class name proxy from a script that doesn't have a 'class_name' clause.
-enum NamelessClassExtensionNameProxy {
-	NOTHING, ## If there is no class_name, nothing will be displayed.
-	SCRIPT_NAME, ## Use the name of the script whose class_name we tried to read. (e.g. "my_script.gd").
-	BASE_TYPE, ## Use the name of the base type which the script extends (e.g. 'Node2D', 'Control', etc.)
-}
-
-## Defines a list of possible behaviors for the 'show_loggie_specs' setting.
-enum ShowLoggieSpecsMode {
-	DISABLED,
-	ESSENTIAL,
-	ADVANCED
-}
-
 ## Removes BBCode from the given text.
 static func remove_BBCode(text: String) -> String:
 	# The bbcode tags to remove.
@@ -142,7 +107,7 @@ static func get_current_stack_frame_data() -> Dictionary:
 ## (String, e.g. "res://my_script.gd"), or a [Script] object.
 ## [br][param proxy] defines which kind of text will be used as a replacement
 ## for the class name if the script has no 'class_name'.
-static func get_class_name_from_script(path_or_script : Variant, proxy : NamelessClassExtensionNameProxy) -> String:
+static func get_class_name_from_script(path_or_script : Variant, proxy : LoggieEnums.NamelessClassExtensionNameProxy) -> String:
 	var script
 	var _class_name = ""
 
@@ -175,9 +140,9 @@ static func get_class_name_from_script(path_or_script : Variant, proxy : Nameles
 			return get_class_name_from_script(base_script, proxy)
 		else:
 			match proxy:
-				LoggieTools.NamelessClassExtensionNameProxy.BASE_TYPE:
+				LoggieEnums.NamelessClassExtensionNameProxy.BASE_TYPE:
 					_class_name = script.get_instance_base_type()
-				LoggieTools.NamelessClassExtensionNameProxy.SCRIPT_NAME:
+				LoggieEnums.NamelessClassExtensionNameProxy.SCRIPT_NAME:
 					_class_name = script.get_script_property_list().front()["name"]
 
 	return _class_name
@@ -189,7 +154,7 @@ static func get_class_name_from_script(path_or_script : Variant, proxy : Nameles
 ## for the class name if the script has no 'class_name'.
 ## [br][br][b]Note:[/b] This is a compatibility method that will be used on older versions of Godot which
 ## don't support [method Script.get_global_name].
-static func extract_class_name_from_gd_script(path_or_script : Variant, proxy : NamelessClassExtensionNameProxy) -> String:
+static func extract_class_name_from_gd_script(path_or_script : Variant, proxy : LoggieEnums.NamelessClassExtensionNameProxy) -> String:
 	var path : String
 
 	if path_or_script is String:
@@ -220,9 +185,9 @@ static func extract_class_name_from_gd_script(path_or_script : Variant, proxy : 
 		var script = load(path)
 		if script is Script:
 			match proxy:
-				LoggieTools.NamelessClassExtensionNameProxy.BASE_TYPE:
+				LoggieEnums.NamelessClassExtensionNameProxy.BASE_TYPE:
 					_class_name = script.get_instance_base_type()
-				LoggieTools.NamelessClassExtensionNameProxy.SCRIPT_NAME:
+				LoggieEnums.NamelessClassExtensionNameProxy.SCRIPT_NAME:
 					_class_name = script.get_script_property_list().front()["name"]
 
 	file.close()

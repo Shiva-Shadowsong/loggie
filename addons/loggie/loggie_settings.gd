@@ -22,7 +22,7 @@ static var loggie_singleton_name = "Loggie"
 const project_settings = {
 	"terminal_mode" = {
 		"path": "loggie/general/terminal_mode",
-		"default_value" : LoggieTools.TerminalMode.BBCODE,
+		"default_value" : LoggieEnums.TerminalMode.BBCODE,
 		"type" : TYPE_INT,
 		"hint" : PROPERTY_HINT_ENUM,
 		"hint_string" : "Plain:0,ANSI:1,BBCode:2",
@@ -30,7 +30,7 @@ const project_settings = {
 	},
 	"log_level" = {
 		"path": "loggie/general/log_level",
-		"default_value" : LoggieTools.LogLevel.INFO,
+		"default_value" : LoggieEnums.LogLevel.INFO,
 		"type" : TYPE_INT,
 		"hint" : PROPERTY_HINT_ENUM,
 		"hint_string" : "Error:0,Warn:1,Notice:2,Info:3,Debug:4",
@@ -46,7 +46,7 @@ const project_settings = {
 	},
 	"show_loggie_specs" = {
 		"path": "loggie/general/show_loggie_specs",
-		"default_value" : LoggieTools.ShowLoggieSpecsMode.ESSENTIAL,
+		"default_value" : LoggieEnums.ShowLoggieSpecsMode.ESSENTIAL,
 		"type" : TYPE_INT,
 		"hint" : PROPERTY_HINT_ENUM,
 		"hint_string" : "Disabled:0,Essential:1,Advanced:2",
@@ -102,7 +102,7 @@ const project_settings = {
 	},
 	"nameless_class_name_proxy" = {
 		"path": "loggie/preprocessing/nameless_class_name_proxy",
-		"default_value" : LoggieTools.NamelessClassExtensionNameProxy.BASE_TYPE,
+		"default_value" : LoggieEnums.NamelessClassExtensionNameProxy.BASE_TYPE,
 		"type" : TYPE_INT,
 		"hint" : PROPERTY_HINT_ENUM,
 		"hint_string" : "Nothing:0,ScriptName:1,BaseType:2",
@@ -118,7 +118,7 @@ const project_settings = {
 	},
 	"box_characters_mode" = {
 		"path": "loggie/preprocessing/box_characters_mode",
-		"default_value" : LoggieTools.BoxCharactersMode.COMPATIBLE,
+		"default_value" : LoggieEnums.BoxCharactersMode.COMPATIBLE,
 		"type" : TYPE_INT,
 		"hint" : PROPERTY_HINT_ENUM,
 		"hint_string" : "Compatible:0,Pretty:1",
@@ -132,15 +132,15 @@ const project_settings = {
 ## [br][br]BBCode is compatible with the Godot console.
 ## [br]ANSI is compatible with consoles like Powershell and Windows CMD.
 ## [br]PLAIN is used to strip any effects and use plain text instead, which is good for saving raw logs into log files.
-var terminal_mode : LoggieTools.TerminalMode
+var terminal_mode : LoggieEnums.TerminalMode
 
 ## The current log level of Loggie.
 ## It determines which types of messages are allowed to be logged.
 ## Set this using [method setLogLevel].
-var log_level : LoggieTools.LogLevel
+var log_level : LoggieEnums.LogLevel
 
 ## Whether or not Loggie should log the loggie specs on ready.
-var show_loggie_specs : LoggieTools.ShowLoggieSpecsMode
+var show_loggie_specs : LoggieEnums.ShowLoggieSpecsMode
 
 ## Whether or not Loggie should log the system specs on ready.
 var show_system_specs : bool
@@ -170,7 +170,7 @@ var derive_and_show_class_names : bool
 
 ## Defines which text will be used as a substitute for the 'class_name' of scripts that do not have a 'class_name'.
 ## Relevant only if [member derive_and_show_class_names] is enabled.
-var nameless_class_name_proxy : LoggieTools.NamelessClassExtensionNameProxy
+var nameless_class_name_proxy : LoggieEnums.NamelessClassExtensionNameProxy
 
 ## Whether Loggie should prepend a timestamp to each output message.
 var show_timestamps : bool
@@ -210,7 +210,7 @@ var format_debug_msg = "[b][color=pink][DEBUG]:[/color][/b] %s"
 var h_separator_symbol = "-"
 
 ## The mode used for drawing boxes.
-var box_characters_mode : LoggieTools.BoxCharactersMode
+var box_characters_mode : LoggieEnums.BoxCharactersMode
 
 ## The symbols which will be used to construct a box decoration that will properly
 ## display on any kind of terminal or text reader.

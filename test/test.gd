@@ -56,13 +56,12 @@ func test_all_log_level_outputs():
 
 func test_output_from_classes_of_various_inheritances_and_origins():
 	Loggie.msg("Test Talkers").box(25).info()
-	Loggie.settings.derive_and_show_class_names = true
-	for proxy : LoggieTools.NamelessClassExtensionNameProxy in LoggieTools.NamelessClassExtensionNameProxy.values():
+	for proxy : LoggieEnums.NamelessClassExtensionNameProxy in LoggieEnums.NamelessClassExtensionNameProxy.values():
 		Loggie.class_names = {}
 		Loggie.settings.nameless_class_name_proxy = proxy
 		
 		Loggie.msg("Using proxy: {proxy}".format({
-			"proxy": LoggieTools.NamelessClassExtensionNameProxy.keys()[proxy]
+			"proxy": LoggieEnums.NamelessClassExtensionNameProxy.keys()[proxy]
 		})).header().info()
 		
 		LoggieAutoloadedTalker.say("This is an autoload class.")
