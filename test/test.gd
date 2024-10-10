@@ -17,14 +17,14 @@ func _ready() -> void:
 	original_settings = Loggie.settings.duplicate()
 	setup_gui()
 
-	print_setting_values_from_project_settings()
-	print_actual_current_settings()
-	print_talker_scripts_data()
+	#print_setting_values_from_project_settings()
+	#print_actual_current_settings()
+	#print_talker_scripts_data()
 	
-	test_all_log_level_outputs()
-	test_decors()
-	test_output_from_classes_of_various_inheritances_and_origins()
-	test_domains()
+	#test_all_log_level_outputs()
+	#test_decors()
+	#test_output_from_classes_of_various_inheritances_and_origins()
+	#test_domains()
 
 func setup_gui():
 	$Label.text = "Loggie {version}".format({"version": Loggie.VERSION})
@@ -152,32 +152,21 @@ func print_talker_scripts_data() -> void:
 ## Prints the values of all LoggieSettings settings obtained from Project Settings.
 ## Deliberately uses [method print] instead of Loggie output methods.
 func print_setting_values_from_project_settings():
-	print(">> Loggie Settings (as read from Project Settings):")
+	Loggie.msg("Loggie Settings (as read from Project Settings):").header().info()
 	for key in LoggieSettings.project_settings.keys():
-		print("|\t{key} = {value}".format({
+		Loggie.msg("|\t{key} = {value}".format({
 			"key": key,
 			"value": ProjectSettings.get_setting(key)
-		}))
-	print("--------------------------------------------------\n")
+		})).info()
+	print()
 
 ## Prints the values of all LoggieSettings settings obtained directly from the current [Loggie] singleton's [member Loggie.settings].
 ## Deliberately uses [method print] instead of Loggie output methods.
 func print_actual_current_settings():
-	print(">> Loggie Settings (as read from Loggie.settings):")
-	var variables_to_print = [
-		"terminal_mode", "log_level", "show_loggie_specs", "show_system_specs",
-		"output_message_domain", "print_errors_to_console", "print_warnings_to_console",
-		"use_print_debug_for_debug_msg", "derive_and_show_class_names", "nameless_class_name_proxy",
-		"show_timestamps", "timestamps_use_utc", "format_header", "format_domain_prefix", "format_error_msg",
-		"format_warning_msg", "format_notice_msg", "format_info_msg", "format_debug_msg",
-		"h_separator_symbol", "box_characters_mode", "box_symbols_compatible", "box_symbols_pretty",
-	]
-	for var_name in variables_to_print:
-		print("|\t{varname} = {value}".format({
-			"varname": var_name,
-			"value": Loggie.settings.get(var_name)
-		}))
-	print("--------------------------------------------------\n")
+	Loggie.msg("Loggie Settings (as read from Loggie.settings):").header().info()
+	var settings_dict = Loggie.settings.to_dict()
+	Loggie.msg(settings_dict).info()
+	print()
 
 func reset_settings():
 	Loggie.settings = original_settings.duplicate()
