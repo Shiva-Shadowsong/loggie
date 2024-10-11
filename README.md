@@ -103,6 +103,17 @@ Call one of the output functions (`info`, `notice`, `warn`, `error`, `debug`) at
 ```gdscript
 Loggie.msg("Hello").bold().color(Color.CYAN).info()
 ```
+#### Alternatively
+
+Use Loggie shortcuts if you don't need to apply additional LoggieMsg modifiers.
+
+```gdscript
+Loggie.error("Hello")
+Loggie.info("Hello")
+Loggie.notice("Hello")
+Loggie.warn("Hello")
+Loggie.debug("Hello")
+```
 
 ## BBCode/ANSI Terminal Compatibility
 
@@ -150,7 +161,8 @@ func generate_loot_for(recipient : Creature):
 
 ## Class Name Extraction
 
-A neat feature pulled I from [LogDuck](https://github.com/ZeeWeasel/LogDuck) _(also a cool logging library worth checking out)_, which allows you to see the names of the classes that prompted Loggie to output something.\* This only works when the engine debugger is connected, therefore it does not work in Release mode, and won't be shown in those logs.\*
+A neat feature I saw in [LogDuck](https://github.com/ZeeWeasel/LogDuck) _(also a cool logging library worth checking out)_, which allows you to see the names of the classes that prompted Loggie to output something.
+\* This only works when the engine debugger is connected, therefore it does not work in Release mode, and won't be shown in those logs.\*
 
 ![ClassNameExtraction](https://i.imgur.com/EWlcKnD.png)
 
@@ -186,5 +198,11 @@ I'm looking to improve Loggie over time with more features, flexibility, styling
 # Contributing
 
 All valid improvements and feature contributions are welcome.
+
+Development is done strictly on the `dev` branch marked with the latest (unreleased) version.
+Upon branch completion, that dev branch is merged into `master`, and a new `dev` branch is started for the next version.
+Please make PRs targeted at the latest `dev` branch.
+
 Have a look at [Loggie Development Project](https://github.com/users/Shiva-Shadowsong/projects/2) for a list of identified desired changes.
+
 Feel free to open a PR directly, or if you wish to preemptively discuss your changes or ideas before working on them - talk to me on the [Loggie discord server](https://discord.gg/XPdxpMqmcs).

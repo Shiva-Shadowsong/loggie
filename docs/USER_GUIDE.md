@@ -6,11 +6,24 @@ Loggie allows you to compose and style messages then send them to the output, wh
 Let's explore some of the features.
 
 # 📋 Table of Contents
+- [📚User Guide](#user-guide)
+- [📋 Table of Contents](#-table-of-contents)
 - [Log Files and Storage](#log-files-and-storage)
 - [Composing Messages](#composing-messages)
 	- [Creating a message](#creating-a-message)
 	- [Styling a message](#styling-a-message)
+				- [bold()](#bold)
+				- [italic()](#italic)
+				- [header()](#header)
+				- [color(color : String | Color)](#colorcolor--string--color)
+				- [box(h\_padding: int = 4)](#boxh_padding-int--4)
+				- [nl(amount: int = 1)](#nlamount-int--1)
+				- [hseparator(size: int = 16, alternative\_symbol: Variant = null)](#hseparatorsize-int--16-alternative_symbol-variant--null)
+				- [add(...)](#add)
+				- [prefix(prefix : String, separator : String = "")](#prefixprefix--string-separator--string--)
+				- [suffix(suffix : String, separator : String = "")](#suffixsuffix--string-separator--string--)
 	- [Outputting a message](#outputting-a-message)
+			- [Extras](#extras)
 - [Adjusting Message Formats](#adjusting-message-formats)
 - [Preprocessing](#preprocessing)
 	- [Eligibility Checks:](#eligibility-checks)
@@ -25,6 +38,9 @@ Let's explore some of the features.
 		- [Timestamps](#timestamps)
 - [Custom Settings](#custom-settings)
 - [Using a custom singleton name](#using-a-custom-singleton-name)
+			- [• Step 1:](#-step-1)
+			- [• Step 2:](#-step-2)
+			- [• Step 3:](#-step-3)
 - [Notable Technicalities](#notable-technicalities)
 
 ----------------------------------------
@@ -191,6 +207,16 @@ If Loggie is not configured to currently have that debug level enabled, the mess
 	Loggie.msg("Regular info message.").info()
 ```
 
+You can also use these Loggie shortcuts if you don't need to apply additional LoggieMsg modifiers:
+
+```gdscript
+	Loggie.error("Hello")
+	Loggie.info("Hello")
+	Loggie.notice("Hello")
+	Loggie.warn("Hello")
+	Loggie.debug("Hello")
+```
+
 #### Extras
 `warn()` and `error()` messages will only appear in the 'Debugger' tab of Godot, unless the 'Output Errors/Warning Also To Console' is turned on in Loggie Project Settings.
 
@@ -270,11 +296,15 @@ Based on what the target terminal is, the content of the message will be convert
 
 ### Class Name Derivation
 * Loggie can sniff out the script from which a call to Loggie was made, and by reading its `class_name` clause, figure out the name of the class that called it.
+* This feature performs better on Godot 4.3+ because it can use the `Script.get_global_name` method to get the class name without needing to read the file. If the old class extraction method is used, it may induce a small performance penalty if executed frequently on a variety of uncached classes in a short manner, since it performs a FileAccess read.
 * This name can then be included in the log if the setting for it is enabled:
 	* LoggieSettings.derive_and_show_class_names
 	* Loggie Project Settings -> Preprocessing -> Derive and Display Class Names
-* This process may induce a small performance penalty if executed frequently, since it performs a FileAccess read.
-* **Warning**: This only works if there is a debugger connected to the project while it's running, so it will only be useful during development most of the time. This is because this uses the `get_stack` function, whose documentation explains why it depends on the debugger. Therefore, class name derivation is automatically disabled in non-debug builds.
+* A setting allows you to specify what kind of substitute gets printed if a script does not have a `class_name`:
+	* LoggieSettings.nameless_class_name_proxy
+	* Loggie Project Settings -> Preprocessing -> Nameless Class Name Proxy
+
+**Warning**: This only works if there is a debugger connected to the project while it's running, so it will only be useful during development most of the time. This is because this uses the `get_stack` function, whose documentation explains why it depends on the debugger. Therefore, class name derivation is automatically disabled in non-debug builds.
 
 ----------------------------------------
 
