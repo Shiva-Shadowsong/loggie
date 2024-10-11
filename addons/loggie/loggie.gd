@@ -6,7 +6,15 @@
 extends Node
 
 ## Stores a string describing the current version of Loggie.
-const VERSION : String = "v1.1"
+const VERSION : String = "v1.2"
+
+## Emitted any time Loggie attempts to log a message.
+## Useful for capturing the messages that pass through Loggie.
+## [br][param msg] is the message Loggie attempted to log (before any preprocessing).
+## [br][param preprocessed_content] is what the string content of that message contained after the preprocessing step, 
+## which is what ultimately gets logged.
+## [br][param result] describes the final result of the attempt to log that message.
+signal log_attempted(msg : LoggieMsg, preprocessed_content : String, result : LoggieEnums.LogAttemptResult)
 
 ## A reference to the settings of this Loggie. Read more about [LoggieSettings].
 var settings : LoggieSettings
@@ -21,13 +29,10 @@ var domains : Dictionary = {}
 var class_names : Dictionary = {}
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
-		return
-
 	var uses_original_settings_file = true
 	var default_settings_path = get_script().get_path().get_base_dir().path_join("loggie_settings.gd")
 	var custom_settings_path = get_script().get_path().get_base_dir().path_join("custom_settings.gd")
-
+	
 	if self.settings == null:
 		if custom_settings_path != null and custom_settings_path != "" and ResourceLoader.exists(custom_settings_path):
 			var loaded_successfully = load_settings_from_path(custom_settings_path)
@@ -39,21 +44,47 @@ func _ready() -> void:
 		if _settings != null:
 			self.settings = _settings.new()
 			self.settings.load()
+			if is_in_production():
+				self.settings.terminal_mode = LoggieEnums.TerminalMode.PLAIN
 		else:
 			push_error("Loggie loaded neither a custom nor a default settings file. This will break the plugin. Make sure that a valid loggie_settings.gd is in the same directory where loggie.gd is.")
 			return
 
-	msg("👀 Loggie {version} booted.".format({"version" : self.VERSION})).color(Color.ORANGE).header().nl().info()
+	# Already cache the name of the singleton found at loggie's script path.
+	class_names[self.get_script().resource_path] = LoggieSettings.loggie_singleton_name
 	
-	if settings.show_loggie_specs:
-		var loggieSpecsMsg = LoggieSystemSpecsMsg.new().useLogger(self)
-		loggieSpecsMsg.embed_logger_specs()
-		loggieSpecsMsg.add(msg("Using Custom Settings File: ").bold(), !uses_original_settings_file).nl()
-		loggieSpecsMsg.preprocessed(false).info()
+	# Prepopulate class data from ProjectSettings to avoid needing to read files.
+	if settings.derive_and_show_class_names == true and OS.has_feature("debug"):
+		for class_data: Dictionary in ProjectSettings.get_global_class_list():
+			class_names[class_data.path] = class_data.class
+	  
+		for autoload_setting: String in ProjectSettings.get_property_list().map(func(prop): return prop.name).filter(func(prop): return prop.begins_with("autoload/") and ProjectSettings.has_setting(prop)):
+			var autoload_class: String = autoload_setting.trim_prefix("autoload/")
+			var class_path: String = ProjectSettings.get_setting(autoload_setting)
+			class_path = class_path.trim_prefix("*")      
+			if not class_names.has(class_path):
+				class_names[class_path] = autoload_class
+
+	# Don't print Loggie boot messages if Loggie is running only from the editor.
+	if Engine.is_editor_hint():
+		return
+	
+	if settings.show_loggie_specs != LoggieEnums.ShowLoggieSpecsMode.DISABLED:
+		msg("👀 Loggie {version} booted.".format({"version" : self.VERSION})).color(Color.ORANGE).header().nl().info()
+		var loggie_specs_msg = LoggieSystemSpecsMsg.new().use_logger(self)
+		loggie_specs_msg.add(msg("|\t Using Custom Settings File: ").bold(), !uses_original_settings_file).nl().add("|\t ").hseparator(35).nl()
+		
+		match settings.show_loggie_specs:
+			LoggieEnums.ShowLoggieSpecsMode.ESSENTIAL:
+				loggie_specs_msg.embed_essential_logger_specs()
+			LoggieEnums.ShowLoggieSpecsMode.ADVANCED:
+				loggie_specs_msg.embed_advanced_logger_specs()
+
+		loggie_specs_msg.preprocessed(false).info()
 
 	if settings.show_system_specs:
-		var systemSpecsMsg = LoggieSystemSpecsMsg.new().useLogger(self)
-		systemSpecsMsg.embed_specs().preprocessed(false).info()
+		var system_specs_msg = LoggieSystemSpecsMsg.new().use_logger(self)
+		system_specs_msg.embed_specs().preprocessed(false).info()
 
 ## Attempts to instantiate a LoggieSettings object from the script at the given [param path].
 ## Returns true if successful, otherwise false and prints an error.
@@ -100,6 +131,35 @@ func is_domain_enabled(domain_name : String) -> bool:
 ## [method LoggieMsg.info], [method LoggieMsg.warn], etc.
 func msg(msg = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
 	var loggieMsg = LoggieMsg.new(msg, arg1, arg2, arg3, arg4, arg5)
-	loggieMsg.useLogger(self)
+	loggieMsg.use_logger(self)
 	return loggieMsg
 
+## A shortcut method that instantly creates a [LoggieMsg] with the given arguments and outputs it at the info level.
+## Can be used when you have no intention of customizing a LoggieMsg in any way using helper methods.
+## For customization, use [method msg] instead.
+func info(msg = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
+	return msg(msg, arg1, arg2, arg3, arg4, arg5).info()
+
+## A shortcut method that instantly creates a [LoggieMsg] with the given arguments and outputs it at the warn level.
+## Can be used when you have no intention of customizing a LoggieMsg in any way using helper methods.
+## For customization, use [method msg] instead.
+func warn(msg = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
+	return msg(msg, arg1, arg2, arg3, arg4, arg5).warn()
+
+## A shortcut method that instantly creates a [LoggieMsg] with the given arguments and outputs it at the error level.
+## Can be used when you have no intention of customizing a LoggieMsg in any way using helper methods.
+## For customization, use [method msg] instead.
+func error(msg = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
+	return msg(msg, arg1, arg2, arg3, arg4, arg5).error()
+
+## A shortcut method that instantly creates a [LoggieMsg] with the given arguments and outputs it at the debug level.
+## Can be used when you have no intention of customizing a LoggieMsg in any way using helper methods.
+## For customization, use [method msg] instead.
+func debug(msg = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
+	return msg(msg, arg1, arg2, arg3, arg4, arg5).debug()
+
+## A shortcut method that instantly creates a [LoggieMsg] with the given arguments and outputs it at the notice level.
+## Can be used when you have no intention of customizing a LoggieMsg in any way using helper methods.
+## For customization, use [method msg] instead.
+func notice(msg = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
+	return msg(msg, arg1, arg2, arg3, arg4, arg5).notice()

@@ -1,27 +1,6 @@
 @tool
 class_name LoggieTools extends Node
 
-## Based on which log level is currently set to be used by the Loggie., attempting to log a message that's on
-## a higher-than-configured log level will result in nothing happening.
-enum LogLevel {
-	ERROR, 	## Log level which includes only the logging of Error type messages.
-	WARN, 	## Log level which includes the logging of Error and Warning type messages.
-	NOTICE, ## Log level which includes the logging of Error, Warning and Notice type messages.
-	INFO,	## Log level which includes the logging of Error, Warning, Notice and Info type messages.
-	DEBUG	## Log level which includes the logging of Error, Warning, Notice, Info and Debug type messages.
-}
-
-enum TerminalMode {
-	PLAIN, ## Prints will be plain text.
-	ANSI,  ## Prints will be styled using the ANSI standard. Compatible with Powershell, Win CMD, etc.
-	BBCODE ## Prints will be styled using the Godot BBCode rules. Compatible with the Godot console.
-}
-
-enum BoxCharactersMode {
-	COMPATIBLE, ## Boxes are drawn using characters that compatible with any kind of terminal or text reader.
-	PRETTY ## Boxes are drawn using special unicode characters that create a prettier looking box which may not display properly in some terminals or text readers.
-}
-
 ## Removes BBCode from the given text.
 static func remove_BBCode(text: String) -> String:
 	# The bbcode tags to remove.
@@ -108,8 +87,8 @@ static func rich_to_ANSI(text: String) -> String:
 
 	return text
 
+## Returns a dictionary of call stack data related to the stack the call to this function is a part of.
 static func get_current_stack_frame_data() -> Dictionary:
-	var data = {}
 	var stack = get_stack()
 	const callerIndex = 3
 	var targetIndex = callerIndex if stack.size() >= callerIndex else stack.size() - 1
@@ -122,18 +101,75 @@ static func get_current_stack_frame_data() -> Dictionary:
 			"line" : 0,
 			"function" : "UnknownFunction"
 		}
-	return data
 
-## Opens a .gd script at the given path, reads the name of the class by checking
-## if it has a "class_name" clause and what comes after it, then caches that result in the
-## [member Loggie.class_names] dictionary.
-static func extract_class_name_from_gd_script(path) -> String:
+## Returns the `class_name` of a script.
+## [br][param path_or_script] should be either an absolute path to the script 
+## (String, e.g. "res://my_script.gd"), or a [Script] object.
+## [br][param proxy] defines which kind of text will be used as a replacement
+## for the class name if the script has no 'class_name'.
+static func get_class_name_from_script(path_or_script : Variant, proxy : LoggieEnums.NamelessClassExtensionNameProxy) -> String:
+	var script
+	var _class_name = ""
+
+	if path_or_script is String or path_or_script is StringName:
+		if !ResourceLoader.exists(path_or_script, "Script"):
+			return _class_name
+		script = load(path_or_script)
+	elif path_or_script is Script:
+		script = path_or_script
+
+	if not (script is Script):
+		push_error("Invalid 'path_or_script' param provided to get_class_name_from_script: {path}".format({"path" : path_or_script}))
+	else:
+		if not script.has_method("get_global_name"):
+			# User is using a pre-4.3 version of Godot that doesn't have Script.get_global_name.
+			# We must use a different method to achieve this then.
+			return extract_class_name_from_gd_script(path_or_script, proxy)
+
+		# Try to get the class name directly.
+		_class_name = script.get_global_name()
+
+		if _class_name != "":
+			return _class_name
+
+		# If that's empty, the script is either a base class, or a class without a name.
+		# Check if this script has a base script, and if so, use that one as the target whose name to obtain.
+		# If it doesn't have it, use what the [param proxy] demands.
+		var base_script = script.get_base_script()
+		if base_script != null:
+			return get_class_name_from_script(base_script, proxy)
+		else:
+			match proxy:
+				LoggieEnums.NamelessClassExtensionNameProxy.BASE_TYPE:
+					_class_name = script.get_instance_base_type()
+				LoggieEnums.NamelessClassExtensionNameProxy.SCRIPT_NAME:
+					_class_name = script.get_script_property_list().front()["name"]
+
+	return _class_name
+
+## Opens and reads a .gd script file to find out its 'class_name' or what it 'extends'.
+## [param path_or_script] should be either an absolute path to the script 
+## (String, e.g. "res://my_script.gd"), or a [Script] object.
+## [br][param proxy] defines which kind of text will be used as a replacement
+## for the class name if the script has no 'class_name'.
+## [br][br][b]Note:[/b] This is a compatibility method that will be used on older versions of Godot which
+## don't support [method Script.get_global_name].
+static func extract_class_name_from_gd_script(path_or_script : Variant, proxy : LoggieEnums.NamelessClassExtensionNameProxy) -> String:
+	var path : String
+
+	if path_or_script is String:
+		path = path_or_script
+	elif path_or_script is Script:
+		path = path_or_script.resource_path
+	else:
+		push_error("Invalid 'path_or_script' param provided to extract_class_name_from_gd_script: {path}".format({"path" : path_or_script}))
+		return ""
+
 	var file = FileAccess.open(path, FileAccess.READ)
 	if not file:
 		return "File Open Error {filepath}".format({"filepath" : path})
 
 	var _class_name: String = ""
-	var extends_from: String = ""
 
 	for line_num in 40:  # Loop only up to 40 lines
 		if file.eof_reached():
@@ -141,19 +177,34 @@ static func extract_class_name_from_gd_script(path) -> String:
 
 		var line = file.get_line().strip_edges()
 
-		if line.begins_with("extends"):
-			extends_from = line.split(" ")[1]  # Get the base class if extends is found
-
 		if line.begins_with("class_name"):
-			_class_name = line.split(" ")[1]  # Get class name directly if defined
+			_class_name = line.split(" ")[1]
 			break
 
 	if _class_name == "":
-		_class_name = extends_from  # If class_name isn't defined, use the base class
+		var script = load(path)
+		if script is Script:
+			match proxy:
+				LoggieEnums.NamelessClassExtensionNameProxy.BASE_TYPE:
+					_class_name = script.get_instance_base_type()
+				LoggieEnums.NamelessClassExtensionNameProxy.SCRIPT_NAME:
+					_class_name = script.get_script_property_list().front()["name"]
 
 	file.close()
 
 	return _class_name
+
+## Prints out a bunch of useful data about a given script.
+## Useful for debugging.
+static func print_script_data(script : Script):
+	var msg = Loggie.msg("Script Data for:", script.get_path()).color("pink")
+	msg.add(":").nl()
+	msg.add(Loggie.msg("get_class():").color("slate_blue").bold()).add(script.get_class()).nl()
+	msg.add(Loggie.msg("get_global_name():").color("slate_blue").bold()).add(script.get_global_name()).nl()
+	msg.add(Loggie.msg("get_base_script():").color("slate_blue").bold()).add(script.get_base_script().resource_path if script.get_base_script() != null else "No base script.").nl()
+	msg.add(Loggie.msg("get_instance_base_type():").color("slate_blue").bold()).add(script.get_instance_base_type()).nl()
+	msg.add(Loggie.msg("get_script_property_list():").color("slate_blue").bold()).add(script.get_script_property_list()).nl()
+	msg.info()
 
 ## A dictionary of named colors matching the constants from [Color] used to help with rich text coloring.
 ## There may be a way to obtain these Color values without this dictionary if one can somehow check for the 
