@@ -22,7 +22,7 @@ static var loggie_singleton_name = "Loggie"
 const project_settings = {
 	"terminal_mode" = {
 		"path": "loggie/general/terminal_mode",
-		"default_value" : LoggieTools.TerminalMode.BBCODE,
+		"default_value" : LoggieEnums.TerminalMode.BBCODE,
 		"type" : TYPE_INT,
 		"hint" : PROPERTY_HINT_ENUM,
 		"hint_string" : "Plain:0,ANSI:1,BBCode:2",
@@ -30,7 +30,7 @@ const project_settings = {
 	},
 	"log_level" = {
 		"path": "loggie/general/log_level",
-		"default_value" : LoggieTools.LogLevel.INFO,
+		"default_value" : LoggieEnums.LogLevel.INFO,
 		"type" : TYPE_INT,
 		"hint" : PROPERTY_HINT_ENUM,
 		"hint_string" : "Error:0,Warn:1,Notice:2,Info:3,Debug:4",
@@ -46,11 +46,11 @@ const project_settings = {
 	},
 	"show_loggie_specs" = {
 		"path": "loggie/general/show_loggie_specs",
-		"default_value" : true,
-		"type" : TYPE_BOOL,
-		"hint" : PROPERTY_HINT_NONE,
-		"hint_string" : "",
-		"doc" : "Should Loggie log its own specs when it is booted?",
+		"default_value" : LoggieEnums.ShowLoggieSpecsMode.ESSENTIAL,
+		"type" : TYPE_INT,
+		"hint" : PROPERTY_HINT_ENUM,
+		"hint_string" : "Disabled:0,Essential:1,Advanced:2",
+		"doc" : "Defines which way Loggie should print its own specs when it is booted.",
 	},
 	"output_timestamps" = {
 		"path": "loggie/timestamps/output_timestamps",
@@ -100,6 +100,14 @@ const project_settings = {
 		"hint_string" : "",
 		"doc" : "If true, Loggie will attempt to find out the name of the main class from which the log line is coming and append it in front of the message.",
 	},
+	"nameless_class_name_proxy" = {
+		"path": "loggie/preprocessing/nameless_class_name_proxy",
+		"default_value" : LoggieEnums.NamelessClassExtensionNameProxy.BASE_TYPE,
+		"type" : TYPE_INT,
+		"hint" : PROPERTY_HINT_ENUM,
+		"hint_string" : "Nothing:0,ScriptName:1,BaseType:2",
+		"doc" : "If 'Derive and Display Class Names From Scripts' is enabled, and a script doesn't have a 'class_name', which text should we use as a substitute?",
+	},
 	"output_message_domain" = {
 		"path": "loggie/preprocessing/output_message_domain",
 		"default_value" : false,
@@ -110,7 +118,7 @@ const project_settings = {
 	},
 	"box_characters_mode" = {
 		"path": "loggie/preprocessing/box_characters_mode",
-		"default_value" : LoggieTools.BoxCharactersMode.COMPATIBLE,
+		"default_value" : LoggieEnums.BoxCharactersMode.COMPATIBLE,
 		"type" : TYPE_INT,
 		"hint" : PROPERTY_HINT_ENUM,
 		"hint_string" : "Compatible:0,Pretty:1",
@@ -124,15 +132,15 @@ const project_settings = {
 ## [br][br]BBCode is compatible with the Godot console.
 ## [br]ANSI is compatible with consoles like Powershell and Windows CMD.
 ## [br]PLAIN is used to strip any effects and use plain text instead, which is good for saving raw logs into log files.
-var terminal_mode : LoggieTools.TerminalMode
+var terminal_mode : LoggieEnums.TerminalMode
 
 ## The current log level of Loggie.
 ## It determines which types of messages are allowed to be logged.
 ## Set this using [method setLogLevel].
-var log_level : LoggieTools.LogLevel
+var log_level : LoggieEnums.LogLevel
 
 ## Whether or not Loggie should log the loggie specs on ready.
-var show_loggie_specs : bool
+var show_loggie_specs : LoggieEnums.ShowLoggieSpecsMode
 
 ## Whether or not Loggie should log the system specs on ready.
 var show_system_specs : bool
@@ -158,13 +166,17 @@ var use_print_debug_for_debug_msg : bool
 ## and display it at the start of each output message.
 ## This only works in debug builds because it uses [method @GDScript.get_stack]. 
 ## See that method's documentation to see why that can't be used in release builds.
-var derive_and_show_class_names
+var derive_and_show_class_names : bool
+
+## Defines which text will be used as a substitute for the 'class_name' of scripts that do not have a 'class_name'.
+## Relevant only if [member derive_and_show_class_names] is enabled.
+var nameless_class_name_proxy : LoggieEnums.NamelessClassExtensionNameProxy
 
 ## Whether Loggie should prepend a timestamp to each output message.
-var show_timestamps
+var show_timestamps : bool
 
 ## Whether the outputted timestamps (if [member show_timestamps] is enabled) use UTC or local machine time.
-var timestamps_use_utc
+var timestamps_use_utc : bool
 
 # ----------------------------------------------- #
 #region Formats for prints
@@ -198,7 +210,7 @@ var format_debug_msg = "[b][color=pink][DEBUG]:[/color][/b] %s"
 var h_separator_symbol = "-"
 
 ## The mode used for drawing boxes.
-var box_characters_mode : LoggieTools.BoxCharactersMode
+var box_characters_mode : LoggieEnums.BoxCharactersMode
 
 ## The symbols which will be used to construct a box decoration that will properly
 ## display on any kind of terminal or text reader.
@@ -247,4 +259,21 @@ func load():
 
 	output_message_domain = ProjectSettings.get_setting(project_settings.output_message_domain.path, project_settings.output_message_domain.default_value)
 	derive_and_show_class_names = ProjectSettings.get_setting(project_settings.derive_and_display_class_names_from_scripts.path, project_settings.derive_and_display_class_names_from_scripts.default_value)
+	nameless_class_name_proxy = ProjectSettings.get_setting(project_settings.nameless_class_name_proxy.path, project_settings.nameless_class_name_proxy.default_value)
 	box_characters_mode = ProjectSettings.get_setting(project_settings.box_characters_mode.path, project_settings.box_characters_mode.default_value)
+
+## Returns a dictionary where the indices are names of relevant variables in the LoggieSettings class,
+## and the values are their current values.
+func to_dict() -> Dictionary:
+	var dict = {}
+	var included = [
+		"terminal_mode", "log_level", "show_loggie_specs", "show_system_specs",
+		"output_message_domain", "print_errors_to_console", "print_warnings_to_console",
+		"use_print_debug_for_debug_msg", "derive_and_show_class_names", "nameless_class_name_proxy",
+		"show_timestamps", "timestamps_use_utc", "format_header", "format_domain_prefix", "format_error_msg",
+		"format_warning_msg", "format_notice_msg", "format_info_msg", "format_debug_msg",
+		"h_separator_symbol", "box_characters_mode", "box_symbols_compatible", "box_symbols_pretty",
+	]
+	for var_name in included:
+		dict[var_name] = Loggie.settings.get(var_name)
+	return dict

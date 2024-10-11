@@ -32,6 +32,7 @@ var domain_name : String = ""
 var preprocess : bool = true
 
 ## Stores a reference to the logger that generated this message, from which we need to read settings and other data.
+## This variable should be set with [method use_logger] before an attempt is made to log this message out.
 var _logger : Variant
 
 func _init(msg = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> void:
@@ -39,33 +40,33 @@ func _init(msg = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = 
 	self.original_content = self.content
 
 ## Returns a reference to the logger object that created this message.
-## If the currently stored reference is null, an attempt will be made to automatically obtain the reference
-## for an autoloaded singleton named 'Loggie'.
-func getLogger() -> Variant:
+func get_logger() -> Variant:
 	return self._logger
 
 ## Sets this message to use the given [param logger] as the logger from which it will be reading
 ## settings. The given logger should be of class [Loggie] or an extension of it.
-func useLogger(logger_to_use : Variant) -> LoggieMsg:
+func use_logger(logger_to_use : Variant) -> LoggieMsg:
 	self._logger = logger_to_use
 	return self
 
 ## Outputs the given string [param msg] at the given output level to the standard output using either [method print_rich] or [method print].
 ## It also does a number of changes to the given [param msg] based on various Loggie settings.
 ## Designed to be called internally. You should consider using [method info], [method error], [method warn], [method notice], [method debug] instead.
-func output(level : LoggieTools.LogLevel, msg : String, domain : String = "") -> void:
-	var loggie = getLogger()
+func output(level : LoggieEnums.LogLevel, msg : String, domain : String = "") -> void:
+	var loggie = get_logger()
 	
 	if loggie == null:
-		push_error("Attempt to log output with an invalid _logger. Make sure to call LoggieMsg.useLogger to set the appropriate logger before working with the message.")
+		push_error("Attempt to log output with an invalid _logger. Make sure to call LoggieMsg.use_logger to set the appropriate logger before working with the message.")
 		return
 
 	# We don't output the message if the settings dictate that messages of that level shouldn't be outputted.
 	if level > loggie.settings.log_level:
+		loggie.log_attempted.emit(self, msg, LoggieEnums.LogAttemptResult.LOG_LEVEL_INSUFFICIENT)
 		return
 
 	# We don't output the message if the domain from which it comes is not enabled.
 	if not loggie.is_domain_enabled(domain):
+		loggie.log_attempted.emit(self, msg, LoggieEnums.LogAttemptResult.DOMAIN_DISABLED)
 		return
 
 	if self.preprocess:
@@ -83,13 +84,14 @@ func output(level : LoggieTools.LogLevel, msg : String, domain : String = "") ->
 			if loggie.class_names.has(scriptPath):
 				_class_name = loggie.class_names[scriptPath]
 			else:
-				_class_name = LoggieTools.extract_class_name_from_gd_script(scriptPath)
+				_class_name = LoggieTools.get_class_name_from_script(scriptPath, loggie.settings.nameless_class_name_proxy)
 				loggie.class_names[scriptPath] = _class_name
 			
-			msg = "[b]({class_name})[/b] {msg}".format({
-				"class_name" : _class_name,
-				"msg" : msg
-			})
+			if _class_name != "":
+				msg = "[b]({class_name})[/b] {msg}".format({
+					"class_name" : _class_name,
+					"msg" : msg
+				})
 
 		# We prepend a timestamp to the message (if Loggie settings are configured to do so).
 		if loggie.settings.show_timestamps == true:
@@ -98,10 +100,9 @@ func output(level : LoggieTools.LogLevel, msg : String, domain : String = "") ->
 				"msg" : msg
 			})
 
-	var usedTerminalMode = LoggieTools.TerminalMode.PLAIN if loggie.is_in_production() else loggie.settings.terminal_mode
-	match usedTerminalMode:
-		LoggieTools.TerminalMode.ANSI:
-			# We put the message through the rich_to_ANSI converted which takes care of converting BBCode
+	match loggie.settings.terminal_mode:
+		LoggieEnums.TerminalMode.ANSI:
+			# We put the message through the rich_to_ANSI converter which takes care of converting BBCode
 			# to appropriate ANSI. (Only if the TerminalMode is set to ANSI).
 			# Godot claims to be already preparing BBCode output for ANSI, but it only works with a small
 			# predefined set of colors, and I think it totally strips stuff like [b], [i], etc.
@@ -109,55 +110,57 @@ func output(level : LoggieTools.LogLevel, msg : String, domain : String = "") ->
 			# to support these features instead of having them stripped.
 			msg = LoggieTools.rich_to_ANSI(msg)
 			print_rich(msg)
-		LoggieTools.TerminalMode.BBCODE:
+		LoggieEnums.TerminalMode.BBCODE:
 			print_rich(msg)
-		LoggieTools.TerminalMode.PLAIN, _:
-			var plainMsg = LoggieTools.remove_BBCode(msg)
-			print(plainMsg)
+		LoggieEnums.TerminalMode.PLAIN, _:
+			msg = LoggieTools.remove_BBCode(msg)
+			print(msg)
+			
+	loggie.log_attempted.emit(self, msg, LoggieEnums.LogAttemptResult.SUCCESS)
 
 ## Outputs this message from Loggie as an Error type message.
 ## The [Loggie.settings.log_level] must be equal to or higher to the ERROR level for this to work.
 func error() -> LoggieMsg:
-	var loggie = getLogger()
+	var loggie = get_logger()
 	var msg = loggie.settings.format_error_msg % [self.content]
-	output(LoggieTools.LogLevel.ERROR, msg, self.domain_name)
-	if loggie.settings.print_errors_to_console and loggie.settings.log_level >= LoggieTools.LogLevel.ERROR:
+	output(LoggieEnums.LogLevel.ERROR, msg, self.domain_name)
+	if loggie.settings.print_errors_to_console and loggie.settings.log_level >= LoggieEnums.LogLevel.ERROR:
 		push_error(self.string())
 	return self
 
 ## Outputs this message from Loggie as an Warning type message.
 ## The [Loggie.settings.log_level] must be equal to or higher to the WARN level for this to work.
 func warn() -> LoggieMsg:
-	var loggie = getLogger()
+	var loggie = get_logger()
 	var msg = loggie.settings.format_warning_msg % [self.content]
-	output(LoggieTools.LogLevel.WARN, msg, self.domain_name)
-	if loggie.settings.print_warnings_to_console and loggie.settings.log_level >= LoggieTools.LogLevel.WARN:
+	output(LoggieEnums.LogLevel.WARN, msg, self.domain_name)
+	if loggie.settings.print_warnings_to_console and loggie.settings.log_level >= LoggieEnums.LogLevel.WARN:
 		push_warning(self.string())
 	return self
 
 ## Outputs this message from Loggie as an Notice type message.
 ## The [Loggie.settings.log_level] must be equal to or higher to the NOTICE level for this to work.
 func notice() -> LoggieMsg:
-	var loggie = getLogger()
+	var loggie = get_logger()
 	var msg = loggie.settings.format_notice_msg % [self.content]
-	output(LoggieTools.LogLevel.NOTICE, msg, self.domain_name)
+	output(LoggieEnums.LogLevel.NOTICE, msg, self.domain_name)
 	return self
 
 ## Outputs this message from Loggie as an Info type message.
 ## The [Loggie.settings.log_level] must be equal to or higher to the INFO level for this to work.
 func info() -> LoggieMsg:
-	var loggie = getLogger()
+	var loggie = get_logger()
 	var msg = loggie.settings.format_info_msg % [self.content]
-	output(LoggieTools.LogLevel.INFO, msg, self.domain_name)
+	output(LoggieEnums.LogLevel.INFO, msg, self.domain_name)
 	return self
 
 ## Outputs this message from Loggie as a Debug type message.
 ## The [Loggie.settings.log_level] must be equal to or higher to the DEBUG level for this to work.
 func debug() -> LoggieMsg:
-	var loggie = getLogger()
+	var loggie = get_logger()
 	var msg = loggie.settings.format_debug_msg % [self.content]
-	output(LoggieTools.LogLevel.DEBUG, msg, self.domain_name)
-	if loggie.settings.use_print_debug_for_debug_msg and loggie.settings.log_level >= LoggieTools.LogLevel.DEBUG:
+	output(LoggieEnums.LogLevel.DEBUG, msg, self.domain_name)
+	if loggie.settings.use_print_debug_for_debug_msg and loggie.settings.log_level >= LoggieEnums.LogLevel.DEBUG:
 		print_debug(self.string())
 	return self
 
@@ -205,7 +208,7 @@ func italic() -> LoggieMsg:
 
 ## Stylizes the current content of this message as a header.
 func header() -> LoggieMsg:
-	var loggie = getLogger()
+	var loggie = get_logger()
 	self.content = loggie.settings.format_header % self.content
 	return self
 
@@ -213,11 +216,11 @@ func header() -> LoggieMsg:
 ## of this message. Messages containing a box are not going to be preprocessed, so they are best
 ## used only as a special header or decoration.
 func box(h_padding : int = 4):
-	var loggie = getLogger()
+	var loggie = get_logger()
 	var stripped_content = LoggieTools.remove_BBCode(self.content).strip_edges(true, true)
 	var content_length = stripped_content.length()
 	var h_fill_length = content_length + (h_padding * 2)
-	var box_character_source = loggie.settings.box_symbols_compatible if loggie.settings.box_characters_mode == LoggieTools.BoxCharactersMode.COMPATIBLE else loggie.settings.box_symbols_pretty
+	var box_character_source = loggie.settings.box_symbols_compatible if loggie.settings.box_characters_mode == LoggieEnums.BoxCharactersMode.COMPATIBLE else loggie.settings.box_symbols_pretty
 
 	var top_row_design = "{top_left_corner}{h_fill}{top_right_corner}".format({
 		"top_left_corner" : box_character_source.top_left,
@@ -290,7 +293,7 @@ func suffix(suffix : String, separator : String = "") -> LoggieMsg:
 ## Appends a horizontal separator with the given length to the message.
 ## If [param alternative_symbol] is provided, it should be a String, and it will be used as the symbol for the separator instead of the default one.
 func hseparator(size : int = 16, alternative_symbol : Variant = null) -> LoggieMsg:
-	var loggie = getLogger()
+	var loggie = get_logger()
 	var symbol = loggie.settings.h_separator_symbol if alternative_symbol == null else str(alternative_symbol)
 	self.content += (symbol.repeat(size))
 	return self
