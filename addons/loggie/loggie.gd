@@ -52,6 +52,18 @@ func _ready() -> void:
 
 	# Already cache the name of the singleton found at loggie's script path.
 	class_names[self.get_script().resource_path] = LoggieSettings.loggie_singleton_name
+	
+	# Prepopulate class data from ProjectSettings to avoid needing to read files.
+	if settings.derive_and_show_class_names == true and OS.has_feature("debug"):
+		for class_data: Dictionary in ProjectSettings.get_global_class_list():
+			class_names[class_data.path] = class_data.class
+	  
+		for autoload_setting: String in ProjectSettings.get_property_list().map(func(prop): return prop.name).filter(func(prop): return prop.begins_with("autoload/") and ProjectSettings.has_setting(prop)):
+			var autoload_class: String = autoload_setting.trim_prefix("autoload/")
+			var class_path: String = ProjectSettings.get_setting(autoload_setting)
+			class_path = class_path.trim_prefix("*")      
+			if not class_names.has(class_path):
+				class_names[class_path] = autoload_class
 
 	# Don't print Loggie boot messages if Loggie is running only from the editor.
 	if Engine.is_editor_hint():
@@ -73,18 +85,6 @@ func _ready() -> void:
 	if settings.show_system_specs:
 		var system_specs_msg = LoggieSystemSpecsMsg.new().use_logger(self)
 		system_specs_msg.embed_specs().preprocessed(false).info()
-	    
-	if settings.derive_and_show_class_names == true and OS.has_feature("debug"):
-		# Prepopulate class data from ProjectSettings to avoid needing to read files
-		for class_data: Dictionary in ProjectSettings.get_global_class_list():
-			class_names[class_data.path] = class_data.class
-      
-		for autoload_setting: String in ProjectSettings.get_property_list().map(func(prop): return prop.name).filter(func(prop): return prop.begins_with("autoload/") and ProjectSettings.has_setting(prop)):
-			var autoload_class: String = autoload_setting.trim_prefix("autoload/")
-			var class_path: String = ProjectSettings.get_setting(autoload_setting)
-			class_path = class_path.trim_prefix("*")      
-			if not class_names.has(class_path):
-				class_names[class_path] = autoload_class
 
 ## Attempts to instantiate a LoggieSettings object from the script at the given [param path].
 ## Returns true if successful, otherwise false and prints an error.
