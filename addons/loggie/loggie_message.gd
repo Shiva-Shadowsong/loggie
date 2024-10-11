@@ -61,10 +61,12 @@ func output(level : LoggieEnums.LogLevel, msg : String, domain : String = "") ->
 
 	# We don't output the message if the settings dictate that messages of that level shouldn't be outputted.
 	if level > loggie.settings.log_level:
+		loggie.log_attempted.emit(self, msg, LoggieEnums.LogAttemptResult.LOG_LEVEL_INSUFFICIENT)
 		return
 
 	# We don't output the message if the domain from which it comes is not enabled.
 	if not loggie.is_domain_enabled(domain):
+		loggie.log_attempted.emit(self, msg, LoggieEnums.LogAttemptResult.DOMAIN_DISABLED)
 		return
 
 	if self.preprocess:
@@ -111,8 +113,10 @@ func output(level : LoggieEnums.LogLevel, msg : String, domain : String = "") ->
 		LoggieEnums.TerminalMode.BBCODE:
 			print_rich(msg)
 		LoggieEnums.TerminalMode.PLAIN, _:
-			var plainMsg = LoggieTools.remove_BBCode(msg)
-			print(plainMsg)
+			msg = LoggieTools.remove_BBCode(msg)
+			print(msg)
+			
+	loggie.log_attempted.emit(self, msg, LoggieEnums.LogAttemptResult.SUCCESS)
 
 ## Outputs this message from Loggie as an Error type message.
 ## The [Loggie.settings.log_level] must be equal to or higher to the ERROR level for this to work.

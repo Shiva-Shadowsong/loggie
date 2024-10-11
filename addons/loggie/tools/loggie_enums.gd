@@ -35,3 +35,10 @@ enum ShowLoggieSpecsMode {
 	ESSENTIAL, ## Show only the essentials.
 	ADVANCED ## Show all loggie specs.
 }
+
+## Defines a list of possible outcomes that can happen when attempting to log a message.
+enum LogAttemptResult {
+	SUCCESS, ## Message will be logged successfully.
+	LOG_LEVEL_INSUFFICIENT, ## Message won't be logged because it was output at a log level higher than what Loggie is currently set to.
+	DOMAIN_DISABLED, ## Message won't be logged because it was outputted from a disabled domain.
+}

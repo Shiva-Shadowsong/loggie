@@ -8,6 +8,14 @@ extends Node
 ## Stores a string describing the current version of Loggie.
 const VERSION : String = "v1.2"
 
+## Emitted any time Loggie attempts to log a message.
+## Useful for capturing the messages that pass through Loggie.
+## [br][param msg] is the message Loggie attempted to log (before any preprocessing).
+## [br][param preprocessed_content] is what the string content of that message contained after the preprocessing step, 
+## which is what ultimately gets logged.
+## [br][param result] describes the final result of the attempt to log that message.
+signal log_attempted(msg : LoggieMsg, preprocessed_content : String, result : LoggieEnums.LogAttemptResult)
+
 ## A reference to the settings of this Loggie. Read more about [LoggieSettings].
 var settings : LoggieSettings
 
