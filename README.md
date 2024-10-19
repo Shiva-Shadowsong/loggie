@@ -200,7 +200,7 @@ I'm looking to improve Loggie over time with more features, flexibility, styling
 All valid improvements and feature contributions are welcome.
 
 Development is done strictly on the `dev` branch marked with the latest (unreleased) version.
-Upon branch completion, that dev branch is merged into `master`, and a new `dev` branch is started for the next version.
+Upon branch completion, that dev branch is merged into `main`, and a new `dev` branch is started for the next version.
 Please make PRs targeted at the latest `dev` branch.
 
 Have a look at [Loggie Development Project](https://github.com/users/Shiva-Shadowsong/projects/2) for a list of identified desired changes.
