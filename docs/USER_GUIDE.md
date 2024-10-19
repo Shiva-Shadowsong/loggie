@@ -6,22 +6,10 @@ Loggie allows you to compose and style messages then send them to the output, wh
 Let's explore some of the features.
 
 # 📋 Table of Contents
-- [📚User Guide](#user-guide)
-- [📋 Table of Contents](#-table-of-contents)
 - [Log Files and Storage](#log-files-and-storage)
 - [Composing Messages](#composing-messages)
 	- [Creating a message](#creating-a-message)
 	- [Styling a message](#styling-a-message)
-				- [bold()](#bold)
-				- [italic()](#italic)
-				- [header()](#header)
-				- [color(color : String | Color)](#colorcolor--string--color)
-				- [box(h\_padding: int = 4)](#boxh_padding-int--4)
-				- [nl(amount: int = 1)](#nlamount-int--1)
-				- [hseparator(size: int = 16, alternative\_symbol: Variant = null)](#hseparatorsize-int--16-alternative_symbol-variant--null)
-				- [add(...)](#add)
-				- [prefix(prefix : String, separator : String = "")](#prefixprefix--string-separator--string--)
-				- [suffix(suffix : String, separator : String = "")](#suffixsuffix--string-separator--string--)
 	- [Outputting a message](#outputting-a-message)
 			- [Extras](#extras)
 - [Adjusting Message Formats](#adjusting-message-formats)
@@ -38,9 +26,6 @@ Let's explore some of the features.
 		- [Timestamps](#timestamps)
 - [Custom Settings](#custom-settings)
 - [Using a custom singleton name](#using-a-custom-singleton-name)
-			- [• Step 1:](#-step-1)
-			- [• Step 2:](#-step-2)
-			- [• Step 3:](#-step-3)
 - [Notable Technicalities](#notable-technicalities)
 
 ----------------------------------------
@@ -171,7 +156,13 @@ Loggie.msg("Very important business.").header().nl().hseparator(20).info()
 > If an argument is a Dictionary, it will be converted with the pretty-print format. If an argument is LoggieMsg, that message's content will be merged into this message's content.
 
 ```gdscript
-Loggie.msg("After").prefix("Before").info()
+# Basic usecase
+Loggie.msg("Hello ").add("World").info()
+
+# Merging messages
+var msg1 = Loggie.msg("Hello").bold()
+var msg2 = Loggie.msg("World").color("yellow")
+msg1.add(msg2).info()
 ```
 
 ------------
