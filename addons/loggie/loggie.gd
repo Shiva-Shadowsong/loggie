@@ -6,7 +6,7 @@
 extends Node
 
 ## Stores a string describing the current version of Loggie.
-const VERSION : String = "v1.3"
+const VERSION : String = "v1.4"
 
 ## Emitted any time Loggie attempts to log a message.
 ## Useful for capturing the messages that pass through Loggie.

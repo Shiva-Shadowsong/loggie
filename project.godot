@@ -19,7 +19,7 @@ config/description="Loggie is a basic logging utility for those who could use a 
 Loggie takes care that your logs always look clean in release builds, while allowing you to use extra styling for console targeted output. ANSI-compatible, and friendly both for solo developers and developers in a team (externally loaded settings for each developer).
 
 If you need something simple but effective, Loggie is your guy."
-config/version="1.3"
+config/version="1.4"
 run/main_scene="res://test/test.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://addons/loggie/assets/icon.png"
