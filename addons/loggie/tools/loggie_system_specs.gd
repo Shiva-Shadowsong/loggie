@@ -170,3 +170,16 @@ func embed_input_specs() -> LoggieSystemSpecsMsg:
 		self.add(loggie.msg("Virtual keyboard height:").bold(), DisplayServer.virtual_keyboard_get_height())
 
 	return self
+
+## Prints out a bunch of useful data about a given script.
+## Useful for debugging.
+func embed_script_data(script : Script):
+	var loggie = get_logger()
+	var msg = loggie.msg("Script Data for:", script.get_path()).color("pink")
+	msg.add(":").nl()
+	msg.add(loggie.msg("get_class():").color("slate_blue").bold()).add(script.get_class()).nl()
+	msg.add(loggie.msg("get_global_name():").color("slate_blue").bold()).add(script.get_global_name()).nl()
+	msg.add(loggie.msg("get_base_script():").color("slate_blue").bold()).add(script.get_base_script().resource_path if script.get_base_script() != null else "No base script.").nl()
+	msg.add(loggie.msg("get_instance_base_type():").color("slate_blue").bold()).add(script.get_instance_base_type()).nl()
+	msg.add(loggie.msg("get_script_property_list():").color("slate_blue").bold()).add(script.get_script_property_list()).nl()
+	return self

@@ -274,6 +274,7 @@ func to_dict() -> Dictionary:
 		"format_warning_msg", "format_notice_msg", "format_info_msg", "format_debug_msg",
 		"h_separator_symbol", "box_characters_mode", "box_symbols_compatible", "box_symbols_pretty",
 	]
+	
 	for var_name in included:
-		dict[var_name] = Loggie.settings.get(var_name)
+		dict[var_name] = get(var_name)
 	return dict
