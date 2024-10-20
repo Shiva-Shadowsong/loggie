@@ -147,6 +147,7 @@ func print_talker_scripts_data() -> void:
 	]
 	for script in scripts:
 		var script_specs : LoggieSystemSpecsMsg = LoggieSystemSpecsMsg.new()
+		script_specs.use_logger(Loggie)
 		script_specs.embed_script_data(script).info()
 
 ## Prints the values of all LoggieSettings settings obtained from Project Settings.
