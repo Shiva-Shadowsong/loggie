@@ -146,7 +146,8 @@ func print_talker_scripts_data() -> void:
 		SCRIPT_LOGGIE_TALKER_NAMED_GRANDCHILD
 	]
 	for script in scripts:
-		LoggieTools.print_script_data(script)
+		var script_specs : LoggieSystemSpecsMsg = LoggieSystemSpecsMsg.new()
+		script_specs.embed_script_data(script).info()
 
 ## Prints the values of all LoggieSettings settings obtained from Project Settings.
 ## Deliberately uses [method print] instead of Loggie output methods.
