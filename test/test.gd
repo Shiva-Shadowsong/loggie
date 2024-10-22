@@ -13,6 +13,9 @@ const SCRIPT_LOGGIE_TALKER_GRANDCHILD = preload("res://test/testing_props/talker
 const SCRIPT_LOGGIE_TALKER_NAMED_GRANDCHILD = preload("res://test/testing_props/talkers/LoggieTalkerNamedGrandchild.gd")
 const SCRIPT_LOGGIE_TALKER_NAMED_CHILD = preload("res://test/testing_props/talkers/LoggieTalkerNamedChild.gd")
 
+func _init() -> void:
+	Loggie.msg("Test message from test.gd _init.").warn()
+
 func _ready() -> void:
 	original_settings = Loggie.settings.duplicate()
 	setup_gui()

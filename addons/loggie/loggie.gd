@@ -28,7 +28,7 @@ var domains : Dictionary = {}
 ## Holds a mapping between script paths and the names of the classes defined in those scripts.
 var class_names : Dictionary = {}
 
-func _ready() -> void:
+func _init() -> void:
 	var uses_original_settings_file = true
 	var default_settings_path = get_script().get_path().get_base_dir().path_join("loggie_settings.gd")
 	var custom_settings_path = get_script().get_path().get_base_dir().path_join("custom_settings.gd")
