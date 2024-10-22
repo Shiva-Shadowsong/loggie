@@ -122,46 +122,51 @@ func output(level : LoggieEnums.LogLevel, msg : String, domain : String = "") ->
 ## The [Loggie.settings.log_level] must be equal to or higher to the ERROR level for this to work.
 func error() -> LoggieMsg:
 	var loggie = get_logger()
-	var msg = loggie.settings.format_error_msg % [self.content]
-	output(LoggieEnums.LogLevel.ERROR, msg, self.domain_name)
-	if loggie.settings.print_errors_to_console and loggie.settings.log_level >= LoggieEnums.LogLevel.ERROR:
-		push_error(self.string())
+	if loggie != null and loggie.settings != null:
+		var msg = loggie.settings.format_error_msg % [self.content]
+		output(LoggieEnums.LogLevel.ERROR, msg, self.domain_name)
+		if loggie.settings.print_errors_to_console and loggie.settings.log_level >= LoggieEnums.LogLevel.ERROR:
+			push_error(self.string())
 	return self
 
 ## Outputs this message from Loggie as an Warning type message.
 ## The [Loggie.settings.log_level] must be equal to or higher to the WARN level for this to work.
 func warn() -> LoggieMsg:
 	var loggie = get_logger()
-	var msg = loggie.settings.format_warning_msg % [self.content]
-	output(LoggieEnums.LogLevel.WARN, msg, self.domain_name)
-	if loggie.settings.print_warnings_to_console and loggie.settings.log_level >= LoggieEnums.LogLevel.WARN:
-		push_warning(self.string())
+	if loggie != null and loggie.settings != null:
+		var msg = loggie.settings.format_warning_msg % [self.content]
+		output(LoggieEnums.LogLevel.WARN, msg, self.domain_name)
+		if loggie.settings.print_warnings_to_console and loggie.settings.log_level >= LoggieEnums.LogLevel.WARN:
+			push_warning(self.string())
 	return self
 
 ## Outputs this message from Loggie as an Notice type message.
 ## The [Loggie.settings.log_level] must be equal to or higher to the NOTICE level for this to work.
 func notice() -> LoggieMsg:
 	var loggie = get_logger()
-	var msg = loggie.settings.format_notice_msg % [self.content]
-	output(LoggieEnums.LogLevel.NOTICE, msg, self.domain_name)
+	if loggie != null and loggie.settings != null:
+		var msg = loggie.settings.format_notice_msg % [self.content]
+		output(LoggieEnums.LogLevel.NOTICE, msg, self.domain_name)
 	return self
 
 ## Outputs this message from Loggie as an Info type message.
 ## The [Loggie.settings.log_level] must be equal to or higher to the INFO level for this to work.
 func info() -> LoggieMsg:
 	var loggie = get_logger()
-	var msg = loggie.settings.format_info_msg % [self.content]
-	output(LoggieEnums.LogLevel.INFO, msg, self.domain_name)
+	if loggie != null and loggie.settings != null:
+		var msg = loggie.settings.format_info_msg % [self.content]
+		output(LoggieEnums.LogLevel.INFO, msg, self.domain_name)
 	return self
 
 ## Outputs this message from Loggie as a Debug type message.
 ## The [Loggie.settings.log_level] must be equal to or higher to the DEBUG level for this to work.
 func debug() -> LoggieMsg:
 	var loggie = get_logger()
-	var msg = loggie.settings.format_debug_msg % [self.content]
-	output(LoggieEnums.LogLevel.DEBUG, msg, self.domain_name)
-	if loggie.settings.use_print_debug_for_debug_msg and loggie.settings.log_level >= LoggieEnums.LogLevel.DEBUG:
-		print_debug(self.string())
+	if loggie != null and loggie.settings != null:
+		var msg = loggie.settings.format_debug_msg % [self.content]
+		output(LoggieEnums.LogLevel.DEBUG, msg, self.domain_name)
+		if loggie.settings.use_print_debug_for_debug_msg and loggie.settings.log_level >= LoggieEnums.LogLevel.DEBUG:
+			print_debug(self.string())
 	return self
 
 ## Returns the string content of this message.
