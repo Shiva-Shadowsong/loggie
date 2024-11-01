@@ -306,7 +306,7 @@ func hseparator(size : int = 16, alternative_symbol : Variant = null) -> LoggieM
 ## Sets whether this message should be preprocessed and potentially modified with prefixes and suffixes during [method output].
 ## If turned off, while outputting this message, Loggie will skip the steps where it appends the messaage domain, class name, timestamp, etc.
 ## Whether preprocess is set to true doesn't affect the final conversion from RICH to ANSI or PLAIN, which always happens 
-## under some circumstances that based on other settings.
+## under some circumstances that are based on other settings.
 func preprocessed(shouldPreprocess : bool) -> LoggieMsg:
 	self.preprocess = shouldPreprocess
 	return self
