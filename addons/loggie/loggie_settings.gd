@@ -20,6 +20,14 @@ static var loggie_singleton_name = "Loggie"
 ## relevant to Loggie, particularly important for the default way of loading [LoggieSettings] and
 ## setting up Godot Project Settings related to Loggie.
 const project_settings = {
+	"remove_settings_if_plugin_disabled" = {
+		"path": "loggie/general/remove_settings_if_plugin_disabled",
+		"default_value" : true,
+		"type" : TYPE_BOOL,
+		"hint" : PROPERTY_HINT_NONE,
+		"hint_string" : "",
+		"doc" : "Choose whether you want Loggie project settings to be wiped from ProjectSettings if the Loggie plugin is disabled.",
+	},
 	"terminal_mode" = {
 		"path": "loggie/general/terminal_mode",
 		"default_value" : LoggieEnums.TerminalMode.BBCODE,

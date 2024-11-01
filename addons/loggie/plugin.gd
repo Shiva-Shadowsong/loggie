@@ -9,7 +9,12 @@ func _enable_plugin() -> void:
 	add_loggie_project_settings()
 
 func _disable_plugin() -> void:
-	remove_loggie_project_setings()
+	var wipe_setting_exists = ProjectSettings.has_setting(LoggieSettings.project_settings.remove_settings_if_plugin_disabled.path)
+	if (not wipe_setting_exists) or (wipe_setting_exists and ProjectSettings.get_setting(LoggieSettings.project_settings.remove_settings_if_plugin_disabled.path, true)):
+		push_warning("The Loggie plugin is being disabled, and all of its ProjectSettings are erased from Godot. If you wish to prevent this behavior, look for the 'Project Settings -> Loggie -> General -> Remove Settings if Plugin Disabled' option while the plugin is enabled.")
+		remove_loggie_project_setings()
+	else:
+		push_warning("The Loggie plugin is being disabled, but its ProjectSettings have been prevented from being removed from Godot. If you wish to allow that behavior, look for the 'Project Settings -> Loggie -> General -> Remove Settings if Plugin Disabled' option while the plugin is enabled.")
 	remove_autoload_singleton(LoggieSettings.loggie_singleton_name)
 
 ## Adds new Loggie related ProjectSettings to Godot.
