@@ -68,6 +68,14 @@ const project_settings = {
 		"hint_string" : "",
 		"doc" : "If 'Output Timestamps' is true, should those timestamps use the UTC time. If not, local system time is used instead.",
 	},
+	"output_message_domain" = {
+		"path": "loggie/preprocessing/output_message_domain",
+		"default_value" : false,
+		"type" : TYPE_BOOL,
+		"hint" : PROPERTY_HINT_NONE,
+		"hint_string" : "",
+		"doc" : "If true, logged messages will have the domain they are coming from prepended to them.",
+	},
 	"output_errors_to_console" = {
 		"path": "loggie/preprocessing/output_errors_also_to_console",
 		"default_value" : true,
@@ -108,22 +116,86 @@ const project_settings = {
 		"hint_string" : "Nothing:0,ScriptName:1,BaseType:2",
 		"doc" : "If 'Derive and Display Class Names From Scripts' is enabled, and a script doesn't have a 'class_name', which text should we use as a substitute?",
 	},
-	"output_message_domain" = {
-		"path": "loggie/preprocessing/output_message_domain",
-		"default_value" : false,
-		"type" : TYPE_BOOL,
+	"format_timestamp" = {
+		"path": "loggie/formats/timestamp",
+		"default_value" : "[{day}.{month}.{year} {hour}:{minute}:{second}]",
+		"type" : TYPE_STRING,
 		"hint" : PROPERTY_HINT_NONE,
 		"hint_string" : "",
-		"doc" : "If true, logged messages will have the domain they are coming from prepended to them.",
+		"doc" : "The format used for timestamps which are prepended to the message when output_timestamps is enabled.",
+	},
+	"format_debug_msg" = {
+		"path": "loggie/formats/debug_message",
+		"default_value" : "[b][color=pink][DEBUG]:[/color][/b] {msg}",
+		"type" : TYPE_STRING,
+		"hint" : PROPERTY_HINT_NONE,
+		"hint_string" : "",
+		"doc" : "The format used for debug messages.",
+	},
+	"format_info_msg" = {
+		"path": "loggie/formats/info_message",
+		"default_value" : "{msg}",
+		"type" : TYPE_STRING,
+		"hint" : PROPERTY_HINT_NONE,
+		"hint_string" : "",
+		"doc" : "The format used for info messages.",
+	},
+	"format_notice_msg" = {
+		"path": "loggie/formats/notice_message",
+		"default_value" : "[b][color=cyan][NOTICE]:[/color][/b] {msg}",
+		"type" : TYPE_STRING,
+		"hint" : PROPERTY_HINT_NONE,
+		"hint_string" : "",
+		"doc" : "The format used for notice messages.",
+	},
+	"format_warning_msg" = {
+		"path": "loggie/formats/warning_message",
+		"default_value" : "[b][color=orange][WARN]:[/color][/b] {msg}",
+		"type" : TYPE_STRING,
+		"hint" : PROPERTY_HINT_NONE,
+		"hint_string" : "",
+		"doc" : "The format used for warning messages.",
+	},
+	"format_error_msg" = {
+		"path": "loggie/formats/error_message",
+		"default_value" : "[b][color=red][ERROR]:[/color][/b] {msg}",
+		"type" : TYPE_STRING,
+		"hint" : PROPERTY_HINT_NONE,
+		"hint_string" : "",
+		"doc" : "The format used for error messages.",
+	},
+	"format_domain_prefix" = {
+		"path": "loggie/formats/domain_prefix",
+		"default_value" : "[b]({domain})[/b] {msg}",
+		"type" : TYPE_STRING,
+		"hint" : PROPERTY_HINT_NONE,
+		"hint_string" : "",
+		"doc" : "The format used for domain prefixes.",
+	},
+	"format_header" = {
+		"path": "loggie/formats/header",
+		"default_value" : "[b][i]{msg}[/i][/b]",
+		"type" : TYPE_STRING,
+		"hint" : PROPERTY_HINT_NONE,
+		"hint_string" : "",
+		"doc" : "The format used for headers.",
+	},
+	"h_separator_symbol" = {
+		"path": "loggie/formats/h_separator_symbol",
+		"default_value" : "-",
+		"type" : TYPE_STRING,
+		"hint" : PROPERTY_HINT_NONE,
+		"hint_string" : "",
+		"doc" : "The symbol used for the horizontal separator.",
 	},
 	"box_characters_mode" = {
-		"path": "loggie/preprocessing/box_characters_mode",
+		"path": "loggie/formats/box_characters_mode",
 		"default_value" : LoggieEnums.BoxCharactersMode.COMPATIBLE,
 		"type" : TYPE_INT,
 		"hint" : PROPERTY_HINT_ENUM,
 		"hint_string" : "Compatible:0,Pretty:1",
 		"doc" : "There are two sets of box characters defined in LoggieSettings - one set contains prettier characters that produce a nicer looking box, but may not render correctly in the context of various terminals. The other set contains characters that produce a less pretty box, but are compatible with being shown in most terminals.",
-	}
+	},
 }
 
 ## The current terminal mode of Loggie.
@@ -173,9 +245,9 @@ var derive_and_show_class_names : bool
 var nameless_class_name_proxy : LoggieEnums.NamelessClassExtensionNameProxy
 
 ## Whether Loggie should prepend a timestamp to each output message.
-var show_timestamps : bool
+var output_timestamps : bool
 
-## Whether the outputted timestamps (if [member show_timestamps] is enabled) use UTC or local machine time.
+## Whether the outputted timestamps (if [member output_timestamps] is enabled) use UTC or local machine time.
 var timestamps_use_utc : bool
 
 # ----------------------------------------------- #
@@ -185,26 +257,46 @@ var timestamps_use_utc : bool
 # Any other color will be displayed in the Godot console or an ANSI based console, but the color tag (in case of BBCode) won't be properly stripped
 # when written to the .log file, resulting in BBCode visible in .log files.
 
-## Formatting of headers generated with [method LoggieMsg.header].
-var format_header = "[b][i]%s[/i][/b]"
+## The format used to decorate a message as a header when using [method LoggieMsg.header].[br]
+## The [param {msg}] is a variable that will be replaced with the contents of the message.[br]
+var format_header = "[b][i]{msg}[/i][/b]"
 
-## Formatting of the domain if it is set to be outputted for messages that come from domains.
-var format_domain_prefix = "[b](%s)[/b] %s"
+## The format used when appending a domain to a message.[br]
+## See: [member output_message_domain]
+## The [param {msg}] is a variable that will be replaced with the contents of the message.[br]
+## The [param {domain}] is a variable that will be replaced with the domain key.[br]
+## You can customize this in your ProjectSettings, or custom_settings.gd (if using it).[br]
+var format_domain_prefix = "[b]({domain})[/b] {msg}"
 
-## The Formatting of a error message.
-var format_error_msg = "[b][color=red][ERROR]:[/color][/b] %s"
+## The format used when outputting error messages.[br]
+## The [param {msg}] is a variable that will be replaced with the contents of the message.[br]
+## You can customize this in your ProjectSettings, or custom_settings.gd (if using it).[br]
+var format_error_msg = "[b][color=red][ERROR]:[/color][/b] {msg}"
 
-## The Formatting of a warning message.
-var format_warning_msg = "[b][color=orange][WARN]:[/color][/b] %s"
+## The format used when outputting warning messages.[br]
+## The [param {msg}] is a variable that will be replaced with the contents of the message.[br]
+## You can customize this in your ProjectSettings, or custom_settings.gd (if using it).[br]
+var format_warning_msg = "[b][color=orange][WARN]:[/color][/b] {msg}"
 
-## The Formatting of a notice message.
-var format_notice_msg = "[b][color=cyan][NOTICE]:[/color][/b] %s"
+## The format used when outputting notice messages.[br]
+## The [param {msg}] is a variable that will be replaced with the contents of the message.[br]
+## You can customize this in your ProjectSettings, or custom_settings.gd (if using it).[br]
+var format_notice_msg = "[b][color=cyan][NOTICE]:[/color][/b] {msg}"
 
-## The Formatting of an info message.
-var format_info_msg = "%s"
+## The format used when outputting info messages.[br]
+## The [param {msg}] is a variable that will be replaced with the contents of the message.[br]
+## You can customize this in your ProjectSettings, or custom_settings.gd (if using it).[br]
+var format_info_msg = "{msg}"
 
-## The Formatting of a debug message.
-var format_debug_msg = "[b][color=pink][DEBUG]:[/color][/b] %s"
+## The format used when outputting debug messages.[br]
+## The [param {msg}] is a variable that will be replaced with the contents of the message.[br]
+## You can customize this in your ProjectSettings, or custom_settings.gd (if using it).[br]
+var format_debug_msg = "[b][color=pink][DEBUG]:[/color][/b] {msg}"
+
+## The format used for timestamps which are prepended to the message when [member output_timestamps] is enabled.[br]
+## The variables [param {day}], [param {month}], [param {year}], [param {hour}], [param {minute}], [param {second}], [param {weekday}], and [param {dst}] are supported.
+## You can customize this in your ProjectSettings, or custom_settings.gd (if using it).[br]
+var format_timestamp = "[{day}.{month}.{year} {hour}:{minute}:{second}]"
 
 ## The symbol which will be used for the HSeparator.
 var h_separator_symbol = "-"
@@ -250,7 +342,7 @@ func load():
 	log_level = ProjectSettings.get_setting(project_settings.log_level.path, project_settings.log_level.default_value)
 	show_loggie_specs = ProjectSettings.get_setting(project_settings.show_loggie_specs.path, project_settings.show_loggie_specs.default_value)
 	show_system_specs = ProjectSettings.get_setting(project_settings.show_system_specs.path, project_settings.show_system_specs.default_value)
-	show_timestamps = ProjectSettings.get_setting(project_settings.output_timestamps.path, project_settings.output_timestamps.default_value)
+	output_timestamps = ProjectSettings.get_setting(project_settings.output_timestamps.path, project_settings.output_timestamps.default_value)
 	timestamps_use_utc = ProjectSettings.get_setting(project_settings.timestamps_use_utc.path, project_settings.timestamps_use_utc.default_value)
 
 	print_errors_to_console = ProjectSettings.get_setting(project_settings.output_errors_to_console.path, project_settings.output_errors_to_console.default_value)
@@ -262,6 +354,14 @@ func load():
 	nameless_class_name_proxy = ProjectSettings.get_setting(project_settings.nameless_class_name_proxy.path, project_settings.nameless_class_name_proxy.default_value)
 	box_characters_mode = ProjectSettings.get_setting(project_settings.box_characters_mode.path, project_settings.box_characters_mode.default_value)
 
+	format_timestamp = ProjectSettings.get_setting(project_settings.format_timestamp.path, project_settings.format_timestamp.default_value)
+	format_info_msg = ProjectSettings.get_setting(project_settings.format_info_msg.path, project_settings.format_info_msg.default_value)
+	format_notice_msg = ProjectSettings.get_setting(project_settings.format_notice_msg.path, project_settings.format_notice_msg.default_value)
+	format_warning_msg = ProjectSettings.get_setting(project_settings.format_warning_msg.path, project_settings.format_warning_msg.default_value)
+	format_error_msg = ProjectSettings.get_setting(project_settings.format_error_msg.path, project_settings.format_error_msg.default_value)
+	format_debug_msg = ProjectSettings.get_setting(project_settings.format_debug_msg.path, project_settings.format_debug_msg.default_value)
+	h_separator_symbol = ProjectSettings.get_setting(project_settings.h_separator_symbol.path, project_settings.h_separator_symbol.default_value)
+
 ## Returns a dictionary where the indices are names of relevant variables in the LoggieSettings class,
 ## and the values are their current values.
 func to_dict() -> Dictionary:
@@ -270,8 +370,8 @@ func to_dict() -> Dictionary:
 		"terminal_mode", "log_level", "show_loggie_specs", "show_system_specs",
 		"output_message_domain", "print_errors_to_console", "print_warnings_to_console",
 		"use_print_debug_for_debug_msg", "derive_and_show_class_names", "nameless_class_name_proxy",
-		"show_timestamps", "timestamps_use_utc", "format_header", "format_domain_prefix", "format_error_msg",
-		"format_warning_msg", "format_notice_msg", "format_info_msg", "format_debug_msg",
+		"output_timestamps", "timestamps_use_utc", "format_header", "format_domain_prefix", "format_error_msg",
+		"format_warning_msg", "format_notice_msg", "format_info_msg", "format_debug_msg", "format_timestamp",
 		"h_separator_symbol", "box_characters_mode", "box_symbols_compatible", "box_symbols_pretty",
 	]
 	

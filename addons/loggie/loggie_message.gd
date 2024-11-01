@@ -72,7 +72,7 @@ func output(level : LoggieEnums.LogLevel, msg : String, domain : String = "") ->
 	if self.preprocess:
 		# We append the name of the domain if that setting is enabled.
 		if !domain.is_empty() and loggie.settings.output_message_domain == true:
-			msg = loggie.settings.format_domain_prefix % [domain, msg]
+			msg = loggie.settings.format_domain_prefix.format({"domain" : domain, "msg" : msg})
 
 		# We prepend the name of the class that called the function which resulted in this output being generated
 		# (if Loggie settings are configured to do so).
@@ -94,9 +94,10 @@ func output(level : LoggieEnums.LogLevel, msg : String, domain : String = "") ->
 				})
 
 		# We prepend a timestamp to the message (if Loggie settings are configured to do so).
-		if loggie.settings.show_timestamps == true:
-			msg = "{timestamp} {msg}".format({
-				"timestamp" : Time.get_datetime_string_from_system(loggie.settings.timestamps_use_utc, true),
+		if loggie.settings.output_timestamps == true:
+			var format_dict : Dictionary = Time.get_datetime_dict_from_system(loggie.settings.timestamps_use_utc)
+			msg = "{formatted_time} {msg}".format({
+				"formatted_time" : loggie.settings.format_timestamp.format(format_dict),
 				"msg" : msg
 			})
 
@@ -123,7 +124,7 @@ func output(level : LoggieEnums.LogLevel, msg : String, domain : String = "") ->
 func error() -> LoggieMsg:
 	var loggie = get_logger()
 	if loggie != null and loggie.settings != null:
-		var msg = loggie.settings.format_error_msg % [self.content]
+		var msg = loggie.settings.format_error_msg.format({"msg": self.content})
 		output(LoggieEnums.LogLevel.ERROR, msg, self.domain_name)
 		if loggie.settings.print_errors_to_console and loggie.settings.log_level >= LoggieEnums.LogLevel.ERROR:
 			push_error(self.string())
@@ -134,7 +135,7 @@ func error() -> LoggieMsg:
 func warn() -> LoggieMsg:
 	var loggie = get_logger()
 	if loggie != null and loggie.settings != null:
-		var msg = loggie.settings.format_warning_msg % [self.content]
+		var msg = loggie.settings.format_warning_msg.format({"msg": self.content})
 		output(LoggieEnums.LogLevel.WARN, msg, self.domain_name)
 		if loggie.settings.print_warnings_to_console and loggie.settings.log_level >= LoggieEnums.LogLevel.WARN:
 			push_warning(self.string())
@@ -145,7 +146,7 @@ func warn() -> LoggieMsg:
 func notice() -> LoggieMsg:
 	var loggie = get_logger()
 	if loggie != null and loggie.settings != null:
-		var msg = loggie.settings.format_notice_msg % [self.content]
+		var msg = loggie.settings.format_notice_msg.format({"msg": self.content})
 		output(LoggieEnums.LogLevel.NOTICE, msg, self.domain_name)
 	return self
 
@@ -154,7 +155,7 @@ func notice() -> LoggieMsg:
 func info() -> LoggieMsg:
 	var loggie = get_logger()
 	if loggie != null and loggie.settings != null:
-		var msg = loggie.settings.format_info_msg % [self.content]
+		var msg = loggie.settings.format_info_msg.format({"msg": self.content})
 		output(LoggieEnums.LogLevel.INFO, msg, self.domain_name)
 	return self
 
@@ -163,7 +164,7 @@ func info() -> LoggieMsg:
 func debug() -> LoggieMsg:
 	var loggie = get_logger()
 	if loggie != null and loggie.settings != null:
-		var msg = loggie.settings.format_debug_msg % [self.content]
+		var msg = loggie.settings.format_debug_msg.format({"msg": self.content})
 		output(LoggieEnums.LogLevel.DEBUG, msg, self.domain_name)
 		if loggie.settings.use_print_debug_for_debug_msg and loggie.settings.log_level >= LoggieEnums.LogLevel.DEBUG:
 			print_debug(self.string())
@@ -214,7 +215,7 @@ func italic() -> LoggieMsg:
 ## Stylizes the current content of this message as a header.
 func header() -> LoggieMsg:
 	var loggie = get_logger()
-	self.content = loggie.settings.format_header % self.content
+	self.content = loggie.settings.format_header.format({"msg": self.content})
 	return self
 
 ## Constructs a decorative box with the given horizontal padding around the current content
