@@ -199,17 +199,17 @@ func color(_color : Variant) -> LoggieMsg:
 	if _color is Color:
 		_color = _color.to_html()
 	
-	self.content = "[color=%s]%s[/color]" % [_color, self.content]
+	self.content = "[color={colorstr}]{msg}[/color]".format({"colorstr": _color, "msg": self.content})
 	return self
 
 ## Stylizes the current content of this message to be bold.
 func bold() -> LoggieMsg:
-	self.content = "[b]%s[/b]" % [self.content]
+	self.content = "[b]{msg}[/b]".format({"msg": self.content})
 	return self
 
 ## Stylizes the current content of this message to be italic.
 func italic() -> LoggieMsg:
-	self.content = "[i]%s[/i]" % [self.content]
+	self.content = "[i]{msg}[/i]".format({"msg": self.content})
 	return self
 
 ## Stylizes the current content of this message as a header.
