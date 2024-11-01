@@ -39,13 +39,8 @@ func add_project_setting(setting_name: String, default_value : Variant, value_ty
 		ProjectSettings.set_setting(setting_name, default_value)
 		
 	ProjectSettings.set_initial_value(setting_name, default_value)
-	
-	ProjectSettings.add_property_info({
-		"name": setting_name,
-		"type": value_type,
-		"hint": type_hint,
-		"hint_string": hint_string
-	})
+	ProjectSettings.add_property_info({	"name": setting_name, "type": value_type, "hint": type_hint, "hint_string": hint_string})
+	ProjectSettings.set_as_basic(setting_name, true)
 
 	var error: int = ProjectSettings.save()
 	if error: 
