@@ -6,7 +6,7 @@
 extends Node
 
 ## Stores a string describing the current version of Loggie.
-const VERSION : String = "v1.3"
+const VERSION : String = "v1.4"
 
 ## Emitted any time Loggie attempts to log a message.
 ## Useful for capturing the messages that pass through Loggie.
@@ -28,7 +28,7 @@ var domains : Dictionary = {}
 ## Holds a mapping between script paths and the names of the classes defined in those scripts.
 var class_names : Dictionary = {}
 
-func _ready() -> void:
+func _init() -> void:
 	var uses_original_settings_file = true
 	var default_settings_path = get_script().get_path().get_base_dir().path_join("loggie_settings.gd")
 	var custom_settings_path = get_script().get_path().get_base_dir().path_join("custom_settings.gd")
@@ -46,6 +46,7 @@ func _ready() -> void:
 			self.settings.load()
 			if is_in_production():
 				self.settings.terminal_mode = LoggieEnums.TerminalMode.PLAIN
+				self.settings.box_characters_mode = LoggieEnums.BoxCharactersMode.COMPATIBLE
 		else:
 			push_error("Loggie loaded neither a custom nor a default settings file. This will break the plugin. Make sure that a valid loggie_settings.gd is in the same directory where loggie.gd is.")
 			return

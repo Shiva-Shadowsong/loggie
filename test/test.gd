@@ -13,6 +13,9 @@ const SCRIPT_LOGGIE_TALKER_GRANDCHILD = preload("res://test/testing_props/talker
 const SCRIPT_LOGGIE_TALKER_NAMED_GRANDCHILD = preload("res://test/testing_props/talkers/LoggieTalkerNamedGrandchild.gd")
 const SCRIPT_LOGGIE_TALKER_NAMED_CHILD = preload("res://test/testing_props/talkers/LoggieTalkerNamedChild.gd")
 
+func _init() -> void:
+	Loggie.msg("Test message from test.gd _init.").warn()
+
 func _ready() -> void:
 	original_settings = Loggie.settings.duplicate()
 	setup_gui()
@@ -146,7 +149,9 @@ func print_talker_scripts_data() -> void:
 		SCRIPT_LOGGIE_TALKER_NAMED_GRANDCHILD
 	]
 	for script in scripts:
-		LoggieTools.print_script_data(script)
+		var script_specs : LoggieSystemSpecsMsg = LoggieSystemSpecsMsg.new()
+		script_specs.use_logger(Loggie)
+		script_specs.embed_script_data(script).info()
 
 ## Prints the values of all LoggieSettings settings obtained from Project Settings.
 ## Deliberately uses [method print] instead of Loggie output methods.

@@ -72,7 +72,7 @@ func output(level : LoggieEnums.LogLevel, msg : String, domain : String = "") ->
 	if self.preprocess:
 		# We append the name of the domain if that setting is enabled.
 		if !domain.is_empty() and loggie.settings.output_message_domain == true:
-			msg = loggie.settings.format_domain_prefix % [domain, msg]
+			msg = loggie.settings.format_domain_prefix.format({"domain" : domain, "msg" : msg})
 
 		# We prepend the name of the class that called the function which resulted in this output being generated
 		# (if Loggie settings are configured to do so).
@@ -94,9 +94,10 @@ func output(level : LoggieEnums.LogLevel, msg : String, domain : String = "") ->
 				})
 
 		# We prepend a timestamp to the message (if Loggie settings are configured to do so).
-		if loggie.settings.show_timestamps == true:
-			msg = "{timestamp} {msg}".format({
-				"timestamp" : Time.get_datetime_string_from_system(loggie.settings.timestamps_use_utc, true),
+		if loggie.settings.output_timestamps == true:
+			var format_dict : Dictionary = Time.get_datetime_dict_from_system(loggie.settings.timestamps_use_utc)
+			msg = "{formatted_time} {msg}".format({
+				"formatted_time" : loggie.settings.format_timestamp.format(format_dict),
 				"msg" : msg
 			})
 
@@ -122,46 +123,51 @@ func output(level : LoggieEnums.LogLevel, msg : String, domain : String = "") ->
 ## The [Loggie.settings.log_level] must be equal to or higher to the ERROR level for this to work.
 func error() -> LoggieMsg:
 	var loggie = get_logger()
-	var msg = loggie.settings.format_error_msg % [self.content]
-	output(LoggieEnums.LogLevel.ERROR, msg, self.domain_name)
-	if loggie.settings.print_errors_to_console and loggie.settings.log_level >= LoggieEnums.LogLevel.ERROR:
-		push_error(self.string())
+	if loggie != null and loggie.settings != null:
+		var msg = loggie.settings.format_error_msg.format({"msg": self.content})
+		output(LoggieEnums.LogLevel.ERROR, msg, self.domain_name)
+		if loggie.settings.print_errors_to_console and loggie.settings.log_level >= LoggieEnums.LogLevel.ERROR:
+			push_error(self.string())
 	return self
 
 ## Outputs this message from Loggie as an Warning type message.
 ## The [Loggie.settings.log_level] must be equal to or higher to the WARN level for this to work.
 func warn() -> LoggieMsg:
 	var loggie = get_logger()
-	var msg = loggie.settings.format_warning_msg % [self.content]
-	output(LoggieEnums.LogLevel.WARN, msg, self.domain_name)
-	if loggie.settings.print_warnings_to_console and loggie.settings.log_level >= LoggieEnums.LogLevel.WARN:
-		push_warning(self.string())
+	if loggie != null and loggie.settings != null:
+		var msg = loggie.settings.format_warning_msg.format({"msg": self.content})
+		output(LoggieEnums.LogLevel.WARN, msg, self.domain_name)
+		if loggie.settings.print_warnings_to_console and loggie.settings.log_level >= LoggieEnums.LogLevel.WARN:
+			push_warning(self.string())
 	return self
 
 ## Outputs this message from Loggie as an Notice type message.
 ## The [Loggie.settings.log_level] must be equal to or higher to the NOTICE level for this to work.
 func notice() -> LoggieMsg:
 	var loggie = get_logger()
-	var msg = loggie.settings.format_notice_msg % [self.content]
-	output(LoggieEnums.LogLevel.NOTICE, msg, self.domain_name)
+	if loggie != null and loggie.settings != null:
+		var msg = loggie.settings.format_notice_msg.format({"msg": self.content})
+		output(LoggieEnums.LogLevel.NOTICE, msg, self.domain_name)
 	return self
 
 ## Outputs this message from Loggie as an Info type message.
 ## The [Loggie.settings.log_level] must be equal to or higher to the INFO level for this to work.
 func info() -> LoggieMsg:
 	var loggie = get_logger()
-	var msg = loggie.settings.format_info_msg % [self.content]
-	output(LoggieEnums.LogLevel.INFO, msg, self.domain_name)
+	if loggie != null and loggie.settings != null:
+		var msg = loggie.settings.format_info_msg.format({"msg": self.content})
+		output(LoggieEnums.LogLevel.INFO, msg, self.domain_name)
 	return self
 
 ## Outputs this message from Loggie as a Debug type message.
 ## The [Loggie.settings.log_level] must be equal to or higher to the DEBUG level for this to work.
 func debug() -> LoggieMsg:
 	var loggie = get_logger()
-	var msg = loggie.settings.format_debug_msg % [self.content]
-	output(LoggieEnums.LogLevel.DEBUG, msg, self.domain_name)
-	if loggie.settings.use_print_debug_for_debug_msg and loggie.settings.log_level >= LoggieEnums.LogLevel.DEBUG:
-		print_debug(self.string())
+	if loggie != null and loggie.settings != null:
+		var msg = loggie.settings.format_debug_msg.format({"msg": self.content})
+		output(LoggieEnums.LogLevel.DEBUG, msg, self.domain_name)
+		if loggie.settings.use_print_debug_for_debug_msg and loggie.settings.log_level >= LoggieEnums.LogLevel.DEBUG:
+			print_debug(self.string())
 	return self
 
 ## Returns the string content of this message.
@@ -193,23 +199,23 @@ func color(_color : Variant) -> LoggieMsg:
 	if _color is Color:
 		_color = _color.to_html()
 	
-	self.content = "[color=%s]%s[/color]" % [_color, self.content]
+	self.content = "[color={colorstr}]{msg}[/color]".format({"colorstr": _color, "msg": self.content})
 	return self
 
 ## Stylizes the current content of this message to be bold.
 func bold() -> LoggieMsg:
-	self.content = "[b]%s[/b]" % [self.content]
+	self.content = "[b]{msg}[/b]".format({"msg": self.content})
 	return self
 
 ## Stylizes the current content of this message to be italic.
 func italic() -> LoggieMsg:
-	self.content = "[i]%s[/i]" % [self.content]
+	self.content = "[i]{msg}[/i]".format({"msg": self.content})
 	return self
 
 ## Stylizes the current content of this message as a header.
 func header() -> LoggieMsg:
 	var loggie = get_logger()
-	self.content = loggie.settings.format_header % self.content
+	self.content = loggie.settings.format_header.format({"msg": self.content})
 	return self
 
 ## Constructs a decorative box with the given horizontal padding around the current content
@@ -301,7 +307,7 @@ func hseparator(size : int = 16, alternative_symbol : Variant = null) -> LoggieM
 ## Sets whether this message should be preprocessed and potentially modified with prefixes and suffixes during [method output].
 ## If turned off, while outputting this message, Loggie will skip the steps where it appends the messaage domain, class name, timestamp, etc.
 ## Whether preprocess is set to true doesn't affect the final conversion from RICH to ANSI or PLAIN, which always happens 
-## under some circumstances that based on other settings.
+## under some circumstances that are based on other settings.
 func preprocessed(shouldPreprocess : bool) -> LoggieMsg:
 	self.preprocess = shouldPreprocess
 	return self
