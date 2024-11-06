@@ -280,7 +280,7 @@ func domain(_domain_name : String) -> LoggieMsg:
 
 ## Prepends the given prefix string to the start of the message with the provided separator.
 func prefix(prefix : String, separator : String = "") -> LoggieMsg:
-	self.content = "{prefix}{space}{content}".format({
+	self.content = "{prefix}{separator}{content}".format({
 		"prefix" : prefix,
 		"separator" : separator,
 		"content" : self.content
