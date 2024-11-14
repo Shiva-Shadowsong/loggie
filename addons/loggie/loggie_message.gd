@@ -96,6 +96,8 @@ func output(level : LoggieEnums.LogLevel, msg : String, domain : String = "") ->
 		# We prepend a timestamp to the message (if Loggie settings are configured to do so).
 		if loggie.settings.output_timestamps == true:
 			var format_dict : Dictionary = Time.get_datetime_dict_from_system(loggie.settings.timestamps_use_utc)
+			for field in ["month", "day", "hour", "minute", "second"]:
+				format_dict[field] = "%02d" % format_dict[field]
 			msg = "{formatted_time} {msg}".format({
 				"formatted_time" : loggie.settings.format_timestamp.format(format_dict),
 				"msg" : msg
