@@ -8,7 +8,7 @@
 ## [i](e.g. loading from a config.ini file, or a .json file, etc.)[/i].[br][br]
 ## 
 ## Loggie calls [method load] on this class during its [method _ready] function.
-class_name LoggieSettings extends Node
+class_name LoggieSettings extends Resource
 
 ## The name that will be used for the singleton referring to Loggie.
 ## [br][br][i][b]Note:[/b] You may change this to something you're more used to, such as "log" or "logger".[/i]
