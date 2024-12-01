@@ -115,8 +115,12 @@ func test_decors():
 	# Test outputting a header, with a newline and a 30 character long horizontal separator.
 	Loggie.msg("Colored Header").header().color("yellow").nl().hseparator(30).info()
 
-	# Test a supported color message.
+	# Test a supported color message of all types.
 	Loggie.msg("I'm cyan.").color("cyan").info()
+	Loggie.msg("I'm cyan.").color("cyan").notice()
+	Loggie.msg("I'm cyan.").color("cyan").warn()
+	Loggie.msg("I'm cyan.").color("cyan").error()
+	Loggie.msg("I'm cyan.").color("cyan").debug()
 	
 	# Test a custom colored message.
 	Loggie.msg("I'm slate blue.").color(Color.SLATE_BLUE).info()
