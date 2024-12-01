@@ -143,7 +143,7 @@ func test_segments():
 	var msg = Loggie.msg("Segment 1 *").endseg().add(" Segment 2 *").endseg().add(" Segment 3").info()
 
 	# Print the 2nd segment of that segmented message:
-	print(msg.string(1))
+	Loggie.info("Segment 1 is:", msg.string(1))
 
 	# Test messages where each segment has different styles.
 	Loggie.msg("SegmentKey:").bold().color(Color.ORANGE).msg("SegmentValue").color(Color.DIM_GRAY).info()
