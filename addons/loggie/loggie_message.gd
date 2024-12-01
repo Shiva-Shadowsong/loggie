@@ -284,6 +284,11 @@ func space(amount : int = 1) -> LoggieMsg:
 	self.content[current_segment_index] += " ".repeat(amount)
 	return self
 
+## Adds a specified amount of tabs to the end of the current segment of this message.
+func tab(amount : int = 1) -> LoggieMsg:
+	self.content[current_segment_index] += "\t".repeat(amount)
+	return self
+
 ## Sets this message to belong to the domain with the given name.
 ## If it attempts to be outputted, but the domain is disabled, it won't be outputted.
 func domain(_domain_name : String) -> LoggieMsg:
