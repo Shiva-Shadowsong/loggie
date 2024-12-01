@@ -117,14 +117,28 @@ func test_decors():
 	Loggie.msg("Colored Header").header().color("yellow").nl().hseparator(30).info()
 
 	# Test a supported color message of all types.
-	Loggie.msg("I'm cyan.").color("cyan").info()
-	Loggie.msg("I'm cyan.").color("cyan").notice()
-	Loggie.msg("I'm cyan.").color("cyan").warn()
-	Loggie.msg("I'm cyan.").color("cyan").error()
-	Loggie.msg("I'm cyan.").color("cyan").debug()
+	Loggie.msg("Supported color info.").color("cyan").info()
+	Loggie.msg("Supported color notice.").color("cyan").notice()
+	Loggie.msg("Supported color warning.").color("cyan").warn()
+	Loggie.msg("Supported color error.").color("cyan").error()
+	Loggie.msg("Supported color debug.").color("cyan").debug()
+	
+	# Test a godot colored message of all types.
+	# Godot-colors are colors defined as consts in the 'Color' class but not
+	# explicitly supported by 'print_rich'.
+	Loggie.msg("Custom colored info msg.").color(Color.SLATE_BLUE).info()
+	Loggie.msg("Custom colored notice.").color(Color.SLATE_BLUE).notice()
+	Loggie.msg("Custom colored warning.").color(Color.SLATE_BLUE).warn()
+	Loggie.msg("Custom colored error.").color(Color.SLATE_BLUE).error()
+	Loggie.msg("Custom colored debug.").color(Color.SLATE_BLUE).debug()
 	
 	# Test a custom colored message.
-	Loggie.msg("I'm slate blue.").color(Color.SLATE_BLUE).info()
+	# (Arbitrary hex codes).
+	Loggie.msg("Custom colored info msg.").color("#3afabc").info()
+	Loggie.msg("Custom colored notice.").color("#3afabc").notice()
+	Loggie.msg("Custom colored warning.").color("#3afabc").warn()
+	Loggie.msg("Custom colored error.").color("#3afabc").error()
+	Loggie.msg("Custom colored debug.").color("#3afabc").debug()
 	
 	# Test pretty printing a dictionary.
 	var testDict = {
