@@ -52,7 +52,7 @@ func use_logger(logger_to_use : Variant) -> LoggieMsg:
 ## Outputs the given string [param msg] at the given output level to the standard output using either [method print_rich] or [method print].
 ## It also does a number of changes to the given [param msg] based on various Loggie settings.
 ## Designed to be called internally. You should consider using [method info], [method error], [method warn], [method notice], [method debug] instead.
-func output(level : LoggieEnums.LogLevel, msg : String, domain : String = "") -> void:
+func output(level : LoggieEnums.LogLevel, msg : String, target_domain : String = "") -> void:
 	var loggie = get_logger()
 	
 	if loggie == null:
@@ -65,14 +65,14 @@ func output(level : LoggieEnums.LogLevel, msg : String, domain : String = "") ->
 		return
 
 	# We don't output the message if the domain from which it comes is not enabled.
-	if not loggie.is_domain_enabled(domain):
+	if not loggie.is_domain_enabled(target_domain):
 		loggie.log_attempted.emit(self, msg, LoggieEnums.LogAttemptResult.DOMAIN_DISABLED)
 		return
 
 	if self.preprocess:
 		# We append the name of the domain if that setting is enabled.
-		if !domain.is_empty() and loggie.settings.output_message_domain == true:
-			msg = loggie.settings.format_domain_prefix.format({"domain" : domain, "msg" : msg})
+		if !target_domain.is_empty() and loggie.settings.output_message_domain == true:
+			msg = loggie.settings.format_domain_prefix.format({"domain" : target_domain, "msg" : msg})
 
 		# We prepend the name of the class that called the function which resulted in this output being generated
 		# (if Loggie settings are configured to do so).
@@ -281,18 +281,18 @@ func domain(_domain_name : String) -> LoggieMsg:
 	return self
 
 ## Prepends the given prefix string to the start of the message with the provided separator.
-func prefix(prefix : String, separator : String = "") -> LoggieMsg:
+func prefix(str_prefix : String, separator : String = "") -> LoggieMsg:
 	self.content = "{prefix}{separator}{content}".format({
-		"prefix" : prefix,
+		"prefix" : str_prefix,
 		"separator" : separator,
 		"content" : self.content
 	})
 	return self
 
 ## Appends the given suffix string to the end of the message with the provided separator.
-func suffix(suffix : String, separator : String = "") -> LoggieMsg:
+func suffix(str_suffix : String, separator : String = "") -> LoggieMsg:
 	self.content = "{content}{separator}{suffix}".format({
-		"suffix" : suffix,
+		"suffix" : str_suffix,
 		"separator" : separator,
 		"content" : self.content
 	})

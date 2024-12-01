@@ -131,37 +131,37 @@ func is_domain_enabled(domain_name : String) -> bool:
 ## Creates a new [LoggieMsg] out of the given [param msg] and extra arguments (by converting them to strings and concatenating them to the msg).
 ## You may continue to modify the [LoggieMsg] with additional functions from that class, then when you are ready to output it, use methods like:
 ## [method LoggieMsg.info], [method LoggieMsg.warn], etc.
-func msg(msg = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
-	var loggieMsg = LoggieMsg.new(msg, arg1, arg2, arg3, arg4, arg5)
+func msg(message = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
+	var loggieMsg = LoggieMsg.new(message, arg1, arg2, arg3, arg4, arg5)
 	loggieMsg.use_logger(self)
 	return loggieMsg
 
 ## A shortcut method that instantly creates a [LoggieMsg] with the given arguments and outputs it at the info level.
 ## Can be used when you have no intention of customizing a LoggieMsg in any way using helper methods.
 ## For customization, use [method msg] instead.
-func info(msg = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
-	return msg(msg, arg1, arg2, arg3, arg4, arg5).info()
+func info(message = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
+	return msg(message, arg1, arg2, arg3, arg4, arg5).info()
 
 ## A shortcut method that instantly creates a [LoggieMsg] with the given arguments and outputs it at the warn level.
 ## Can be used when you have no intention of customizing a LoggieMsg in any way using helper methods.
 ## For customization, use [method msg] instead.
-func warn(msg = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
-	return msg(msg, arg1, arg2, arg3, arg4, arg5).warn()
+func warn(message = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
+	return msg(message, arg1, arg2, arg3, arg4, arg5).warn()
 
 ## A shortcut method that instantly creates a [LoggieMsg] with the given arguments and outputs it at the error level.
 ## Can be used when you have no intention of customizing a LoggieMsg in any way using helper methods.
 ## For customization, use [method msg] instead.
-func error(msg = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
-	return msg(msg, arg1, arg2, arg3, arg4, arg5).error()
+func error(message = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
+	return msg(message, arg1, arg2, arg3, arg4, arg5).error()
 
 ## A shortcut method that instantly creates a [LoggieMsg] with the given arguments and outputs it at the debug level.
 ## Can be used when you have no intention of customizing a LoggieMsg in any way using helper methods.
 ## For customization, use [method msg] instead.
-func debug(msg = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
-	return msg(msg, arg1, arg2, arg3, arg4, arg5).debug()
+func debug(message = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
+	return msg(message, arg1, arg2, arg3, arg4, arg5).debug()
 
 ## A shortcut method that instantly creates a [LoggieMsg] with the given arguments and outputs it at the notice level.
 ## Can be used when you have no intention of customizing a LoggieMsg in any way using helper methods.
 ## For customization, use [method msg] instead.
-func notice(msg = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
-	return msg(msg, arg1, arg2, arg3, arg4, arg5).notice()
+func notice(message = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
+	return msg(message, arg1, arg2, arg3, arg4, arg5).notice()
