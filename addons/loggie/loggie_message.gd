@@ -40,8 +40,8 @@ var preprocess : bool = true
 ## This variable should be set with [method use_logger] before an attempt is made to log this message out.
 var _logger : Variant
 
-func _init(msg = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> void:
-	self.content[current_segment_index] = LoggieTools.concatenate_msg_and_args(msg, arg1, arg2, arg3, arg4, arg5)
+func _init(message = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> void:
+	self.content[current_segment_index] = LoggieTools.concatenate_msg_and_args(message, arg1, arg2, arg3, arg4, arg5)
 	self.original_content = self.content[current_segment_index]
 
 ## Returns a reference to the logger object that created this message.
@@ -57,7 +57,7 @@ func use_logger(logger_to_use : Variant) -> LoggieMsg:
 ## Outputs the given string [param msg] at the given output level to the standard output using either [method print_rich] or [method print].
 ## It also does a number of changes to the given [param msg] based on various Loggie settings.
 ## Designed to be called internally. You should consider using [method info], [method error], [method warn], [method notice], [method debug] instead.
-func output(level : LoggieEnums.LogLevel, msg : String, target_domain : String = "") -> void:
+func output(level : LoggieEnums.LogLevel, message : String, target_domain : String = "") -> void:
 	var loggie = get_logger()
 	
 	if loggie == null:
@@ -77,7 +77,7 @@ func output(level : LoggieEnums.LogLevel, msg : String, target_domain : String =
 	if self.preprocess:
 		# We append the name of the domain if that setting is enabled.
 		if !target_domain.is_empty() and loggie.settings.output_message_domain == true:
-			msg = loggie.settings.format_domain_prefix.format({"domain" : target_domain, "msg" : msg})
+			message = loggie.settings.format_domain_prefix.format({"domain" : target_domain, "msg" : message})
 
 		# We prepend the name of the class that called the function which resulted in this output being generated
 		# (if Loggie settings are configured to do so).
@@ -93,9 +93,9 @@ func output(level : LoggieEnums.LogLevel, msg : String, target_domain : String =
 				loggie.class_names[scriptPath] = _class_name
 			
 			if _class_name != "":
-				msg = "[b]({class_name})[/b] {msg}".format({
+				message = "[b]({class_name})[/b] {msg}".format({
 					"class_name" : _class_name,
-					"msg" : msg
+					"msg" : message
 				})
 
 		# We prepend a timestamp to the message (if Loggie settings are configured to do so).
@@ -103,9 +103,9 @@ func output(level : LoggieEnums.LogLevel, msg : String, target_domain : String =
 			var format_dict : Dictionary = Time.get_datetime_dict_from_system(loggie.settings.timestamps_use_utc)
 			for field in ["month", "day", "hour", "minute", "second"]:
 				format_dict[field] = "%02d" % format_dict[field]
-			msg = "{formatted_time} {msg}".format({
+			message = "{formatted_time} {msg}".format({
 				"formatted_time" : loggie.settings.format_timestamp.format(format_dict),
-				"msg" : msg
+				"msg" : message
 			})
 
 	match loggie.settings.terminal_mode:
@@ -116,13 +116,13 @@ func output(level : LoggieEnums.LogLevel, msg : String, target_domain : String =
 			# predefined set of colors, and I think it totally strips stuff like [b], [i], etc.
 			# It is possible to display those stylings in ANSI, but we have to do our own conversion here
 			# to support these features instead of having them stripped.
-			msg = LoggieTools.rich_to_ANSI(msg)
-			print_rich(msg)
+			message = LoggieTools.rich_to_ANSI(message)
+			print_rich(message)
 		LoggieEnums.TerminalMode.BBCODE:
-			print_rich(msg)
+			print_rich(message)
 		LoggieEnums.TerminalMode.PLAIN, _:
-			msg = LoggieTools.remove_BBCode(msg)
-			print(msg)
+			message = LoggieTools.remove_BBCode(message)
+			print(message)
 			
 	loggie.log_attempted.emit(self, msg, LoggieEnums.LogAttemptResult.SUCCESS)
 
@@ -131,8 +131,8 @@ func output(level : LoggieEnums.LogLevel, msg : String, target_domain : String =
 func error() -> LoggieMsg:
 	var loggie = get_logger()
 	if loggie != null and loggie.settings != null:
-		var msg = loggie.settings.format_error_msg.format({"msg": self.string()})
-		output(LoggieEnums.LogLevel.ERROR, msg, self.domain_name)
+		var message = loggie.settings.format_error_msg.format({"msg": self.string()})
+		output(LoggieEnums.LogLevel.ERROR, message, self.domain_name)
 		if loggie.settings.print_errors_to_console and loggie.settings.log_level >= LoggieEnums.LogLevel.ERROR:
 			push_error(self.string())
 	return self
@@ -142,8 +142,8 @@ func error() -> LoggieMsg:
 func warn() -> LoggieMsg:
 	var loggie = get_logger()
 	if loggie != null and loggie.settings != null:
-		var msg = loggie.settings.format_warning_msg.format({"msg": self.string()})
-		output(LoggieEnums.LogLevel.WARN, msg, self.domain_name)
+		var message = loggie.settings.format_warning_msg.format({"msg": self.string()})
+		output(LoggieEnums.LogLevel.WARN, message, self.domain_name)
 		if loggie.settings.print_warnings_to_console and loggie.settings.log_level >= LoggieEnums.LogLevel.WARN:
 			push_warning(self.string())
 	return self
@@ -153,8 +153,8 @@ func warn() -> LoggieMsg:
 func notice() -> LoggieMsg:
 	var loggie = get_logger()
 	if loggie != null and loggie.settings != null:
-		var msg = loggie.settings.format_notice_msg.format({"msg": self.string()})
-		output(LoggieEnums.LogLevel.NOTICE, msg, self.domain_name)
+		var message = loggie.settings.format_notice_msg.format({"msg": self.string()})
+		output(LoggieEnums.LogLevel.NOTICE, message, self.domain_name)
 	return self
 
 ## Outputs this message from Loggie as an Info type message.
@@ -162,8 +162,8 @@ func notice() -> LoggieMsg:
 func info() -> LoggieMsg:
 	var loggie = get_logger()
 	if loggie != null and loggie.settings != null:
-		var msg = loggie.settings.format_info_msg.format({"msg": self.string()})
-		output(LoggieEnums.LogLevel.INFO, msg, self.domain_name)
+		var message = loggie.settings.format_info_msg.format({"msg": self.string()})
+		output(LoggieEnums.LogLevel.INFO, message, self.domain_name)
 	return self
 
 ## Outputs this message from Loggie as a Debug type message.
@@ -171,8 +171,8 @@ func info() -> LoggieMsg:
 func debug() -> LoggieMsg:
 	var loggie = get_logger()
 	if loggie != null and loggie.settings != null:
-		var msg = loggie.settings.format_debug_msg.format({"msg": self.string()})
-		output(LoggieEnums.LogLevel.DEBUG, msg, self.domain_name)
+		var message = loggie.settings.format_debug_msg.format({"msg": self.string()})
+		output(LoggieEnums.LogLevel.DEBUG, message, self.domain_name)
 		if loggie.settings.use_print_debug_for_debug_msg and loggie.settings.log_level >= LoggieEnums.LogLevel.DEBUG:
 			print_debug(self.string())
 	return self
@@ -287,8 +287,8 @@ func box(h_padding : int = 4):
 	
 ## Appends additional content to this message at the end of the current content and its stylings.
 ## This does not create a new message segment, just appends to the current one.
-func add(msg : Variant = null, arg1 : Variant = null, arg2 : Variant = null, arg3 : Variant = null, arg4 : Variant = null, arg5 : Variant = null) -> LoggieMsg:
-	self.content[current_segment_index] = self.content[current_segment_index] + LoggieTools.concatenate_msg_and_args(msg, arg1, arg2, arg3, arg4, arg5)
+func add(message : Variant = null, arg1 : Variant = null, arg2 : Variant = null, arg3 : Variant = null, arg4 : Variant = null, arg5 : Variant = null) -> LoggieMsg:
+	self.content[current_segment_index] = self.content[current_segment_index] + LoggieTools.concatenate_msg_and_args(message, arg1, arg2, arg3, arg4, arg5)
 	return self
 
 ## Adds a specified amount of newlines to the end of the current segment of this message.
