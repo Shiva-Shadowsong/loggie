@@ -1,7 +1,7 @@
 @tool
 
-## LoggieMsg represents a mutable object that holds a string message ([member content]), its original unmutated form ([member original_content]), and
-## a bunch of helper methods that make it easy to manipulate the content and chain together additions and changes to it.
+## LoggieMsg represents a mutable object that holds an array of strings ([member content]) [i](referred to as 'content segments')[/i], and
+## a bunch of helper methods that make it easy to manipulate these segments and chain together additions and changes to them.
 ## [br][br]For example:
 ## [codeblock]
 ### Prints: "Hello world!" at the INFO debug level.
@@ -11,11 +11,6 @@
 ## [br] Example of usage:
 ## [codeblock]Loggie.msg("Hello world").color(Color("#ffffff")).suffix("!").info()[/codeblock]
 class_name LoggieMsg extends RefCounted
-
-## The original string content of this message, as it existed at the moment this message was instantiated.
-## This content can be accessed with [method get_original], or you can convert the current [member content] to its original form
-## by calling [method to_original].
-var original_content : String = ""
 
 ## The full content of this message. By calling various helper methods in this class, this content is further altered.
 ## The content is an array of strings which represents segments of the message which are ultimately appended together 
@@ -42,7 +37,6 @@ var _logger : Variant
 
 func _init(message = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> void:
 	self.content[current_segment_index] = LoggieTools.concatenate_msg_and_args(message, arg1, arg2, arg3, arg4, arg5)
-	self.original_content = self.content[current_segment_index]
 
 ## Returns a reference to the logger object that created this message.
 func get_logger() -> Variant:
@@ -204,17 +198,6 @@ func strip_BBCode() -> LoggieMsg:
 	for segment in self.content:
 		new_content.append(LoggieTools.remove_BBCode(segment))
 	self.content = new_content
-	return self
-
-## Returns the original version of this message (as it was in the moment when it was constructed).
-## (Only counts the part of the message provided to the constructor, not any subsequent segments added with apppended [method msg] calls.)
-func get_original() -> String:
-	return self.original_content
-
-## Changes the content of this message to be equal to the original version of this message (as it was in the moment when it was constructed).
-## (Only counts the part of the message provided to the constructor, not any subsequent segments added with apppended [method msg] calls.)
-func to_original() -> LoggieMsg:
-	self.content = [self.original_content]
 	return self
 
 ## Wraps the content of the current segment of this message in the given color.
