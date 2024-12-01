@@ -31,7 +31,7 @@ func _ready() -> void:
 
 func setup_gui():
 	$Label.text = "Loggie {version}".format({"version": Loggie.VERSION})
-	print_rich("[i]Edit the test.tscn _ready function and uncomment the calls to features you want to test out.[/i]")
+	Loggie.msg("Edit the test.tscn _ready function and uncomment the calls to features you want to test out.").italic().color(Color.GRAY).preprocessed(false).info()
 
 # -----------------------------------------
 #region Tests
