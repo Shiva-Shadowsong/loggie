@@ -17,9 +17,14 @@ class_name LoggieMsg extends RefCounted
 ## by calling [method to_original].
 var original_content : String = ""
 
-## The string content of this message. By calling various helper methods in this class, this content is further altered.
-## You can then output it with methods like [method info], [method debug], etc.
-var content : String = ""
+## The full content of this message. By calling various helper methods in this class, this content is further altered.
+## The content is an array of strings which represents segments of the message which are ultimately appended together 
+## to form the final message. You can start a new segment by calling [method msg] on this class.
+## You can then output the whole message with methods like [method info], [method debug], etc.
+var content : Array = [""]
+
+## The segment of [member content] that is currently being edited.
+var current_segment_index : int = 0
 
 ## The (key string) domain this message belongs to.
 ## "" is the default domain which is always enabled.
@@ -36,8 +41,8 @@ var preprocess : bool = true
 var _logger : Variant
 
 func _init(msg = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> void:
-	self.content = LoggieTools.concatenate_msg_and_args(msg, arg1, arg2, arg3, arg4, arg5)
-	self.original_content = self.content
+	self.content[current_segment_index] = LoggieTools.concatenate_msg_and_args(msg, arg1, arg2, arg3, arg4, arg5)
+	self.original_content = self.content[current_segment_index]
 
 ## Returns a reference to the logger object that created this message.
 func get_logger() -> Variant:
@@ -126,7 +131,7 @@ func output(level : LoggieEnums.LogLevel, msg : String, target_domain : String =
 func error() -> LoggieMsg:
 	var loggie = get_logger()
 	if loggie != null and loggie.settings != null:
-		var msg = loggie.settings.format_error_msg.format({"msg": self.content})
+		var msg = loggie.settings.format_error_msg.format({"msg": self.string()})
 		output(LoggieEnums.LogLevel.ERROR, msg, self.domain_name)
 		if loggie.settings.print_errors_to_console and loggie.settings.log_level >= LoggieEnums.LogLevel.ERROR:
 			push_error(self.string())
@@ -137,7 +142,7 @@ func error() -> LoggieMsg:
 func warn() -> LoggieMsg:
 	var loggie = get_logger()
 	if loggie != null and loggie.settings != null:
-		var msg = loggie.settings.format_warning_msg.format({"msg": self.content})
+		var msg = loggie.settings.format_warning_msg.format({"msg": self.string()})
 		output(LoggieEnums.LogLevel.WARN, msg, self.domain_name)
 		if loggie.settings.print_warnings_to_console and loggie.settings.log_level >= LoggieEnums.LogLevel.WARN:
 			push_warning(self.string())
@@ -148,7 +153,7 @@ func warn() -> LoggieMsg:
 func notice() -> LoggieMsg:
 	var loggie = get_logger()
 	if loggie != null and loggie.settings != null:
-		var msg = loggie.settings.format_notice_msg.format({"msg": self.content})
+		var msg = loggie.settings.format_notice_msg.format({"msg": self.string()})
 		output(LoggieEnums.LogLevel.NOTICE, msg, self.domain_name)
 	return self
 
@@ -157,7 +162,7 @@ func notice() -> LoggieMsg:
 func info() -> LoggieMsg:
 	var loggie = get_logger()
 	if loggie != null and loggie.settings != null:
-		var msg = loggie.settings.format_info_msg.format({"msg": self.content})
+		var msg = loggie.settings.format_info_msg.format({"msg": self.string()})
 		output(LoggieEnums.LogLevel.INFO, msg, self.domain_name)
 	return self
 
@@ -166,66 +171,87 @@ func info() -> LoggieMsg:
 func debug() -> LoggieMsg:
 	var loggie = get_logger()
 	if loggie != null and loggie.settings != null:
-		var msg = loggie.settings.format_debug_msg.format({"msg": self.content})
+		var msg = loggie.settings.format_debug_msg.format({"msg": self.string()})
 		output(LoggieEnums.LogLevel.DEBUG, msg, self.domain_name)
 		if loggie.settings.use_print_debug_for_debug_msg and loggie.settings.log_level >= LoggieEnums.LogLevel.DEBUG:
 			print_debug(self.string())
 	return self
 
 ## Returns the string content of this message.
-func string() -> String:
-	return self.content
+## If [param segment] is provided, it should be an integer indicating which segment of the message to return.
+## If its value is -1, all segments are concatenated together and returned.
+func string(segment : int = -1) -> String:
+	if segment == -1:
+		return "".join(self.content)
+	else:
+		if segment < self.content.size():
+			return self.content[segment]
+		else:
+			push_error("Attempt to access a non-existent segment of a LoggieMsg. Make sure to use a valid segment index.")
+			return ""
 
 ## Converts the current content of this message to an ANSI compatible form.
 func to_ANSI() -> LoggieMsg:
-	self.content = LoggieTools.rich_to_ANSI(self.content)
+	var new_content : Array = []
+	for segment in self.content:
+		new_content.append(LoggieTools.rich_to_ANSI(segment))
+	self.content = new_content
 	return self
 
 ## Strips all the BBCode in the current content of this message.
 func strip_BBCode() -> LoggieMsg:
-	self.content = LoggieTools.remove_BBCode(self.content)
+	var new_content : Array = []
+	for segment in self.content:
+		new_content.append(LoggieTools.remove_BBCode(segment))
+	self.content = new_content
 	return self
 
 ## Returns the original version of this message (as it was in the moment when it was constructed).
+## (Only counts the part of the message provided to the constructor, not any subsequent segments added with apppended [method msg] calls.)
 func get_original() -> String:
 	return self.original_content
 
 ## Changes the content of this message to be equal to the original version of this message (as it was in the moment when it was constructed).
+## (Only counts the part of the message provided to the constructor, not any subsequent segments added with apppended [method msg] calls.)
 func to_original() -> LoggieMsg:
-	self.content = self.original_content
+	self.content = [self.original_content]
 	return self
 
-## Wraps the current content of this message in the given color.
+## Wraps the content of the current segment of this message in the given color.
 ## The [param color] can be provided as a [Color], a recognized Godot color name (String, e.g. "red"), or a color hex code (String, e.g. "#ff0000").
 func color(_color : Variant) -> LoggieMsg:
 	if _color is Color:
 		_color = _color.to_html()
 	
-	self.content = "[color={colorstr}]{msg}[/color]".format({"colorstr": _color, "msg": self.content})
+	self.content[current_segment_index] = "[color={colorstr}]{msg}[/color]".format({
+		"colorstr": _color, 
+		"msg": self.content[current_segment_index]
+	})
+
 	return self
 
-## Stylizes the current content of this message to be bold.
+## Stylizes the current segment of this message to be bold.
 func bold() -> LoggieMsg:
-	self.content = "[b]{msg}[/b]".format({"msg": self.content})
+	self.content[current_segment_index] = "[b]{msg}[/b]".format({"msg": self.content[current_segment_index]})
 	return self
 
-## Stylizes the current content of this message to be italic.
+## Stylizes the current segment of this message to be italic.
 func italic() -> LoggieMsg:
-	self.content = "[i]{msg}[/i]".format({"msg": self.content})
+	self.content[current_segment_index] = "[i]{msg}[/i]".format({"msg": self.content[current_segment_index]})
 	return self
 
-## Stylizes the current content of this message as a header.
+## Stylizes the current segment of this message as a header.
 func header() -> LoggieMsg:
 	var loggie = get_logger()
-	self.content = loggie.settings.format_header.format({"msg": self.content})
+	self.content[current_segment_index] = loggie.settings.format_header.format({"msg": self.content[current_segment_index]})
 	return self
 
-## Constructs a decorative box with the given horizontal padding around the current content
+## Constructs a decorative box with the given horizontal padding around the current segment
 ## of this message. Messages containing a box are not going to be preprocessed, so they are best
 ## used only as a special header or decoration.
 func box(h_padding : int = 4):
 	var loggie = get_logger()
-	var stripped_content = LoggieTools.remove_BBCode(self.content).strip_edges(true, true)
+	var stripped_content = LoggieTools.remove_BBCode(self.content[current_segment_index]).strip_edges(true, true)
 	var content_length = stripped_content.length()
 	var h_fill_length = content_length + (h_padding * 2)
 	var box_character_source = loggie.settings.box_symbols_compatible if loggie.settings.box_characters_mode == LoggieEnums.BoxCharactersMode.COMPATIBLE else loggie.settings.box_symbols_pretty
@@ -238,7 +264,7 @@ func box(h_padding : int = 4):
 
 	var middle_row_design = "{vert_line}{padding}{content}{space_fill}{padding}{vert_line}".format({
 		"vert_line" : box_character_source.v_line,
-		"content" : self.content,
+		"content" : self.content[current_segment_index],
 		"padding" : " ".repeat(h_padding),
 		"space_fill" : " ".repeat(h_fill_length - stripped_content.length() - h_padding*2)
 	})
@@ -249,7 +275,7 @@ func box(h_padding : int = 4):
 		"bottom_right_corner" : box_character_source.bottom_right
 	})
 	
-	self.content = "{top_row}\n{middle_row}\n{bottom_row}\n".format({
+	self.content[current_segment_index] = "{top_row}\n{middle_row}\n{bottom_row}\n".format({
 		"top_row" : top_row_design,
 		"middle_row" : middle_row_design,
 		"bottom_row" : bottom_row_design
@@ -260,18 +286,19 @@ func box(h_padding : int = 4):
 	return self
 	
 ## Appends additional content to this message at the end of the current content and its stylings.
+## This does not create a new message segment, just appends to the current one.
 func add(msg : Variant = null, arg1 : Variant = null, arg2 : Variant = null, arg3 : Variant = null, arg4 : Variant = null, arg5 : Variant = null) -> LoggieMsg:
-	self.content = self.content + LoggieTools.concatenate_msg_and_args(msg, arg1, arg2, arg3, arg4, arg5)
+	self.content[current_segment_index] = self.content[current_segment_index] + LoggieTools.concatenate_msg_and_args(msg, arg1, arg2, arg3, arg4, arg5)
 	return self
 
-## Adds a specified amount of newlines to the end of this message.
+## Adds a specified amount of newlines to the end of the current segment of this message.
 func nl(amount : int = 1) -> LoggieMsg:
-	self.content += "\n".repeat(amount)
+	self.content[current_segment_index] += "\n".repeat(amount)
 	return self
 
-## Adds a specified amount of spaces to the end of this message.
+## Adds a specified amount of spaces to the end of the current segment of this message.
 func space(amount : int = 1) -> LoggieMsg:
-	self.content += " ".repeat(amount)
+	self.content[current_segment_index] += " ".repeat(amount)
 	return self
 
 ## Sets this message to belong to the domain with the given name.
@@ -280,30 +307,43 @@ func domain(_domain_name : String) -> LoggieMsg:
 	self.domain_name = _domain_name
 	return self
 
-## Prepends the given prefix string to the start of the message with the provided separator.
+## Prepends the given prefix string to the start of the message (first segment) with the provided separator.
 func prefix(str_prefix : String, separator : String = "") -> LoggieMsg:
-	self.content = "{prefix}{separator}{content}".format({
+	self.content[0] = "{prefix}{separator}{content}".format({
 		"prefix" : str_prefix,
 		"separator" : separator,
-		"content" : self.content
+		"content" : self.content[0]
 	})
 	return self
 
-## Appends the given suffix string to the end of the message with the provided separator.
+## Appends the given suffix string to the end of the message (last segment) with the provided separator.
 func suffix(str_suffix : String, separator : String = "") -> LoggieMsg:
-	self.content = "{content}{separator}{suffix}".format({
+	self.content[self.content.size() - 1] = "{content}{separator}{suffix}".format({
 		"suffix" : str_suffix,
 		"separator" : separator,
-		"content" : self.content
+		"content" : self.content[self.content.size() - 1]
 	})
 	return self
 
-## Appends a horizontal separator with the given length to the message.
+## Appends a horizontal separator with the given length to the current segment of this message.
 ## If [param alternative_symbol] is provided, it should be a String, and it will be used as the symbol for the separator instead of the default one.
 func hseparator(size : int = 16, alternative_symbol : Variant = null) -> LoggieMsg:
 	var loggie = get_logger()
 	var symbol = loggie.settings.h_separator_symbol if alternative_symbol == null else str(alternative_symbol)
-	self.content += (symbol.repeat(size))
+	self.content[current_segment_index] = self.content[current_segment_index] + (symbol.repeat(size))
+	return self
+
+## Ends the current segment of the message and starts a new one.
+func endseg() -> LoggieMsg:
+	self.content.push_back("")
+	self.current_segment_index = self.content.size() - 1
+	return self
+
+## Creates a new segment in this message and sets its content to the given message.
+## Acts as a shortcut for calling [method endseg] + [method add].
+func msg(message = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
+	self.endseg()
+	self.content[current_segment_index] = LoggieTools.concatenate_msg_and_args(message, arg1, arg2, arg3, arg4, arg5)
 	return self
 
 ## Sets whether this message should be preprocessed and potentially modified with prefixes and suffixes during [method output].

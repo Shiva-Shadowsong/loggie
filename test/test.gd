@@ -28,6 +28,7 @@ func _ready() -> void:
 	#test_decors()
 	#test_output_from_classes_of_various_inheritances_and_origins()
 	#test_domains()
+	#test_segments()
 
 func setup_gui():
 	$Label.text = "Loggie {version}".format({"version": Loggie.VERSION})
@@ -135,7 +136,21 @@ func test_decors():
 		"c" : ["A", {"B" : "2"}, 3]
 	}
 	Loggie.msg(testDict).info()
-	print()
+	
+
+func test_segments():
+	# Test basic segmenting.
+	var msg = Loggie.msg("Segment 1 *").endseg().add(" Segment 2 *").endseg().add(" Segment 3").info()
+
+	# Print the 2nd segment of that segmented message:
+	print(msg.string(1))
+
+	# Test messages where each segment has different styles.
+	Loggie.msg("SegmentKey:").bold().color(Color.ORANGE).msg("SegmentValue").color(Color.DIM_GRAY).info()
+	Loggie.msg("SegHeader").header().color(Color.ORANGE).space().msg("SegPlain ").msg("SegGrayItalic").italic().color(Color.DIM_GRAY).prefix("PREFIX: ").suffix(" - SUFFIX").debug()
+
+	print("\n\n")
+	Loggie.msg("Segment1: ").color("orange").msg("Segment2").info()
 	
 
 #endregion

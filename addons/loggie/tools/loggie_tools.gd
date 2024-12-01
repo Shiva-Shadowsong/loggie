@@ -30,7 +30,7 @@ static func convert_to_string(something : Variant) -> String:
 	if something is Dictionary:
 		result = JSON.new().stringify(something, "  ", false, true)
 	elif something is LoggieMsg:
-		result = str(something.content)
+		result = str(something.string())
 	else:
 		result = str(something)
 	return result
