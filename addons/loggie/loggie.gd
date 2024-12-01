@@ -44,18 +44,19 @@ func _init() -> void:
 		if _settings != null:
 			self.settings = _settings.new()
 			self.settings.load()
-			if is_in_production():
-				self.settings.terminal_mode = LoggieEnums.TerminalMode.PLAIN
-				self.settings.box_characters_mode = LoggieEnums.BoxCharactersMode.COMPATIBLE
 		else:
 			push_error("Loggie loaded neither a custom nor a default settings file. This will break the plugin. Make sure that a valid loggie_settings.gd is in the same directory where loggie.gd is.")
 			return
+
+	if is_in_production():
+		self.settings.terminal_mode = LoggieEnums.TerminalMode.PLAIN
+		self.settings.box_characters_mode = LoggieEnums.BoxCharactersMode.COMPATIBLE
 
 	# Already cache the name of the singleton found at loggie's script path.
 	class_names[self.get_script().resource_path] = LoggieSettings.loggie_singleton_name
 	
 	# Prepopulate class data from ProjectSettings to avoid needing to read files.
-	if settings.derive_and_show_class_names == true and OS.has_feature("debug"):
+	if self.settings.derive_and_show_class_names == true and OS.has_feature("debug"):
 		for class_data: Dictionary in ProjectSettings.get_global_class_list():
 			class_names[class_data.path] = class_data.class
 	  
@@ -70,12 +71,12 @@ func _init() -> void:
 	if Engine.is_editor_hint():
 		return
 	
-	if settings.show_loggie_specs != LoggieEnums.ShowLoggieSpecsMode.DISABLED:
+	if self.settings.show_loggie_specs != LoggieEnums.ShowLoggieSpecsMode.DISABLED:
 		msg("👀 Loggie {version} booted.".format({"version" : self.VERSION})).color(Color.ORANGE).header().nl().info()
 		var loggie_specs_msg = LoggieSystemSpecsMsg.new().use_logger(self)
 		loggie_specs_msg.add(msg("|\t Using Custom Settings File: ").bold(), !uses_original_settings_file).nl().add("|\t ").hseparator(35).nl()
 		
-		match settings.show_loggie_specs:
+		match self.settings.show_loggie_specs:
 			LoggieEnums.ShowLoggieSpecsMode.ESSENTIAL:
 				loggie_specs_msg.embed_essential_logger_specs()
 			LoggieEnums.ShowLoggieSpecsMode.ADVANCED:
@@ -83,7 +84,7 @@ func _init() -> void:
 
 		loggie_specs_msg.preprocessed(false).info()
 
-	if settings.show_system_specs:
+	if self.settings.show_system_specs:
 		var system_specs_msg = LoggieSystemSpecsMsg.new().use_logger(self)
 		system_specs_msg.embed_specs().preprocessed(false).info()
 
