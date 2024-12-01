@@ -28,10 +28,11 @@ func _ready() -> void:
 	#test_decors()
 	#test_output_from_classes_of_various_inheritances_and_origins()
 	#test_domains()
+	#test_segments()
 
 func setup_gui():
 	$Label.text = "Loggie {version}".format({"version": Loggie.VERSION})
-	print_rich("[i]Edit the test.tscn _ready function and uncomment the calls to features you want to test out.[/i]")
+	Loggie.msg("Edit the test.tscn _ready function and uncomment the calls to features you want to test out.").italic().color(Color.GRAY).preprocessed(false).info()
 
 # -----------------------------------------
 #region Tests
@@ -115,11 +116,29 @@ func test_decors():
 	# Test outputting a header, with a newline and a 30 character long horizontal separator.
 	Loggie.msg("Colored Header").header().color("yellow").nl().hseparator(30).info()
 
-	# Test a supported color message.
-	Loggie.msg("I'm cyan.").color("cyan").info()
+	# Test a supported color message of all types.
+	Loggie.msg("Supported color info.").color("cyan").info()
+	Loggie.msg("Supported color notice.").color("cyan").notice()
+	Loggie.msg("Supported color warning.").color("cyan").warn()
+	Loggie.msg("Supported color error.").color("cyan").error()
+	Loggie.msg("Supported color debug.").color("cyan").debug()
+	
+	# Test a godot colored message of all types.
+	# Godot-colors are colors defined as consts in the 'Color' class but not
+	# explicitly supported by 'print_rich'.
+	Loggie.msg("Custom colored info msg.").color(Color.SLATE_BLUE).info()
+	Loggie.msg("Custom colored notice.").color(Color.SLATE_BLUE).notice()
+	Loggie.msg("Custom colored warning.").color(Color.SLATE_BLUE).warn()
+	Loggie.msg("Custom colored error.").color(Color.SLATE_BLUE).error()
+	Loggie.msg("Custom colored debug.").color(Color.SLATE_BLUE).debug()
 	
 	# Test a custom colored message.
-	Loggie.msg("I'm slate blue.").color(Color.SLATE_BLUE).info()
+	# (Arbitrary hex codes).
+	Loggie.msg("Custom colored info msg.").color("#3afabc").info()
+	Loggie.msg("Custom colored notice.").color("#3afabc").notice()
+	Loggie.msg("Custom colored warning.").color("#3afabc").warn()
+	Loggie.msg("Custom colored error.").color("#3afabc").error()
+	Loggie.msg("Custom colored debug.").color("#3afabc").debug()
 	
 	# Test pretty printing a dictionary.
 	var testDict = {
@@ -131,7 +150,21 @@ func test_decors():
 		"c" : ["A", {"B" : "2"}, 3]
 	}
 	Loggie.msg(testDict).info()
-	print()
+	
+
+func test_segments():
+	# Test basic segmenting.
+	var msg = Loggie.msg("Segment 1 *").endseg().add(" Segment 2 *").endseg().add(" Segment 3").info()
+
+	# Print the 2nd segment of that segmented message:
+	Loggie.info("Segment 1 is:", msg.string(1))
+
+	# Test messages where each segment has different styles.
+	Loggie.msg("SegmentKey:").bold().color(Color.ORANGE).msg("SegmentValue").color(Color.DIM_GRAY).info()
+	Loggie.msg("SegHeader").header().color(Color.ORANGE).space().msg("SegPlain ").msg("SegGrayItalic").italic().color(Color.DIM_GRAY).prefix("PREFIX: ").suffix(" - SUFFIX").debug()
+
+	print("\n\n")
+	Loggie.msg("Segment1: ").color("orange").msg("Segment2").info()
 	
 
 #endregion

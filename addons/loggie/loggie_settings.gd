@@ -8,7 +8,7 @@
 ## [i](e.g. loading from a config.ini file, or a .json file, etc.)[/i].[br][br]
 ## 
 ## Loggie calls [method load] on this class during its [method _ready] function.
-class_name LoggieSettings extends Node
+class_name LoggieSettings extends Resource
 
 ## The name that will be used for the singleton referring to Loggie.
 ## [br][br][i][b]Note:[/b] You may change this to something you're more used to, such as "log" or "logger".[/i]
@@ -59,6 +59,14 @@ const project_settings = {
 		"hint" : PROPERTY_HINT_ENUM,
 		"hint_string" : "Disabled:0,Essential:1,Advanced:2",
 		"doc" : "Defines which way Loggie should print its own specs when it is booted.",
+	},
+	"enforce_optimal_settings_in_release_build" = {
+		"path": "loggie/general/enforce_optimal_settings_in_release_build",
+		"default_value" : true,
+		"type" : TYPE_BOOL,
+		"hint" : PROPERTY_HINT_NONE,
+		"hint_string" : "",
+		"doc" : "Should Loggie enforce certain settings to automatically change to optimal values in production/release builds?",
 	},
 	"output_timestamps" = {
 		"path": "loggie/timestamps/output_timestamps",
@@ -258,6 +266,12 @@ var output_timestamps : bool
 ## Whether the outputted timestamps (if [member output_timestamps] is enabled) use UTC or local machine time.
 var timestamps_use_utc : bool
 
+## Whether Loggie should enforce optimal values for certain settings when in a Release/Production build.
+## [br]If true, Loggie will enforce:
+## [br]  * [member terminal_mode] to [member LoggieEnums.TerminalMode.PLAIN]
+## [br]  * [member box_characters_mode] to [member LoggieEnums.BoxCharactersMode.COMPATIBLE]
+var enforce_optimal_settings_in_release_build : bool
+
 # ----------------------------------------------- #
 #region Formats for prints
 # ----------------------------------------------- #
@@ -352,6 +366,7 @@ func load():
 	show_system_specs = ProjectSettings.get_setting(project_settings.show_system_specs.path, project_settings.show_system_specs.default_value)
 	output_timestamps = ProjectSettings.get_setting(project_settings.output_timestamps.path, project_settings.output_timestamps.default_value)
 	timestamps_use_utc = ProjectSettings.get_setting(project_settings.timestamps_use_utc.path, project_settings.timestamps_use_utc.default_value)
+	enforce_optimal_settings_in_release_build = ProjectSettings.get_setting(project_settings.enforce_optimal_settings_in_release_build.path, project_settings.enforce_optimal_settings_in_release_build.default_value)
 
 	print_errors_to_console = ProjectSettings.get_setting(project_settings.output_errors_to_console.path, project_settings.output_errors_to_console.default_value)
 	print_warnings_to_console = ProjectSettings.get_setting(project_settings.output_warnings_to_console.path, project_settings.output_warnings_to_console.default_value)
@@ -359,6 +374,7 @@ func load():
 
 	output_message_domain = ProjectSettings.get_setting(project_settings.output_message_domain.path, project_settings.output_message_domain.default_value)
 	derive_and_show_class_names = ProjectSettings.get_setting(project_settings.derive_and_display_class_names_from_scripts.path, project_settings.derive_and_display_class_names_from_scripts.default_value)
+	
 	nameless_class_name_proxy = ProjectSettings.get_setting(project_settings.nameless_class_name_proxy.path, project_settings.nameless_class_name_proxy.default_value)
 	box_characters_mode = ProjectSettings.get_setting(project_settings.box_characters_mode.path, project_settings.box_characters_mode.default_value)
 
@@ -375,7 +391,7 @@ func load():
 func to_dict() -> Dictionary:
 	var dict = {}
 	var included = [
-		"terminal_mode", "log_level", "show_loggie_specs", "show_system_specs",
+		"terminal_mode", "log_level", "show_loggie_specs", "show_system_specs", "enforce_optimal_settings_in_release_build",
 		"output_message_domain", "print_errors_to_console", "print_warnings_to_console",
 		"use_print_debug_for_debug_msg", "derive_and_show_class_names", "nameless_class_name_proxy",
 		"output_timestamps", "timestamps_use_utc", "format_header", "format_domain_prefix", "format_error_msg",

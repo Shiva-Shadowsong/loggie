@@ -11,6 +11,15 @@ enum LogLevel {
 	DEBUG	## Log level which includes the logging of Error, Warning, Notice, Info and Debug type messages.
 }
 
+## The classification of message types that can be used to distinguish two identical strings in nature
+## of their origin. This is different from [enum LogLevel].
+enum MsgType {
+	STANDARD, ## A message that is considered a standard text that is not special in any way.
+	ERROR, ## A message that is considered to be an error message.
+	WARNING, ## A message that is considered to be a warning message.
+	DEBUG ## A message that is considered to be a message used for debugging.
+}
+
 enum TerminalMode {
 	PLAIN, ## Prints will be plain text.
 	ANSI,  ## Prints will be styled using the ANSI standard. Compatible with Powershell, Win CMD, etc.
