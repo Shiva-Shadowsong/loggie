@@ -48,7 +48,7 @@ func _init() -> void:
 			push_error("Loggie loaded neither a custom nor a default settings file. This will break the plugin. Make sure that a valid loggie_settings.gd is in the same directory where loggie.gd is.")
 			return
 
-	if is_in_production():
+	if self.settings.enforce_optimal_settings_in_release_build == true and is_in_production():
 		self.settings.terminal_mode = LoggieEnums.TerminalMode.PLAIN
 		self.settings.box_characters_mode = LoggieEnums.BoxCharactersMode.COMPATIBLE
 

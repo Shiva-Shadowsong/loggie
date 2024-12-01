@@ -11,6 +11,8 @@ func load():
 	self.log_level = LoggieEnums.LogLevel.INFO
 	self.show_loggie_specs = LoggieEnums.ShowLoggieSpecsMode.ESSENTIAL
 	self.show_system_specs = true
+	self.enforce_optimal_settings_in_release_build = true
+
 	self.output_message_domain = true
 	self.print_errors_to_console = true
 	self.print_warnings_to_console = true
