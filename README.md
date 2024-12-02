@@ -121,7 +121,7 @@ Loggie was made with different consoles in mind. As such, it can be configured s
 
 This is great for users who prefer to develop Godot projects with VSCode or some other external editor which displays logs in a non-godot console.
 
-![Compatibility](screenshots/screenshot_1.png)
+![Compatibility](assets/screenshots/screenshot_1.png)
 
 ## Automatically makes clean plaintext logs in Release builds
 
