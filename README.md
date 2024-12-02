@@ -195,7 +195,7 @@ Head to the 'Search Help' window in Godot and search for Loggie to check it out.
 
 If you need help with anything, feel free to reach out on the [Loggie discord server](https://discord.gg/XPdxpMqmcs).
 
-![assets/screenshots/screenshot4.gif](assets/screenshots/screenshot4.gif)
+![assets/screenshots/screenshot_4.gif](assets/screenshots/screenshot_4.gif)
 
 # Development and Contributions
 
