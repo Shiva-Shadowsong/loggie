@@ -50,18 +50,14 @@ This part of the guide has been moved to a different page - click here to visit:
  [<img src="https://i.imgur.com/wPuyQjT.png">](MESSAGE_CUSTOMIZATION.md)
 
 # Adjusting Message Formats
-Adjusting message formats is currently not supported through the Loggie Project Settings. 
-
-Instead, you have 2 options. 
+You have 2 options. 
 
 You can either:
 * Use a 'Custom Settings' file, which is covered [here](#custom-settings).
-* Modify `loggie_settings.gd` directly (not recommended).
+* Open Godot's Project Settings -> Loggie -> Formatting
 
-Once you're ready to modify the formats - have a look at `loggie_settings.gd` under the "`Formats for prints`" code region.
-There, you will find all the variables responsible for setting up the default format for the messages.
-
-You can set the values of these variables in your Custom Settings to your liking.
+If you decide to use Project Settings to store your loggie settings, be advised that this is then stored in your .project file therefore you will be enforced on all other team members who use the same .project file.
+If you are not working solo, it's better to use the 'Custom Settings' [file](#custom-settings).
 
 # Preprocessing
 All LoggieMsgs, before being output, are preprocessed, unless `preprocessed(false)` is called on them. During the preprocess step, the messages are inspected for eligibility to be logged, and then possibly further altered in various ways which can be finetuned through settings.
