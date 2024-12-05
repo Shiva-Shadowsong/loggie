@@ -58,7 +58,9 @@ func _init() -> void:
 		self.settings.box_characters_mode = LoggieEnums.BoxCharactersMode.COMPATIBLE
 
 	# Install all the built-in channels.
-	# TODO.
+	var terminal_channel : TerminalLoggieMsgChannel = load("res://addons/loggie/channels/terminal.gd").new()
+	terminal_channel.preprocess_flags = self.settings.preprocess_flags_terminal_channel
+	add_channel(terminal_channel)
 
 	# Already cache the name of the singleton found at loggie's script path.
 	class_names[self.get_script().resource_path] = LoggieSettings.loggie_singleton_name
