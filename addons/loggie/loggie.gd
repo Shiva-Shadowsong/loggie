@@ -28,6 +28,22 @@ var domains : Dictionary = {}
 ## Holds a mapping between script paths and the names of the classes defined in those scripts.
 var class_names : Dictionary = {}
 
+## Holds a mapping between channel types (String) and the
+## loaded LoggieMsgChannel with that type.
+var available_channels = {
+	"terminal" : load("res://addons/loggie/channels/terminal.gd").new(),
+	"discord" : load("res://addons/loggie/channels/discord.gd").new(),
+}
+
+## Adds a new channel for sending messages to.
+func add_channel(channel : LoggieMsgChannel):
+	if not available_channels.has(channel.type):
+		available_channels[channel.type] = channel
+	else:
+		push_error("Attempt to add a channel with type {type} failed, a channel with that type already exists in Loggie.".format({
+			"type": channel.type
+		}))
+
 func _init() -> void:
 	var uses_original_settings_file = true
 	var default_settings_path = get_script().get_path().get_base_dir().path_join("loggie_settings.gd")

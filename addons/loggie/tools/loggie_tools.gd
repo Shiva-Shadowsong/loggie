@@ -215,6 +215,8 @@ static func extract_class_name_from_gd_script(path_or_script : Variant, proxy : 
 
 	return _class_name
 
+
+
 ## A dictionary of named colors matching the constants from [Color] used to help with rich text coloring.
 ## There may be a way to obtain these Color values without this dictionary if one can somehow check for the 
 ## existence and value of a constant on the Color class (since they're already there),

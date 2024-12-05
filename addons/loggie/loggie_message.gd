@@ -35,6 +35,8 @@ var preprocess : bool = true
 ## This variable should be set with [method use_logger] before an attempt is made to log this message out.
 var _logger : Variant
 
+var used_channel : String = "terminal"
+
 func _init(message = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> void:
 	self.content[current_segment_index] = LoggieTools.concatenate_msg_and_args(message, arg1, arg2, arg3, arg4, arg5)
 
@@ -47,6 +49,10 @@ func get_logger() -> Variant:
 func use_logger(logger_to_use : Variant) -> LoggieMsg:
 	self._logger = logger_to_use
 	return self
+
+## Sets the channel that this message should use.
+func channel(ch : LoggieMsgChannel):
+	self.used_channel = ch.type
 
 ## Outputs the given string [param msg] at the given output [param level] to the standard output using either [method print_rich] or [method print].
 ## The domain from which the message is considered to be coming can be provided via [param target_domain].
@@ -122,24 +128,8 @@ func output(level : LoggieEnums.LogLevel, message : String, target_domain : Stri
 				"msg" : message
 			})
 
-	# Prepare the preprocessed message to be output in the terminal mode of choice.
-	message = LoggieTools.get_terminal_ready_string(message, loggie.settings.terminal_mode)
-	
-	# Output the preprocessed message.
-	match loggie.settings.terminal_mode:
-		LoggieEnums.TerminalMode.ANSI, LoggieEnums.TerminalMode.BBCODE:
-			print_rich(message)
-		LoggieEnums.TerminalMode.PLAIN, _:
-			print(message)
-
-	# Dump a non-preprocessed terminal-ready version of the message in additional ways if that has been configured.
-	if msg_type == LoggieEnums.MsgType.ERROR and loggie.settings.print_errors_to_console:
-		push_error(LoggieTools.get_terminal_ready_string(self.string(), LoggieEnums.TerminalMode.PLAIN))
-	if msg_type == LoggieEnums.MsgType.WARNING and loggie.settings.print_warnings_to_console:
-		push_warning(LoggieTools.get_terminal_ready_string(self.string(), LoggieEnums.TerminalMode.PLAIN))
-	if msg_type == LoggieEnums.MsgType.DEBUG and loggie.settings.use_print_debug_for_debug_msg:
-		print_debug(LoggieTools.get_terminal_ready_string(self.string(), loggie.settings.terminal_mode))
-
+	self.set_meta("content", message)
+	loggie.available_channels[used_channel].dispatch(self)
 	loggie.log_attempted.emit(self, message, LoggieEnums.LogAttemptResult.SUCCESS)
 
 ## Outputs this message from Loggie as an Error type message.

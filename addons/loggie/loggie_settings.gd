@@ -212,6 +212,14 @@ const project_settings = {
 		"hint_string" : "Compatible:0,Pretty:1",
 		"doc" : "There are two sets of box characters defined in LoggieSettings - one set contains prettier characters that produce a nicer looking box, but may not render correctly in the context of various terminals. The other set contains characters that produce a less pretty box, but are compatible with being shown in most terminals.",
 	},
+	"discord_webhook_url" = {
+		"path": "loggie/formats/channels/discord_webhook",
+		"default_value" : "-",
+		"type" : TYPE_STRING,
+		"hint" : PROPERTY_HINT_MULTILINE_TEXT,
+		"hint_string" : "",
+		"doc" : "The endpoint URL for the Discord webhook.",
+	},
 }
 
 ## The current terminal mode of Loggie.
@@ -271,6 +279,9 @@ var timestamps_use_utc : bool
 ## [br]  * [member terminal_mode] to [member LoggieEnums.TerminalMode.PLAIN]
 ## [br]  * [member box_characters_mode] to [member LoggieEnums.BoxCharactersMode.COMPATIBLE]
 var enforce_optimal_settings_in_release_build : bool
+
+## Endpoint URL for the Discord webhook
+var discord_webhook_url : String = ""
 
 # ----------------------------------------------- #
 #region Formats for prints
@@ -385,6 +396,10 @@ func load():
 	format_error_msg = ProjectSettings.get_setting(project_settings.format_error_msg.path, project_settings.format_error_msg.default_value)
 	format_debug_msg = ProjectSettings.get_setting(project_settings.format_debug_msg.path, project_settings.format_debug_msg.default_value)
 	h_separator_symbol = ProjectSettings.get_setting(project_settings.h_separator_symbol.path, project_settings.h_separator_symbol.default_value)
+	
+	discord_webhook_url = ProjectSettings.get_setting(project_settings.discord_webhook_url.path, project_settings.discord_webhook_url.default_value)
+
+	
 
 ## Returns a dictionary where the indices are names of relevant variables in the LoggieSettings class,
 ## and the values are their current values.

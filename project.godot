@@ -26,8 +26,8 @@ config/icon="res://addons/loggie/assets/icon.png"
 
 [autoload]
 
-Loggie="*res://addons/loggie/loggie.gd"
 LoggieAutoloadedTalker="*res://test/testing_props/autoloads/LoggieAutoloadedTalker.gd"
+Loggie="*res://addons/loggie/loggie.gd"
 
 [editor_plugins]
 
@@ -42,3 +42,4 @@ timestamps/output_timestamps=true
 preprocessing/output_message_domain=true
 preprocessing/derive_and_display_class_names_from_scripts=true
 formats/box_characters_mode=1
+formats/channels/discord_webhook="https://discord.com/api/webhooks/1314107336813449237/t8ZYaebJEC4y1B88MpyokHFzPqKtOsb7k0MNg-NrqCB8zMiP5cdUPyl_dKuKIY9lhGEW"
