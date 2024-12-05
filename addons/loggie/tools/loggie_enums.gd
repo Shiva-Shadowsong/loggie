@@ -26,6 +26,23 @@ enum TerminalMode {
 	BBCODE ## Prints will be styled using the Godot BBCode rules. Compatible with the Godot console.
 }
 
+## Classifies various steps that can happen during preprocessing.
+enum PreprocessStep {
+	## A timestamp will be added to the message.
+	APPEND_TIMESTAMPS = 1 << 0, 
+	
+	## The name of the domain from which the message is coming will be added to the message.
+	APPEND_DOMAIN_NAME = 1 << 1, 
+
+	## Whether Loggie should use the scripts from which it is being called to 
+	## figure out a class name for the class that called a loggie function,
+	## and append it to the outputted message.
+	## This only works in debug builds because it uses [method @GDScript.get_stack]. 
+	## See that method's documentation to see why that can't be used in release builds.
+	APPEND_CLASS_NAME = 1 << 2,
+}
+
+
 enum BoxCharactersMode {
 	COMPATIBLE, ## Boxes are drawn using characters that compatible with any kind of terminal or text reader.
 	PRETTY ## Boxes are drawn using special unicode characters that create a prettier looking box which may not display properly in some terminals or text readers.
@@ -50,4 +67,5 @@ enum LogAttemptResult {
 	SUCCESS, ## Message will be logged successfully.
 	LOG_LEVEL_INSUFFICIENT, ## Message won't be logged because it was output at a log level higher than what Loggie is currently set to.
 	DOMAIN_DISABLED, ## Message won't be logged because it was outputted from a disabled domain.
+	INVALID_CHANNEL, ## Message won't be logged because the channel which was supposed to send it doesn't exist.
 }
