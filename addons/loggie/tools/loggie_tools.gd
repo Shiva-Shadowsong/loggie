@@ -1,6 +1,29 @@
 @tool
 class_name LoggieTools extends Node
 
+## Converts a text with BBCode in it to markdown.
+## A limited set of BBCode tags are supported for this conversion, because standard Markdown can't handle everything
+## that BBCode can. For example, colors will be entirely stripped.
+static func convert_BBCode_to_markdown(text: String) -> String:
+	var supported_conversions = {
+		"[b]" : "**",
+		"[/b]" : "**",
+		"[i]" : "*",
+		"[/i]" : "*",
+		"[u]" : "__",
+		"[/u]" : "__",
+		"[s]" : "~~",
+		"[/s]" : "~~",
+	}
+
+	for bbcodetag in supported_conversions.keys():
+		text = text.replace(bbcodetag, supported_conversions[bbcodetag])
+
+	## Strip all other BBcode that remains:
+	text = LoggieTools.remove_BBCode(text)
+
+	return text
+
 ## Removes BBCode from the given text.
 static func remove_BBCode(text: String) -> String:
 	# The bbcode tags to remove.
