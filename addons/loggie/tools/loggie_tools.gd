@@ -38,7 +38,7 @@ static func convert_to_string(something : Variant) -> String:
 ## Takes the given [param str] and returns a terminal-ready version of it by converting its content
 ## to the appropriate format required to display the string correctly in the provided [param mode]
 ## msg format mode.
-static func get_terminal_ready_string(str : String, mode : LoggieEnums.MsgFormatMode) -> String:
+static func convert_string_to_format_mode(str : String, mode : LoggieEnums.MsgFormatMode) -> String:
 	match mode:
 		LoggieEnums.MsgFormatMode.ANSI:
 			# We put the message through the rich_to_ANSI converter which takes care of converting BBCode

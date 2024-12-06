@@ -6,7 +6,7 @@ func _init() -> void:
 
 func send(msg : LoggieMsg, msg_type : LoggieEnums.MsgType):
 	var loggie = msg.get_logger()
-	var text = LoggieTools.get_terminal_ready_string(msg.last_preprocess_result, loggie.settings.msg_format_mode)
+	var text = LoggieTools.convert_string_to_format_mode(msg.last_preprocess_result, loggie.settings.msg_format_mode)
 
 	match loggie.settings.msg_format_mode:
 		LoggieEnums.MsgFormatMode.ANSI, LoggieEnums.MsgFormatMode.BBCODE:
@@ -16,8 +16,8 @@ func send(msg : LoggieMsg, msg_type : LoggieEnums.MsgType):
 
 	# Dump a non-preprocessed terminal-ready version of the message in additional ways if that has been configured.
 	if msg_type == LoggieEnums.MsgType.ERROR and loggie.settings.print_errors_to_console:
-		push_error(LoggieTools.get_terminal_ready_string(msg.string(), LoggieEnums.MsgFormatMode.PLAIN))
+		push_error(LoggieTools.convert_string_to_format_mode(msg.string(), LoggieEnums.MsgFormatMode.PLAIN))
 	if msg_type == LoggieEnums.MsgType.WARNING and loggie.settings.print_warnings_to_console:
-		push_warning(LoggieTools.get_terminal_ready_string(msg.string(), LoggieEnums.MsgFormatMode.PLAIN))
+		push_warning(LoggieTools.convert_string_to_format_mode(msg.string(), LoggieEnums.MsgFormatMode.PLAIN))
 	if msg_type == LoggieEnums.MsgType.DEBUG and loggie.settings.use_print_debug_for_debug_msg:
-		print_debug(LoggieTools.get_terminal_ready_string(msg.string(), loggie.settings.msg_format_mode))
+		print_debug(LoggieTools.convert_string_to_format_mode(msg.string(), loggie.settings.msg_format_mode))
