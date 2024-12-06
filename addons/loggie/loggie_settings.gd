@@ -31,13 +31,13 @@ const project_settings = {
 		"hint_string" : "",
 		"doc" : "Choose whether you want Loggie project settings to be wiped from ProjectSettings if the Loggie plugin is disabled.",
 	},
-	"terminal_mode" = {
-		"path": "loggie/general/terminal_mode",
-		"default_value" : LoggieEnums.TerminalMode.BBCODE,
+	"msg_format_mode" = {
+		"path": "loggie/general/msg_format_mode",
+		"default_value" : LoggieEnums.MsgFormatMode.BBCODE,
 		"type" : TYPE_INT,
 		"hint" : PROPERTY_HINT_ENUM,
-		"hint_string" : "Plain:0,ANSI:1,BBCode:2",
-		"doc" : "Choose the terminal for which loggie should preprocess the output so that it displays as intended.[br][br]Use BBCode for Godot console.[br]Use ANSI for Powershell, Bash, etc.[br]Use PLAIN for log files.",
+		"hint_string" : "Plain:0,ANSI:1,BBCode:2,Markdown:3",
+		"doc" : "Choose the format for which loggie should preprocess the output so that it displays correctly on the intended output medium.[br][br]Use BBCode for Godot console.[br]Use ANSI for Powershell, Bash, etc.[br]Use MARKDOWN for Discord.[br]Use PLAIN for log files.",
 	},
 	"log_level" = {
 		"path": "loggie/general/log_level",
@@ -222,13 +222,13 @@ const project_settings = {
 #region Variables
 # ----------------------------------------------- #
 
-## The current terminal mode of Loggie.
-## Terminal mode determines whether BBCode, ANSI or some other type of
+## The current Message Format Mode of Loggie.
+## Message Format Mode determines whether BBCode, ANSI or some other type of
 ## formatting is used to convey text effects, such as bold, italic, colors, etc.
 ## [br][br]BBCode is compatible with the Godot console.
 ## [br]ANSI is compatible with consoles like Powershell and Windows CMD.
 ## [br]PLAIN is used to strip any effects and use plain text instead, which is good for saving raw logs into log files.
-var terminal_mode : LoggieEnums.TerminalMode
+var msg_format_mode : LoggieEnums.MsgFormatMode
 
 ## The current log level of Loggie.
 ## It determines which types of messages are allowed to be logged.
@@ -262,7 +262,7 @@ var timestamps_use_utc : bool
 
 ## Whether Loggie should enforce optimal values for certain settings when in a Release/Production build.
 ## [br]If true, Loggie will enforce:
-## [br]  * [member terminal_mode] to [member LoggieEnums.TerminalMode.PLAIN]
+## [br]  * [member msg_format_mode] to [member LoggieEnums.MsgFormatMode.PLAIN]
 ## [br]  * [member box_characters_mode] to [member LoggieEnums.BoxCharactersMode.COMPATIBLE]
 var enforce_optimal_settings_in_release_build : bool
 
@@ -363,7 +363,7 @@ var box_symbols_pretty = {
 ## [br][br]Extend this class and override this function to write your own logic for 
 ## how loggie should obtain these settings if you have a need for a different approach.
 func load():
-	terminal_mode = ProjectSettings.get_setting(project_settings.terminal_mode.path, project_settings.terminal_mode.default_value)
+	msg_format_mode = ProjectSettings.get_setting(project_settings.msg_format_mode.path, project_settings.msg_format_mode.default_value)
 	log_level = ProjectSettings.get_setting(project_settings.log_level.path, project_settings.log_level.default_value)
 	show_loggie_specs = ProjectSettings.get_setting(project_settings.show_loggie_specs.path, project_settings.show_loggie_specs.default_value)
 	show_system_specs = ProjectSettings.get_setting(project_settings.show_system_specs.path, project_settings.show_system_specs.default_value)
@@ -394,7 +394,7 @@ func load():
 func to_dict() -> Dictionary:
 	var dict = {}
 	var included = [
-		"terminal_mode", "log_level", "show_loggie_specs", "show_system_specs", "enforce_optimal_settings_in_release_build",
+		"msg_format_mode", "log_level", "show_loggie_specs", "show_system_specs", "enforce_optimal_settings_in_release_build",
 		"preprocess_flags_discord_channel", "preprocess_flags_terminal_channel",
 		"print_errors_to_console", "print_warnings_to_console",
 		"use_print_debug_for_debug_msg", "nameless_class_name_proxy",

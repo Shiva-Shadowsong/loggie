@@ -37,22 +37,22 @@ static func convert_to_string(something : Variant) -> String:
 
 ## Takes the given [param str] and returns a terminal-ready version of it by converting its content
 ## to the appropriate format required to display the string correctly in the provided [param mode]
-## terminal mode.
-static func get_terminal_ready_string(str : String, mode : LoggieEnums.TerminalMode) -> String:
+## msg format mode.
+static func get_terminal_ready_string(str : String, mode : LoggieEnums.MsgFormatMode) -> String:
 	match mode:
-		LoggieEnums.TerminalMode.ANSI:
+		LoggieEnums.MsgFormatMode.ANSI:
 			# We put the message through the rich_to_ANSI converter which takes care of converting BBCode
-			# to appropriate ANSI. (Only if the TerminalMode is set to ANSI).
+			# to appropriate ANSI. (Only if the MsgFormatMode is set to ANSI).
 			# Godot claims to be already preparing BBCode output for ANSI, but it only works with a small
 			# predefined set of colors, and I think it totally strips stuff like [b], [i], etc.
 			# It is possible to display those stylings in ANSI, but we have to do our own conversion here
 			# to support these features instead of having them stripped.
 			str = LoggieTools.rich_to_ANSI(str)
-		LoggieEnums.TerminalMode.BBCODE:
+		LoggieEnums.MsgFormatMode.BBCODE:
 			# No need to do anything for BBCODE mode, because we already expect all strings to
 			# start out with this format in mind.
 			pass
-		LoggieEnums.TerminalMode.PLAIN, _:
+		LoggieEnums.MsgFormatMode.PLAIN, _:
 			str = LoggieTools.remove_BBCode(str)
 	return str
 

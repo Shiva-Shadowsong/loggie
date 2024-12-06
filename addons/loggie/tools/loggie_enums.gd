@@ -20,10 +20,10 @@ enum MsgType {
 	DEBUG ## A message that is considered to be a message used for debugging.
 }
 
-enum TerminalMode {
+enum MsgFormatMode {
 	PLAIN, ## Prints will be plain text.
 	ANSI,  ## Prints will be styled using the ANSI standard. Compatible with Powershell, Win CMD, etc.
-	BBCODE ## Prints will be styled using the Godot BBCode rules. Compatible with the Godot console.
+	BBCODE, ## Prints will be styled using the Godot BBCode rules. Compatible with the Godot console.
 }
 
 ## Classifies various steps that can happen during preprocessing.

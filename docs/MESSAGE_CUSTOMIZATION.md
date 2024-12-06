@@ -183,7 +183,7 @@ Loggie.msg("Hello.").color("#ff0000").info()
 
 > Loggie uses `print_rich` under the hood to print stylized messages. Unfortunately, as of right now, Godot's BBCode color parser for that function only officially supports a small sub-set of colors in full.
 > 
-> If you are using `TerminalMode.BBCODE` and use an unsupported color - your logs **WILL NOT** end up having the BBCode of that color stripped from them. This is not a concern for Release/Production builds because Loggie automatically uses `TerminalMode.PLAIN` in that circumstance - which strips *all* BBCode.
+> If you are using `MsgFormatMode.BBCODE` and use an unsupported color - your logs **WILL NOT** end up having the BBCode of that color stripped from them. This is not a concern for Release/Production builds because Loggie automatically uses `MsgFormatMode.PLAIN` in that circumstance - which strips *all* BBCode.
 > The list of supported colors can be found in the documentation of the `print_rich` method - `black, red, green, yellow, blue, magenta, pink, purple, cyan, white, orange, gray`
 
 

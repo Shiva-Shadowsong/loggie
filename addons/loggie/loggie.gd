@@ -54,7 +54,7 @@ func _init() -> void:
 
 	# Enforce certain settings if configured to do so.
 	if self.settings.enforce_optimal_settings_in_release_build == true and is_in_production():
-		self.settings.terminal_mode = LoggieEnums.TerminalMode.PLAIN
+		self.settings.msg_format_mode = LoggieEnums.MsgFormatMode.PLAIN
 		self.settings.box_characters_mode = LoggieEnums.BoxCharactersMode.COMPATIBLE
 
 	# Install all the built-in channels.
