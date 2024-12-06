@@ -29,6 +29,7 @@ func _ready() -> void:
 	#test_output_from_classes_of_various_inheritances_and_origins()
 	#test_domains()
 	#test_segments()
+	test_bbcode_to_markdown()
 
 func setup_gui():
 	$Label.text = "Loggie {version}".format({"version": Loggie.VERSION})
@@ -166,6 +167,12 @@ func test_segments():
 	print("\n\n")
 	Loggie.msg("Segment1: ").color("orange").msg("Segment2").info()
 	
+func test_bbcode_to_markdown():
+	var msg = Loggie.msg("Hello world").bold().color(Color.RED).msg(" - part 2 is italic").italic()
+	var converted_text = LoggieTools.convert_BBCode_to_markdown(msg.string())
+	
+	# Print with standard print to see what the actual output looks like without Loggie interfering with any other conversion.
+	print(converted_text)
 
 #endregion
 # -----------------------------------------
