@@ -24,6 +24,7 @@ enum MsgFormatMode {
 	PLAIN, ## Prints will be plain text.
 	ANSI,  ## Prints will be styled using the ANSI standard. Compatible with Powershell, Win CMD, etc.
 	BBCODE, ## Prints will be styled using the Godot BBCode rules. Compatible with the Godot console.
+	MARKDOWN, ## Prints will be styled using the Markdown standard. Compatible with most Markdown readers.
 }
 
 ## Classifies various steps that can happen during preprocessing.
