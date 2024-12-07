@@ -101,7 +101,7 @@ func _init() -> void:
 		var system_specs_msg = LoggieSystemSpecsMsg.new().use_logger(self)
 		system_specs_msg.embed_specs().preprocessed(false).info()
 
-## Attempts to instantiate a LoggieSettings object from the script at the given [param path].
+## Attempts to instantiate and use a LoggieSettings object from the script at the given [param path].
 ## Returns true if successful, otherwise false and prints an error.
 func load_settings_from_path(path : String) -> bool:
 	var settings_resource = ResourceLoader.load(path)
@@ -150,7 +150,7 @@ func get_channel(channel_id : String) -> LoggieMsgChannel:
 ## Adds a new channel for sending messages to.
 ## Multiple channels with the same ID can not be added, so make sure your ID
 ## does not clash with one of the existing channels' IDs, which are:
-## [param terminal].
+## [param terminal], [param discord].
 func add_channel(channel : LoggieMsgChannel):
 	if not available_channels.has(channel.ID):
 		available_channels[channel.ID] = channel
