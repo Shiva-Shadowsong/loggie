@@ -253,6 +253,15 @@ static func extract_class_name_from_gd_script(path_or_script : Variant, proxy : 
 
 	return _class_name
 
+## Takes the given [param string] and returns an array made out of chunks of the given size.
+## The string is chunked from start to end.
+static func chunk_string(string : String, chunk_size : int) -> Array:
+	var message_chunks = []
+	while string.length() >= chunk_size:
+		message_chunks.append(string.left(chunk_size))
+		string = string.substr(chunk_size, -1)
+	return message_chunks
+
 ## A dictionary of named colors matching the constants from [Color] used to help with rich text coloring.
 ## There may be a way to obtain these Color values without this dictionary if one can somehow check for the 
 ## existence and value of a constant on the Color class (since they're already there),

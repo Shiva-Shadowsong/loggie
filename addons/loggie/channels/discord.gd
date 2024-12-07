@@ -1,5 +1,6 @@
 class_name DiscordLoggieMsgChannel extends LoggieMsgChannel
 
+const discord_msg_character_limit = 2000 # The max. amount of characters the content of the message can contain before discord refuses to post it.
 var debug_domain = "_d_loggie_discord"
 var debug_enabled = true
 
@@ -20,22 +21,33 @@ func send(msg : LoggieMsg, msg_type : LoggieEnums.MsgType):
 			send(msg, msg_type)
 		, CONNECT_ONE_SHOT)
 		return
-		
-	var webhook = loggie.settings.discord_webhook_url_live if loggie.is_in_production() else loggie.settings.discord_webhook_url_dev
-	if webhook == null or (webhook is String and webhook.is_empty()):
-		push_error("Attempt to send a message to the discord channel with an invalid webhook.")
+
+	var webhook_url = loggie.settings.discord_webhook_url_live if loggie.is_in_production() else loggie.settings.discord_webhook_url_dev
+	if webhook_url == null or (webhook_url is String and webhook_url.is_empty()):
+		push_error("Attempt to send a message to the discord channel with an invalid webhook_url.")
 		return
 
+	var output_text = LoggieTools.convert_string_to_format_mode(msg.last_preprocess_result, LoggieEnums.MsgFormatMode.MARKDOWN)
+
+	# Chunk the given string into chunks of maximum supported size by discord, so we don't end up hitting the character limit
+	# which would prevent the message from getting posted.
+	var chunks = LoggieTools.chunk_string(output_text, discord_msg_character_limit)
+	if chunks.size() > 1:
+		Loggie.warn("Sending a chunked message - chunks amount:", chunks.size())
+	for chunk : String in chunks:
+		send_post_request(loggie, chunk, webhook_url)
+
+func send_post_request(logger : Variant, output_text : String, webhook_url : String):
 	# Enable debug messages if configured.
-	loggie.set_domain_enabled(debug_domain, debug_enabled)
+	logger.set_domain_enabled(debug_domain, debug_enabled)
 
 	# Create a new HTTPRequest POST request that will be sent to discord and add it into the scenetree.
 	var http = HTTPRequest.new()
-	loggie.add_child(http)
+	logger.add_child(http)
 
 	# When the request is completed, destroy it.
 	http.request_completed.connect(func(result, response_code, headers, body):
-		var debug_msg = loggie.msg("HTTP Request Completed:").color(Color.ORANGE).header().domain(debug_domain).channel("terminal")
+		var debug_msg = logger.msg("HTTP Request Completed:").color(Color.ORANGE).header().domain(debug_domain).channel("terminal")
 		debug_msg.nl().msg("Result:").color(Color.ORANGE).bold().space().msg(result).nl()
 		debug_msg.msg("Response Code:").color(Color.ORANGE).bold().space().msg(response_code).nl()
 		debug_msg.msg("Headers:").color(Color.ORANGE).bold().space().msg(headers).nl()
@@ -50,16 +62,14 @@ func send(msg : LoggieMsg, msg_type : LoggieEnums.MsgType):
 	)
 	
 	# Convert the [LoggieMsg]'s contents into markdown and post that to the target webhook url.
-	var md_text = LoggieTools.convert_string_to_format_mode(msg.last_preprocess_result, LoggieEnums.MsgFormatMode.MARKDOWN)
-	var json = JSON.stringify({"content": md_text})
+	var json = JSON.stringify({"content": output_text})
 	var header = ["Content-Type: application/json"]
-	
+
 	# Construct debug message.
 	if debug_enabled:
-		var debug_msg_post = loggie.msg("Sending POST Request:").color(Color.ORANGE).header().channel("terminal").domain(debug_domain).nl()
-		debug_msg_post.msg("Preprocessed message:").color(Color.ORANGE).bold().space().msg(msg.last_preprocess_result).nl()
-		debug_msg_post.msg("JSON stringified:").color(Color.ORANGE).bold().space().msg(json)
+		var debug_msg_post = logger.msg("Sending POST Request:").color(Color.CORNFLOWER_BLUE).header().channel("terminal").domain(debug_domain).nl()
+		debug_msg_post.msg("JSON stringified (length {size}):".format({"size": output_text.length()})).color(Color.ORANGE).bold().space().msg(json).color(Color.SLATE_GRAY)
 		debug_msg_post.debug()
 	
 	# Send the request.
-	http.request(webhook, header, HTTPClient.METHOD_POST, json)
+	http.request(webhook_url, header, HTTPClient.METHOD_POST, json)
