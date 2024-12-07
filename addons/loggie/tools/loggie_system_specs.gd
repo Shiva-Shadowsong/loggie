@@ -21,6 +21,7 @@ func embed_specs() -> LoggieSystemSpecsMsg:
 func embed_essential_logger_specs() -> LoggieSystemSpecsMsg:
 	var loggie = get_logger()
 	self.add(loggie.msg("|\t Is in Production:").bold(), loggie.is_in_production()).nl()
+	self.add(loggie.msg("|\t Default Channel(s):").bold(),loggie.settings.default_channels).nl()
 	self.add(loggie.msg("|\t Msg Format Mode:").bold(), LoggieEnums.MsgFormatMode.keys()[loggie.settings.msg_format_mode]).nl()
 	self.add(loggie.msg("|\t Log Level:").bold(), LoggieEnums.LogLevel.keys()[loggie.settings.log_level]).nl()
 	return self
