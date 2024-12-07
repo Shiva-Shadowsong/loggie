@@ -64,6 +64,9 @@ func _init() -> void:
 	var discord_channel : DiscordLoggieMsgChannel = load("res://addons/loggie/channels/discord.gd").new()
 	discord_channel.preprocess_flags = self.settings.preprocess_flags_discord_channel
 	add_channel(discord_channel)
+	var slack_channel : SlackLoggieMsgChannel = load("res://addons/loggie/channels/slack.gd").new()
+	slack_channel.preprocess_flags = self.settings.preprocess_flags_slack_channel
+	add_channel(slack_channel)
 
 	# Already cache the name of the singleton found at loggie's script path.
 	class_names[self.get_script().resource_path] = LoggieSettings.loggie_singleton_name
@@ -150,7 +153,7 @@ func get_channel(channel_id : String) -> LoggieMsgChannel:
 ## Adds a new channel for sending messages to.
 ## Multiple channels with the same ID can not be added, so make sure your ID
 ## does not clash with one of the existing channels' IDs, which are:
-## [param terminal], [param discord].
+## [param terminal], [param discord], [param slack].
 func add_channel(channel : LoggieMsgChannel):
 	if not available_channels.has(channel.ID):
 		available_channels[channel.ID] = channel

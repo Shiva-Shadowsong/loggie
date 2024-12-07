@@ -87,6 +87,22 @@ const project_settings = {
 		"hint_string" : "",
 		"doc" : "The endpoint URL for the Discord webhook used when Loggie is not running in a production build.",
 	},
+	"slack_webhook_url_live" = {
+		"path": "loggie/general/slack/live_webhook",
+		"default_value" : "",
+		"type" : TYPE_STRING,
+		"hint" : PROPERTY_HINT_MULTILINE_TEXT,
+		"hint_string" : "",
+		"doc" : "The endpoint URL for the Slack webhook used when Loggie is running in a production build.",
+	},
+	"slack_webhook_url_dev" = {
+		"path": "loggie/general/slack/dev_webhook",
+		"default_value" : "",
+		"type" : TYPE_STRING,
+		"hint" : PROPERTY_HINT_MULTILINE_TEXT,
+		"hint_string" : "",
+		"doc" : "The endpoint URL for the Slack webhook used when Loggie is not running in a production build.",
+	},
 	"timestamps_use_utc" = {
 		"path": "loggie/preprocessing/timestamps_use_utc",
 		"default_value" : true,
@@ -133,7 +149,7 @@ const project_settings = {
 		"type" : TYPE_INT,
 		"hint" : PROPERTY_HINT_FLAGS,
 		"hint_string" : "Append Timestamp:1,Append Domain Name:2,Append Class Name:4",
-		"doc" : "The endpoint URL for the Discord webhook.",
+		"doc" : "Defines the flags which LoggieMessages sent to the terminal channel will use during preprocessing.",
 	},
 	"preprocess_flags_discord_channel" = {
 		"path": "loggie/preprocessing/discord/preprocess_flags",
@@ -141,7 +157,15 @@ const project_settings = {
 		"type" : TYPE_INT,
 		"hint" : PROPERTY_HINT_FLAGS,
 		"hint_string" : "Append Timestamp:1,Append Domain Name:2,Append Class Name:4",
-		"doc" : "The endpoint URL for the Discord webhook.",
+		"doc" : "Defines the flags which LoggieMessages sent to the Discord channel will use during preprocessing.",
+	},
+	"preprocess_flags_slack_channel" = {
+		"path": "loggie/preprocessing/slack/preprocess_flags",
+		"default_value" : LoggieEnums.PreprocessStep.APPEND_DOMAIN_NAME | LoggieEnums.PreprocessStep.APPEND_CLASS_NAME,
+		"type" : TYPE_INT,
+		"hint" : PROPERTY_HINT_FLAGS,
+		"hint_string" : "Append Timestamp:1,Append Domain Name:2,Append Class Name:4",
+		"doc" : "Defines the flags which LoggieMessages sent to the Slack channel will use during preprocessing.",
 	},
 	"format_timestamp" = {
 		"path": "loggie/formats/timestamp",
@@ -277,11 +301,17 @@ var enforce_optimal_settings_in_release_build : bool
 var discord_webhook_url_dev : String = "" ## Endpoint URL for the Discord webhook (used in dev environment)
 var discord_webhook_url_live : String = "" ## Endpoint URL for the Discord webhook (used in production/release environment)
 
+var slack_webhook_url_dev : String = "" ## Endpoint URL for the Slack webhook (used in dev environment)
+var slack_webhook_url_live : String = "" ## Endpoint URL for the Slack webhook (used in production/release environment)
+
 ## Defines the flags which LoggieMessages sent to the terminal channel will use during preprocessing.
 var preprocess_flags_terminal_channel = LoggieEnums.PreprocessStep.APPEND_TIMESTAMPS | LoggieEnums.PreprocessStep.APPEND_DOMAIN_NAME | LoggieEnums.PreprocessStep.APPEND_CLASS_NAME
 
-## Defines the flags which LoggieMessages sent to the discord channel output will use during preprocessing.
+## Defines the flags which LoggieMessages sent to the Discord channel output will use during preprocessing.
 var preprocess_flags_discord_channel = LoggieEnums.PreprocessStep.APPEND_DOMAIN_NAME | LoggieEnums.PreprocessStep.APPEND_CLASS_NAME
+
+## Defines the flags which LoggieMessages sent to the Slack channel output will use during preprocessing.
+var preprocess_flags_slack_channel = LoggieEnums.PreprocessStep.APPEND_DOMAIN_NAME | LoggieEnums.PreprocessStep.APPEND_CLASS_NAME
 
 #endregion
 # ----------------------------------------------- #
@@ -396,6 +426,9 @@ func load():
 	discord_webhook_url_live = ProjectSettings.get_setting(project_settings.discord_webhook_url_live.path, project_settings.discord_webhook_url_live.default_value)
 	discord_webhook_url_dev = ProjectSettings.get_setting(project_settings.discord_webhook_url_dev.path, project_settings.discord_webhook_url_dev.default_value)
 	preprocess_flags_discord_channel = ProjectSettings.get_setting(project_settings.preprocess_flags_discord_channel.path, project_settings.preprocess_flags_discord_channel.default_value)
+	slack_webhook_url_live = ProjectSettings.get_setting(project_settings.slack_webhook_url_live.path, project_settings.slack_webhook_url_live.default_value)
+	slack_webhook_url_dev = ProjectSettings.get_setting(project_settings.slack_webhook_url_dev.path, project_settings.slack_webhook_url_dev.default_value)
+	preprocess_flags_slack_channel = ProjectSettings.get_setting(project_settings.preprocess_flags_slack_channel.path, project_settings.preprocess_flags_slack_channel.default_value)
 	preprocess_flags_terminal_channel = ProjectSettings.get_setting(project_settings.preprocess_flags_terminal_channel.path, project_settings.preprocess_flags_terminal_channel.default_value)
 
 ## Returns a dictionary where the indices are names of relevant variables in the LoggieSettings class,
@@ -404,7 +437,7 @@ func to_dict() -> Dictionary:
 	var dict = {}
 	var included = [
 		"msg_format_mode", "log_level", "show_loggie_specs", "show_system_specs", "enforce_optimal_settings_in_release_build",
-		"preprocess_flags_discord_channel", "preprocess_flags_terminal_channel",
+		"preprocess_flags_discord_channel", "preprocess_flags_slack_channel", "preprocess_flags_terminal_channel",
 		"print_errors_to_console", "print_warnings_to_console",
 		"use_print_debug_for_debug_msg", "nameless_class_name_proxy",
 		"timestamps_use_utc", "format_header", "format_domain_prefix", "format_error_msg",

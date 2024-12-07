@@ -1,10 +1,10 @@
-class_name DiscordLoggieMsgChannel extends LoggieMsgChannel
+class_name SlackLoggieMsgChannel extends LoggieMsgChannel
 
-var debug_domain = "_d_loggie_discord"
+var debug_domain = "_d_loggie_slack"
 var debug_enabled = true
 
 func _init() -> void:
-	self.ID = "discord"
+	self.ID = "slack"
 	self.preprocess_flags = 0 # For this type of channel, this will be applied dynamically by Loggie after it loads LoggieSettings.
 
 func send(msg : LoggieMsg, msg_type : LoggieEnums.MsgType):
@@ -21,15 +21,15 @@ func send(msg : LoggieMsg, msg_type : LoggieEnums.MsgType):
 		, CONNECT_ONE_SHOT)
 		return
 		
-	var webhook = loggie.settings.discord_webhook_url_live if loggie.is_in_production() else loggie.settings.discord_webhook_url_dev
+	var webhook = loggie.settings.slack_webhook_url_live if loggie.is_in_production() else loggie.settings.slack_webhook_url_dev
 	if webhook == null or (webhook is String and webhook.is_empty()):
-		push_error("Attempt to send a message to the Discord channel with an invalid webhook.")
+		push_error("Attempt to send a message to the Slack channel with an invalid webhook.")
 		return
 
 	# Enable debug messages if configured.
 	loggie.set_domain_enabled(debug_domain, debug_enabled)
 
-	# Create a new HTTPRequest POST request that will be sent to Discord and add it into the scenetree.
+	# Create a new HTTPRequest POST request that will be sent to discord and add it into the scenetree.
 	var http = HTTPRequest.new()
 	loggie.add_child(http)
 
@@ -46,8 +46,8 @@ func send(msg : LoggieMsg, msg_type : LoggieEnums.MsgType):
 	)
 	
 	# Convert the [LoggieMsg]'s contents into markdown and post that to the target webhook url.
-	var md_text = LoggieTools.convert_string_to_format_mode(msg.last_preprocess_result, LoggieEnums.MsgFormatMode.MARKDOWN)
-	var json = JSON.stringify({"content": md_text})
+	var md_text = LoggieTools.convert_string_to_format_mode(msg.last_preprocess_result, LoggieEnums.MsgFormatMode.PLAIN)
+	var json = JSON.stringify({"text": md_text})
 	var header = ["Content-Type: application/json"]
 	
 	# Construct debug message.
