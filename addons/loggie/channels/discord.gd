@@ -13,6 +13,13 @@ func send(msg : LoggieMsg, msg_type : LoggieEnums.MsgType):
 	if loggie == null:
 		push_error("Attempt to send a message that's coming from an invalid logger.")
 		return
+	
+	# Wait until loggie is inside tree so that we can use add_child(http) on it without errors.
+	if !loggie.is_inside_tree():
+		loggie.tree_entered.connect(func():
+			send(msg, msg_type)
+		, CONNECT_ONE_SHOT)
+		return
 		
 	var webhook = loggie.settings.discord_webhook_url_live if loggie.is_in_production() else loggie.settings.discord_webhook_url_dev
 	if webhook == null or (webhook is String and webhook.is_empty()):
@@ -24,7 +31,7 @@ func send(msg : LoggieMsg, msg_type : LoggieEnums.MsgType):
 
 	# Create a new HTTPRequest POST request that will be sent to discord and add it into the scenetree.
 	var http = HTTPRequest.new()
-	msg.get_logger().add_child(http)
+	loggie.add_child(http)
 
 	# When the request is completed, destroy it.
 	http.request_completed.connect(func(result, response_code, headers, body):
