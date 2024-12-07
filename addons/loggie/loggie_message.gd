@@ -69,6 +69,7 @@ func channel(channels : Variant):
 	if typeof(channels) != TYPE_ARRAY and typeof(channels) != TYPE_PACKED_STRING_ARRAY:
 		channels = [str(channels)]
 	self.used_channels = channels
+	return self
 
 ## Returns a processed version of the content of this message, which has modifications applied to
 ## it based on the requested [param level] and other external Loggie settings.
