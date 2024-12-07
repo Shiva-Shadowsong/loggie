@@ -35,12 +35,16 @@ func send(msg : LoggieMsg, msg_type : LoggieEnums.MsgType):
 
 	# When the request is completed, destroy it.
 	http.request_completed.connect(func(result, response_code, headers, body):
-		var debug_msg = loggie.msg("HTTP Request Completed:").color(Color.ORANGE).header().domain(debug_domain)
+		var debug_msg = loggie.msg("HTTP Request Completed:").color(Color.ORANGE).header().domain(debug_domain).channel("terminal")
 		debug_msg.nl().msg("Result:").color(Color.ORANGE).bold().space().msg(result).nl()
 		debug_msg.msg("Response Code:").color(Color.ORANGE).bold().space().msg(response_code).nl()
 		debug_msg.msg("Headers:").color(Color.ORANGE).bold().space().msg(headers).nl()
 		debug_msg.msg("Body:").color(Color.ORANGE).bold().space().msg(body)
 		debug_msg.debug()
+		
+		## Inform the user about a received non-success response code.
+		if response_code < 200 or response_code > 299:
+			Loggie.msg("Discord responded with a non-success code: ").bold().msg(response_code, " - This is an indicator that something about the message you tried to send to discord does not comply with their request body standards (e.g. content is too long, invalid format, etc.)").channel("terminal").warn()
 		
 		http.queue_free()
 	)
@@ -52,7 +56,7 @@ func send(msg : LoggieMsg, msg_type : LoggieEnums.MsgType):
 	
 	# Construct debug message.
 	if debug_enabled:
-		var debug_msg_post = loggie.msg("Sending POST Request:").color(Color.ORANGE).header().domain(debug_domain).nl()
+		var debug_msg_post = loggie.msg("Sending POST Request:").color(Color.ORANGE).header().channel("terminal").domain(debug_domain).nl()
 		debug_msg_post.msg("Preprocessed message:").color(Color.ORANGE).bold().space().msg(msg.last_preprocess_result).nl()
 		debug_msg_post.msg("JSON stringified:").color(Color.ORANGE).bold().space().msg(json)
 		debug_msg_post.debug()
