@@ -1,33 +1,12 @@
 @tool
 class_name LoggieTools extends Node
 
-## Converts a text with BBCode in it to markdown.
-## A limited set of BBCode tags are supported for this conversion, because standard Markdown can't handle everything
-## that BBCode can. For example, colors will be entirely stripped.
-static func convert_BBCode_to_markdown(text: String) -> String:
-	var supported_conversions = {
-		"[b]" : "**",
-		"[/b]" : "**",
-		"[i]" : "*",
-		"[/i]" : "*",
-		"[u]" : "__",
-		"[/u]" : "__",
-		"[s]" : "~~",
-		"[/s]" : "~~",
-	}
-
-	for bbcodetag in supported_conversions.keys():
-		text = text.replace(bbcodetag, supported_conversions[bbcodetag])
-
-	## Strip all other BBcode that remains:
-	text = LoggieTools.remove_BBCode(text)
-
-	return text
-
 ## Removes BBCode from the given text.
-static func remove_BBCode(text: String) -> String:
+## If [param specific_tags] is an array.
+static func remove_BBCode(text: String, specific_tags = null) -> String:
 	# The bbcode tags to remove.
-	var tags = ["b", "i", "u", "s", "indent", "code", "url", "center", "right", "color", "bgcolor", "fgcolor"]
+	var default_tags = ["b", "i", "u", "s", "indent", "code", "url", "center", "right", "color", "bgcolor", "fgcolor"]
+	var tags = specific_tags if specific_tags is Array else default_tags
 
 	var regex = RegEx.new()
 	var tags_pattern = "|".join(tags)
@@ -44,6 +23,40 @@ static func concatenate_msg_and_args(msg : Variant, arg1 : Variant = null, arg2 
 		if arg != null:
 			final_msg += (" " + convert_to_string(arg))
 	return final_msg
+
+
+## Converts a text with BBCode in it to markdown.
+## A limited set of BBCode tags are supported for this conversion, because standard Markdown can't handle everything
+## that BBCode can. For example, colors will be entirely stripped.
+static func convert_BBCode_to_markdown(text: String) -> String:
+	# Purge the unsupported tags.
+	var unsupported_tags = ["indent", "url", "center", "right", "color", "bgcolor", "fgcolor"]
+	text = LoggieTools.remove_BBCode(text, unsupported_tags)
+
+	# Space out all instances where "*" characters from multiple tags are strung together,
+	# since that would break them from rendering with the proper effect in markdown.
+	# This is only an issue with [b] and [i] tags because they both use the same "*" character
+	# in markdown to be represented.
+	text = text.replace("[/b][i]", "** *")
+	text = text.replace("[/b][/i]", "** *")
+	text = text.replace("[/i][b]", "* **")
+	text = text.replace("[/i][/b]", "* **")
+	text = text.replace("[/i][i]", "* *")
+	text = text.replace("[/i][/i]", "* *")
+	text = text.replace("[/b][b]", "** **")
+	text = text.replace("[/b][/b]", "** **")
+
+	# Perform all supported conversion.
+	var supported_conversions = {
+		"[b]" : "**", "[/b]" : "**",
+		"[i]" : "*",  "[/i]" : "*",
+		"[u]" : "__", "[/u]" : "__",
+		"[s]" : "~~", "[/s]" : "~~",
+	}
+	for bbcodetag in supported_conversions.keys():
+		text = text.replace(bbcodetag, supported_conversions[bbcodetag])
+
+	return text
 
 ## Converts [param something] into a string.
 ## If [param something] is a Dictionary, uses a special way to convert it into a string.
@@ -75,6 +88,8 @@ static func convert_string_to_format_mode(str : String, mode : LoggieEnums.MsgFo
 			# No need to do anything for BBCODE mode, because we already expect all strings to
 			# start out with this format in mind.
 			pass
+		LoggieEnums.MsgFormatMode.MARKDOWN:
+			str = LoggieTools.convert_BBCode_to_markdown(str)
 		LoggieEnums.MsgFormatMode.PLAIN, _:
 			str = LoggieTools.remove_BBCode(str)
 	return str
@@ -237,8 +252,6 @@ static func extract_class_name_from_gd_script(path_or_script : Variant, proxy : 
 	file.close()
 
 	return _class_name
-
-
 
 ## A dictionary of named colors matching the constants from [Color] used to help with rich text coloring.
 ## There may be a way to obtain these Color values without this dictionary if one can somehow check for the 

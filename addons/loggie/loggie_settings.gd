@@ -71,13 +71,21 @@ const project_settings = {
 		"hint_string" : "",
 		"doc" : "Should Loggie enforce certain settings to automatically change to optimal values in production/release builds?",
 	},
-	"discord_webhook_url" = {
-		"path": "loggie/general/discord/webhook",
+	"discord_webhook_url_live" = {
+		"path": "loggie/general/discord/live_webhook",
 		"default_value" : "",
 		"type" : TYPE_STRING,
 		"hint" : PROPERTY_HINT_MULTILINE_TEXT,
 		"hint_string" : "",
-		"doc" : "The endpoint URL for the Discord webhook.",
+		"doc" : "The endpoint URL for the Discord webhook used when Loggie is running in a production build.",
+	},
+	"discord_webhook_url_dev" = {
+		"path": "loggie/general/discord/dev_webhook",
+		"default_value" : "",
+		"type" : TYPE_STRING,
+		"hint" : PROPERTY_HINT_MULTILINE_TEXT,
+		"hint_string" : "",
+		"doc" : "The endpoint URL for the Discord webhook used when Loggie is not running in a production build.",
 	},
 	"timestamps_use_utc" = {
 		"path": "loggie/preprocessing/timestamps_use_utc",
@@ -266,8 +274,8 @@ var timestamps_use_utc : bool
 ## [br]  * [member box_characters_mode] to [member LoggieEnums.BoxCharactersMode.COMPATIBLE]
 var enforce_optimal_settings_in_release_build : bool
 
-## Endpoint URL for the Discord webhook
-var discord_webhook_url : String = ""
+var discord_webhook_url_dev : String = "" ## Endpoint URL for the Discord webhook (used in dev environment)
+var discord_webhook_url_live : String = "" ## Endpoint URL for the Discord webhook (used in production/release environment)
 
 ## Defines the flags which LoggieMessages sent to the terminal channel will use during preprocessing.
 var preprocess_flags_terminal_channel = LoggieEnums.PreprocessStep.APPEND_TIMESTAMPS | LoggieEnums.PreprocessStep.APPEND_DOMAIN_NAME | LoggieEnums.PreprocessStep.APPEND_CLASS_NAME
@@ -385,7 +393,8 @@ func load():
 	format_debug_msg = ProjectSettings.get_setting(project_settings.format_debug_msg.path, project_settings.format_debug_msg.default_value)
 	h_separator_symbol = ProjectSettings.get_setting(project_settings.h_separator_symbol.path, project_settings.h_separator_symbol.default_value)
 	
-	discord_webhook_url = ProjectSettings.get_setting(project_settings.discord_webhook_url.path, project_settings.discord_webhook_url.default_value)
+	discord_webhook_url_live = ProjectSettings.get_setting(project_settings.discord_webhook_url_live.path, project_settings.discord_webhook_url_live.default_value)
+	discord_webhook_url_dev = ProjectSettings.get_setting(project_settings.discord_webhook_url_dev.path, project_settings.discord_webhook_url_dev.default_value)
 	preprocess_flags_discord_channel = ProjectSettings.get_setting(project_settings.preprocess_flags_discord_channel.path, project_settings.preprocess_flags_discord_channel.default_value)
 	preprocess_flags_terminal_channel = ProjectSettings.get_setting(project_settings.preprocess_flags_terminal_channel.path, project_settings.preprocess_flags_terminal_channel.default_value)
 
