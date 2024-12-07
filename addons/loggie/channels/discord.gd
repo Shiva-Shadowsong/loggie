@@ -2,7 +2,7 @@ class_name DiscordLoggieMsgChannel extends LoggieMsgChannel
 
 const discord_msg_character_limit = 2000 # The max. amount of characters the content of the message can contain before discord refuses to post it.
 var debug_domain = "_d_loggie_discord"
-var debug_enabled = true
+var debug_enabled = false
 
 func _init() -> void:
 	self.ID = "discord"
@@ -33,7 +33,7 @@ func send(msg : LoggieMsg, msg_type : LoggieEnums.MsgType):
 	# which would prevent the message from getting posted.
 	var chunks = LoggieTools.chunk_string(output_text, discord_msg_character_limit)
 	if chunks.size() > 1:
-		Loggie.warn("Sending a chunked message - chunks amount:", chunks.size())
+		Loggie.debug("Chunking a long (", output_text.length(), "length ) message while sending to discord into:", chunks.size(), "chunks.")
 	for chunk : String in chunks:
 		send_post_request(loggie, chunk, webhook_url)
 
@@ -68,7 +68,7 @@ func send_post_request(logger : Variant, output_text : String, webhook_url : Str
 	# Construct debug message.
 	if debug_enabled:
 		var debug_msg_post = logger.msg("Sending POST Request:").color(Color.CORNFLOWER_BLUE).header().channel("terminal").domain(debug_domain).nl()
-		debug_msg_post.msg("JSON stringified (length {size}):".format({"size": output_text.length()})).color(Color.ORANGE).bold().space().msg(json).color(Color.SLATE_GRAY)
+		debug_msg_post.msg("JSON stringified (length {size}):".format({"size": output_text.length()})).color(Color.LIGHT_SLATE_GRAY).bold().space().msg(json).color(Color.SLATE_GRAY)
 		debug_msg_post.debug()
 	
 	# Send the request.
