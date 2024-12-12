@@ -1,7 +1,7 @@
 class_name SlackLoggieMsgChannel extends LoggieMsgChannel
 
 var debug_domain = "_d_loggie_slack"
-var debug_enabled = true
+var debug_enabled = false
 
 func _init() -> void:
 	self.ID = "slack"
@@ -29,7 +29,7 @@ func send(msg : LoggieMsg, msg_type : LoggieEnums.MsgType):
 	# Enable debug messages if configured.
 	loggie.set_domain_enabled(debug_domain, debug_enabled)
 
-	# Create a new HTTPRequest POST request that will be sent to discord and add it into the scenetree.
+	# Create a new HTTPRequest POST request that will be sent to Slack and add it into the scenetree.
 	var http = HTTPRequest.new()
 	loggie.add_child(http)
 
