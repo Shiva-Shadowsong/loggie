@@ -26,19 +26,9 @@ config/icon="res://addons/loggie/assets/icon.png"
 
 [autoload]
 
-Loggie="*res://addons/loggie/loggie.gd"
 LoggieAutoloadedTalker="*res://test/testing_props/autoloads/LoggieAutoloadedTalker.gd"
+Loggie="*res://addons/loggie/loggie.gd"
 
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/loggie/plugin.cfg")
-
-[loggie]
-
-general/remove_settings_if_plugin_disabled=false
-general/log_level=4
-general/show_loggie_specs=2
-timestamps/output_timestamps=true
-preprocessing/output_message_domain=true
-preprocessing/derive_and_display_class_names_from_scripts=true
-formats/box_characters_mode=1

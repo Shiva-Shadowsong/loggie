@@ -2,9 +2,11 @@
 class_name LoggieTools extends Node
 
 ## Removes BBCode from the given text.
-static func remove_BBCode(text: String) -> String:
+## If [param specific_tags] is an array.
+static func remove_BBCode(text: String, specific_tags = null) -> String:
 	# The bbcode tags to remove.
-	var tags = ["b", "i", "u", "s", "indent", "code", "url", "center", "right", "color", "bgcolor", "fgcolor"]
+	var default_tags = ["b", "i", "u", "s", "indent", "code", "url", "center", "right", "color", "bgcolor", "fgcolor"]
+	var tags = specific_tags if specific_tags is Array else default_tags
 
 	var regex = RegEx.new()
 	var tags_pattern = "|".join(tags)
@@ -22,6 +24,40 @@ static func concatenate_msg_and_args(msg : Variant, arg1 : Variant = null, arg2 
 			final_msg += (" " + convert_to_string(arg))
 	return final_msg
 
+
+## Converts a text with BBCode in it to markdown.
+## A limited set of BBCode tags are supported for this conversion, because standard Markdown can't handle everything
+## that BBCode can. For example, colors will be entirely stripped.
+static func convert_BBCode_to_markdown(text: String) -> String:
+	# Purge the unsupported tags.
+	var unsupported_tags = ["indent", "url", "center", "right", "color", "bgcolor", "fgcolor"]
+	text = LoggieTools.remove_BBCode(text, unsupported_tags)
+
+	# Space out all instances where "*" characters from multiple tags are strung together,
+	# since that would break them from rendering with the proper effect in markdown.
+	# This is only an issue with [b] and [i] tags because they both use the same "*" character
+	# in markdown to be represented.
+	text = text.replace("[/b][i]", "** *")
+	text = text.replace("[/b][/i]", "** *")
+	text = text.replace("[/i][b]", "* **")
+	text = text.replace("[/i][/b]", "* **")
+	text = text.replace("[/i][i]", "* *")
+	text = text.replace("[/i][/i]", "* *")
+	text = text.replace("[/b][b]", "** **")
+	text = text.replace("[/b][/b]", "** **")
+
+	# Perform all supported conversion.
+	var supported_conversions = {
+		"[b]" : "**", "[/b]" : "**",
+		"[i]" : "*",  "[/i]" : "*",
+		"[u]" : "__", "[/u]" : "__",
+		"[s]" : "~~", "[/s]" : "~~",
+	}
+	for bbcodetag in supported_conversions.keys():
+		text = text.replace(bbcodetag, supported_conversions[bbcodetag])
+
+	return text
+
 ## Converts [param something] into a string.
 ## If [param something] is a Dictionary, uses a special way to convert it into a string.
 ## You can add more exceptions and rules for how different things are converted to strings here.
@@ -37,22 +73,24 @@ static func convert_to_string(something : Variant) -> String:
 
 ## Takes the given [param str] and returns a terminal-ready version of it by converting its content
 ## to the appropriate format required to display the string correctly in the provided [param mode]
-## terminal mode.
-static func get_terminal_ready_string(str : String, mode : LoggieEnums.TerminalMode) -> String:
+## msg format mode.
+static func convert_string_to_format_mode(str : String, mode : LoggieEnums.MsgFormatMode) -> String:
 	match mode:
-		LoggieEnums.TerminalMode.ANSI:
+		LoggieEnums.MsgFormatMode.ANSI:
 			# We put the message through the rich_to_ANSI converter which takes care of converting BBCode
-			# to appropriate ANSI. (Only if the TerminalMode is set to ANSI).
+			# to appropriate ANSI. (Only if the MsgFormatMode is set to ANSI).
 			# Godot claims to be already preparing BBCode output for ANSI, but it only works with a small
 			# predefined set of colors, and I think it totally strips stuff like [b], [i], etc.
 			# It is possible to display those stylings in ANSI, but we have to do our own conversion here
 			# to support these features instead of having them stripped.
 			str = LoggieTools.rich_to_ANSI(str)
-		LoggieEnums.TerminalMode.BBCODE:
+		LoggieEnums.MsgFormatMode.BBCODE:
 			# No need to do anything for BBCODE mode, because we already expect all strings to
 			# start out with this format in mind.
 			pass
-		LoggieEnums.TerminalMode.PLAIN, _:
+		LoggieEnums.MsgFormatMode.MARKDOWN:
+			str = LoggieTools.convert_BBCode_to_markdown(str)
+		LoggieEnums.MsgFormatMode.PLAIN, _:
 			str = LoggieTools.remove_BBCode(str)
 	return str
 
@@ -214,6 +252,23 @@ static func extract_class_name_from_gd_script(path_or_script : Variant, proxy : 
 	file.close()
 
 	return _class_name
+
+## Takes the given [param string] and returns an array made out of chunks of the given size.
+## The string is chunked from start to end.
+static func chunk_string(string : String, chunk_size : int) -> Array:
+	var message_chunks = []
+	if string.length() >= chunk_size:
+		# Cut chunk_size pieces from the left side of the string and push them to message_chunks.
+		while string.length() >= chunk_size:
+			message_chunks.append(string.left(chunk_size))
+			string = string.substr(chunk_size, -1)
+			
+		# Append the remaining slice as the final chunk.
+		if string.length() > 0:
+			message_chunks.append(string)
+		return message_chunks
+	else:
+		return [string]
 
 ## A dictionary of named colors matching the constants from [Color] used to help with rich text coloring.
 ## There may be a way to obtain these Color values without this dictionary if one can somehow check for the 

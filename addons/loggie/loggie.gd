@@ -28,6 +28,14 @@ var domains : Dictionary = {}
 ## Holds a mapping between script paths and the names of the classes defined in those scripts.
 var class_names : Dictionary = {}
 
+## Holds a mapping between channel IDs (string) and the
+## [LoggieMsgChannel] objects those IDs are representing.
+var available_channels = {}
+
+## The default channel(s) messages outputted from ths logger will be sent to.
+## The value gets loaded in from [LoggieSettings] automatically.
+var default_channels = []
+
 func _init() -> void:
 	var uses_original_settings_file = true
 	var default_settings_path = get_script().get_path().get_base_dir().path_join("loggie_settings.gd")
@@ -47,16 +55,33 @@ func _init() -> void:
 		else:
 			push_error("Loggie loaded neither a custom nor a default settings file. This will break the plugin. Make sure that a valid loggie_settings.gd is in the same directory where loggie.gd is.")
 			return
+			
+	# Read the default channels from settings.
+	for channel_id in settings.default_channels:
+		if typeof(channel_id) == TYPE_STRING or typeof(channel_id) == TYPE_STRING_NAME:
+			default_channels.push_back(channel_id)
 
+	# Enforce certain settings if configured to do so.
 	if self.settings.enforce_optimal_settings_in_release_build == true and is_in_production():
-		self.settings.terminal_mode = LoggieEnums.TerminalMode.PLAIN
+		self.settings.msg_format_mode = LoggieEnums.MsgFormatMode.PLAIN
 		self.settings.box_characters_mode = LoggieEnums.BoxCharactersMode.COMPATIBLE
+
+	# Install all the built-in channels.
+	var terminal_channel : TerminalLoggieMsgChannel = load("res://addons/loggie/channels/terminal.gd").new()
+	terminal_channel.preprocess_flags = self.settings.preprocess_flags_terminal_channel
+	add_channel(terminal_channel)
+	var discord_channel : DiscordLoggieMsgChannel = load("res://addons/loggie/channels/discord.gd").new()
+	discord_channel.preprocess_flags = self.settings.preprocess_flags_discord_channel
+	add_channel(discord_channel)
+	var slack_channel : SlackLoggieMsgChannel = load("res://addons/loggie/channels/slack.gd").new()
+	slack_channel.preprocess_flags = self.settings.preprocess_flags_slack_channel
+	add_channel(slack_channel)
 
 	# Already cache the name of the singleton found at loggie's script path.
 	class_names[self.get_script().resource_path] = LoggieSettings.loggie_singleton_name
 	
 	# Prepopulate class data from ProjectSettings to avoid needing to read files.
-	if self.settings.derive_and_show_class_names == true and OS.has_feature("debug"):
+	if OS.has_feature("debug"):
 		for class_data: Dictionary in ProjectSettings.get_global_class_list():
 			class_names[class_data.path] = class_data.class
 	  
@@ -88,7 +113,7 @@ func _init() -> void:
 		var system_specs_msg = LoggieSystemSpecsMsg.new().use_logger(self)
 		system_specs_msg.embed_specs().preprocessed(false).info()
 
-## Attempts to instantiate a LoggieSettings object from the script at the given [param path].
+## Attempts to instantiate and use a LoggieSettings object from the script at the given [param path].
 ## Returns true if successful, otherwise false and prints an error.
 func load_settings_from_path(path : String) -> bool:
 	var settings_resource = ResourceLoader.load(path)
@@ -127,6 +152,24 @@ func is_domain_enabled(domain_name : String) -> bool:
 		return true
 	
 	return false
+
+## Returns an available channel with the given ID (if one exists), otherwise null.
+func get_channel(channel_id : String) -> LoggieMsgChannel:
+	if available_channels.has(channel_id):
+		return available_channels[channel_id]
+	return null
+
+## Adds a new channel for sending messages to.
+## Multiple channels with the same ID can not be added, so make sure your ID
+## does not clash with one of the existing channels' IDs, which are:
+## [param terminal], [param discord], [param slack].
+func add_channel(channel : LoggieMsgChannel):
+	if not available_channels.has(channel.ID):
+		available_channels[channel.ID] = channel
+	else:
+		push_error("Attempt to add a channel with ID {ID} failed, a channel with that ID already exists in Loggie.".format({
+			"ID": channel.ID
+		}))
 
 ## Creates a new [LoggieMsg] out of the given [param msg] and extra arguments (by converting them to strings and concatenating them to the msg).
 ## You may continue to modify the [LoggieMsg] with additional functions from that class, then when you are ready to output it, use methods like:
