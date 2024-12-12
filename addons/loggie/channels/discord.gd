@@ -24,7 +24,7 @@ func send(msg : LoggieMsg, msg_type : LoggieEnums.MsgType):
 
 	var webhook_url = loggie.settings.discord_webhook_url_live if loggie.is_in_production() else loggie.settings.discord_webhook_url_dev
 	if webhook_url == null or (webhook_url is String and webhook_url.is_empty()):
-		push_error("Attempt to send a message to the discord channel with an invalid webhook_url.")
+		push_error("Attempt to send a message to the Discord channel with an invalid webhook_url.")
 		return
 
 	var output_text = LoggieTools.convert_string_to_format_mode(msg.last_preprocess_result, LoggieEnums.MsgFormatMode.MARKDOWN)
@@ -41,7 +41,7 @@ func send_post_request(logger : Variant, output_text : String, webhook_url : Str
 	# Enable debug messages if configured.
 	logger.set_domain_enabled(debug_domain, debug_enabled)
 
-	# Create a new HTTPRequest POST request that will be sent to discord and add it into the scenetree.
+	# Create a new HTTPRequest POST request that will be sent to Discord and add it into the scenetree.
 	var http = HTTPRequest.new()
 	logger.add_child(http)
 
