@@ -149,8 +149,8 @@ static func rich_to_ANSI(text: String) -> String:
 ## Returns a dictionary of call stack data related to the stack the call to this function is a part of.
 static func get_current_stack_frame_data() -> Dictionary:
 	var stack = get_stack()
-	const callerIndex = 3
-	var targetIndex = callerIndex if stack.size() >= callerIndex else stack.size() - 1
+	const callerIndex = 5
+	var targetIndex = callerIndex if stack.size() - 1 >= callerIndex else stack.size() - 1
 
 	if stack.size() > 0:
 		return stack[targetIndex]
