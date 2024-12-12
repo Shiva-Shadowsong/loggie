@@ -32,6 +32,10 @@ var class_names : Dictionary = {}
 ## [LoggieMsgChannel] objects those IDs are representing.
 var available_channels = {}
 
+## The default channel(s) messages outputted from ths logger will be sent to.
+## The value gets loaded in from [LoggieSettings] automatically.
+var default_channels = []
+
 func _init() -> void:
 	var uses_original_settings_file = true
 	var default_settings_path = get_script().get_path().get_base_dir().path_join("loggie_settings.gd")
@@ -51,6 +55,11 @@ func _init() -> void:
 		else:
 			push_error("Loggie loaded neither a custom nor a default settings file. This will break the plugin. Make sure that a valid loggie_settings.gd is in the same directory where loggie.gd is.")
 			return
+			
+	# Read the default channels from settings.
+	for channel_id in settings.default_channels:
+		if typeof(channel_id) == TYPE_STRING or typeof(channel_id) == TYPE_STRING_NAME:
+			default_channels.push_back(channel_id)
 
 	# Enforce certain settings if configured to do so.
 	if self.settings.enforce_optimal_settings_in_release_build == true and is_in_production():

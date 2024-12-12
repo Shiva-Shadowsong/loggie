@@ -71,6 +71,14 @@ const project_settings = {
 		"hint_string" : "",
 		"doc" : "Should Loggie enforce certain settings to automatically change to optimal values in production/release builds?",
 	},
+	"default_channels" = {
+		"path": "loggie/general/default_channels",
+		"default_value" : ["terminal"],
+		"type" : TYPE_PACKED_STRING_ARRAY,
+		"hint" : PROPERTY_HINT_TYPE_STRING,
+		"hint_string" : "",
+		"doc" : "The channels messages outputted from Loggie will be sent to by default (if not modified with LoggieMsg.channel method).",
+	},
 	"discord_webhook_url_live" = {
 		"path": "loggie/general/discord/live_webhook",
 		"default_value" : "",
@@ -313,6 +321,9 @@ var preprocess_flags_discord_channel = LoggieEnums.PreprocessStep.APPEND_DOMAIN_
 ## Defines the flags which LoggieMessages sent to the Slack channel output will use during preprocessing.
 var preprocess_flags_slack_channel = LoggieEnums.PreprocessStep.APPEND_DOMAIN_NAME | LoggieEnums.PreprocessStep.APPEND_CLASS_NAME
 
+## The list of channels a message outputted from Loggie should be sent to by default.
+var default_channels : PackedStringArray
+
 #endregion
 # ----------------------------------------------- #
 #region Formats for prints
@@ -407,6 +418,7 @@ func load():
 	show_system_specs = ProjectSettings.get_setting(project_settings.show_system_specs.path, project_settings.show_system_specs.default_value)
 	timestamps_use_utc = ProjectSettings.get_setting(project_settings.timestamps_use_utc.path, project_settings.timestamps_use_utc.default_value)
 	enforce_optimal_settings_in_release_build = ProjectSettings.get_setting(project_settings.enforce_optimal_settings_in_release_build.path, project_settings.enforce_optimal_settings_in_release_build.default_value)
+	default_channels = ProjectSettings.get_setting(project_settings.default_channels.path, project_settings.default_channels.default_value)
 
 	print_errors_to_console = ProjectSettings.get_setting(project_settings.output_errors_to_console.path, project_settings.output_errors_to_console.default_value)
 	print_warnings_to_console = ProjectSettings.get_setting(project_settings.output_warnings_to_console.path, project_settings.output_warnings_to_console.default_value)
@@ -436,8 +448,8 @@ func load():
 func to_dict() -> Dictionary:
 	var dict = {}
 	var included = [
-		"msg_format_mode", "log_level", "show_loggie_specs", "show_system_specs", "enforce_optimal_settings_in_release_build",
 		"preprocess_flags_discord_channel", "preprocess_flags_slack_channel", "preprocess_flags_terminal_channel",
+		"default_channels", "msg_format_mode", "log_level", "show_loggie_specs", "show_system_specs", "enforce_optimal_settings_in_release_build",
 		"print_errors_to_console", "print_warnings_to_console",
 		"use_print_debug_for_debug_msg", "nameless_class_name_proxy",
 		"timestamps_use_utc", "format_header", "format_domain_prefix", "format_error_msg",
