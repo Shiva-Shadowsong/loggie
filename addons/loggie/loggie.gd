@@ -36,7 +36,15 @@ var available_channels = {}
 ## The value gets loaded in from [LoggieSettings] automatically.
 var default_channels = []
 
+## Stores a reference to a [LoggieVersionManager] that will be used to manage the
+## version of this instance.
+var version_manager : LoggieVersionManager = LoggieVersionManager.new()
+
 func _init() -> void:
+	# Initialize the version manager.
+	
+	
+	# Load and initialize the settings.
 	var uses_original_settings_file = true
 	var default_settings_path = get_script().get_path().get_base_dir().path_join("loggie_settings.gd")
 	var custom_settings_path = get_script().get_path().get_base_dir().path_join("custom_settings.gd")
@@ -96,6 +104,7 @@ func _init() -> void:
 	if Engine.is_editor_hint():
 		return
 	
+	# Print the Loggie boot messages.
 	if self.settings.show_loggie_specs != LoggieEnums.ShowLoggieSpecsMode.DISABLED:
 		msg("👀 Loggie {version} booted.".format({"version" : self.VERSION})).color(Color.ORANGE).header().nl().info()
 		var loggie_specs_msg = LoggieSystemSpecsMsg.new().use_logger(self)

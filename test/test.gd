@@ -38,6 +38,12 @@ func _ready() -> void:
 	#var chunked = LoggieTools.chunk_string2(msgtosplit, chunk_size)
 	#print("Chunked:", chunked)
 
+	var v1 = Loggie.version_manager.get_version_breakdown_from_string("v1.55-red")
+	var v2 = Loggie.version_manager.get_version_breakdown_from_string("2.43.4")
+	var v3 = Loggie.version_manager.get_version_breakdown_from_string("v1.5")
+	print("V1:", v1)
+	print("V2:", v2)
+	print("V3:", v3)
 
 func setup_gui():
 	$Label.text = "Loggie {version}".format({"version": Loggie.VERSION})
