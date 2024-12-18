@@ -43,6 +43,8 @@ func test_all_log_level_outputs():
 	Loggie.msg("Test logging methods").box(25).info()
 	Loggie.msg("Test info").info()
 	Loggie.msg("Test", "info", "multi", "argument").info()
+	Loggie.msg("Test", 50, get_viewport(), AudioServer).info()
+	Loggie.msg("Test", Color.RED, Vector2.UP, Vector2i.ONE).info()
 	Loggie.msg("Test error.").error()
 	Loggie.msg("Test warning.").warn()
 	Loggie.msg("Test notice.").notice()
