@@ -19,7 +19,7 @@ static func concatenate_msg_and_args(msg : Variant, arg1 : Variant = null, arg2 
 	var arguments = [arg1, arg2, arg3, arg4, arg5, arg6]
 	for arg in arguments:
 		if arg != null:
-			final_msg += (" " + convert_to_string(arg))
+			final_msg += ", [ %s ]" % convert_to_string(arg)
 	return final_msg
 
 ## Converts [param something] into a string.
@@ -31,6 +31,23 @@ static func convert_to_string(something : Variant) -> String:
 		result = JSON.new().stringify(something, "  ", false, true)
 	elif something is LoggieMsg:
 		result = str(something.string())
+
+	elif something is Object:
+		return "%s: %s" % [something.get_class(), something.to_string()]
+
+	elif something is Vector2:
+		return "Vector2: %s" % str(something)
+	elif something is Vector2i:
+		return "Vector2i: %s" % str(something)
+	elif something is Vector3:
+		return "Vector3: %s" % str(something)
+	elif something is Vector3i:
+		return "Vector3i: %s" % str(something)
+
+	elif something is Color:
+		var html:String = something.to_html()
+		return "Color: {%s} [color=%s]#%s[/color]" % [str(something), html, html]
+		
 	else:
 		result = str(something)
 	return result
