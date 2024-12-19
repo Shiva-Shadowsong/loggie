@@ -43,7 +43,6 @@ enum PreprocessStep {
 	APPEND_CLASS_NAME = 1 << 2,
 }
 
-
 enum BoxCharactersMode {
 	COMPATIBLE, ## Boxes are drawn using characters that compatible with any kind of terminal or text reader.
 	PRETTY ## Boxes are drawn using special unicode characters that create a prettier looking box which may not display properly in some terminals or text readers.
@@ -69,4 +68,11 @@ enum LogAttemptResult {
 	LOG_LEVEL_INSUFFICIENT, ## Message won't be logged because it was output at a log level higher than what Loggie is currently set to.
 	DOMAIN_DISABLED, ## Message won't be logged because it was outputted from a disabled domain.
 	INVALID_CHANNEL, ## Message won't be logged because the channel which was supposed to send it doesn't exist.
+}
+
+## Defines a list of possible ways to configure Loggie to check for updates.
+enum UpdateCheckType {
+	DONT_CHECK, ## If the user doesn't want Loggie to check for updates at all.
+	CHECK_AND_SHOW_MSG, ## If the user wants Loggie to check for updates, and display info in a terminal message.
+	CHECK_AND_SHOW_UPDATER_WINDOW, ## If the user wants Loggie to check for updats, and display the updater window.
 }
