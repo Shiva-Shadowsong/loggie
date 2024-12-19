@@ -19,10 +19,10 @@ var version : LoggieVersion = null
 ## Stores the result of reading the latest Loggie version with [method get_latest_version].
 var latest_version : LoggieVersion = null
 
-## Stores a reference to the plugin.cfg config file used by Loggie.
+## Stores a reference to a ConfigFile which will be dynamically loaded from the current connected logger.
 var config : ConfigFile = ConfigFile.new()
 
-## Stores a reference to the [Loggie] logger that's using this version manager.
+## Stores a reference to the logger that's using this version manager.
 var _logger : Variant = null
 
 ## Internal debug variable.
