@@ -270,6 +270,87 @@ static func chunk_string(string : String, chunk_size : int) -> Array:
 	else:
 		return [string]
 
+## Copies the directory at the given [param path_dir_to_copy] path and places the copy at the given [param path_dir_to_copy_into] path.
+## Returns a dictionary with 2 keys:
+## [code]
+## [br]`errors` : Array[Error] # An array of all errors that occured during the process. ('Error.OK' is an exception and won't be included here)
+## [br]`messages` : Array[LoggieMsg] # An array of messages describing the process, including informational or error related content.
+## [/code]
+static func copy_dir_absolute(path_dir_to_copy: String, path_dir_to_copy_into: String, overwrite_existing_files_with_same_name : bool = false) -> Dictionary:
+	const debug_enabled = true
+	var result = {
+		"errors" : [],
+		"messages" : []
+	}
+	
+	# Ensure source directory is openable.
+	var source_dir = DirAccess.open(path_dir_to_copy)
+	if source_dir == null:
+		var open_error = DirAccess.get_open_error()
+		result.errors.push_back(open_error)
+		result.messages.push_back(LoggieMsg.new("Failed to open source directory: ", path_dir_to_copy, " with error: ", error_string(open_error)))
+		return result
+
+	# Ensure target directory is openable.
+	var target_dir = DirAccess.open(path_dir_to_copy_into)
+	var target_dir_path_abs = ProjectSettings.globalize_path(path_dir_to_copy_into)
+	if target_dir == null:
+		var msg = LoggieMsg.new("📂 Target directory not found - creating it at:").msg(path_dir_to_copy_into).color(Color.CADET_BLUE)
+		result.messages.push_back(msg)
+		DirAccess.make_dir_recursive_absolute(path_dir_to_copy_into)
+		target_dir = DirAccess.open(path_dir_to_copy_into)
+
+	# Copy all files from the current source directory into the target directory.
+	for file_name : String in source_dir.get_files():
+		var file_path_abs = ProjectSettings.globalize_path(path_dir_to_copy.path_join(file_name))
+		var target_file_path_abs = target_dir_path_abs.path_join(file_name)
+		var copying_msg = LoggieMsg.new("Copying file...")
+		copying_msg.msg("\n\t📝").msg("From: ", file_path_abs).color(Color.CORNFLOWER_BLUE)
+		copying_msg.msg("\n\t📝").msg("To:   ", target_file_path_abs).color(Color.CORNFLOWER_BLUE)
+		copying_msg.nl()
+		
+		var is_overwrite_required = false
+		if FileAccess.file_exists(target_file_path_abs):
+			is_overwrite_required = true
+			if overwrite_existing_files_with_same_name:
+				copying_msg.msg("\t[!] Target file already exists and will be overwritten.").bold().color(Color.DARK_KHAKI)
+			else:
+				copying_msg.msg("\t🛑 File will not be copied as overwriting existing files is disabled.").bold().color(Color.SALMON)
+
+		result.messages.push_back(copying_msg)
+		
+		if (not is_overwrite_required) or (is_overwrite_required and overwrite_existing_files_with_same_name):
+			var copy_error = DirAccess.copy_absolute(file_path_abs, target_file_path_abs)
+			if copy_error != OK:
+				result.errors.push_back(copy_error)
+				result.messages.push_back(LoggieMsg.new("Attempt to copy file failed with error: '", error_string(copy_error)))
+
+	# Create all of source directory's subdirectories in the target directory and copy their contents.
+	for dir_name : String in source_dir.get_directories():
+		var source_subdir_path = path_dir_to_copy.path_join(dir_name)
+		var source_subdir_path_abs = ProjectSettings.globalize_path(source_subdir_path)
+		var target_subdir_path = path_dir_to_copy_into.path_join(dir_name)
+		var dir_path_abs = ProjectSettings.globalize_path(target_subdir_path)
+
+		result.messages.push_back(LoggieMsg.new("📂 Creating directory: ").msg("{dir}".format({"dir": dir_path_abs})).color(Color.CADET_BLUE))
+		var make_dir_error = DirAccess.make_dir_recursive_absolute(dir_path_abs)
+		if make_dir_error != OK:
+			result.errors.push_back(make_dir_error)
+			var error_msg = LoggieMsg.new("Attempt to create directory at absolute path recursively failed with error: '", error_string(make_dir_error))
+			result.messages.push_back(error_msg)
+			continue
+
+		# Recursively copy the contents of the subdirectory
+		var subdir_copy_result = copy_dir_absolute(source_subdir_path_abs, target_subdir_path, overwrite_existing_files_with_same_name)
+		result.errors = result.errors + subdir_copy_result.errors
+		result.messages = result.messages + subdir_copy_result.messages
+	
+	if debug_enabled:
+		for msg : LoggieMsg in result.messages:
+			print_rich(msg.string())
+			
+	return result
+
 ## A dictionary of named colors matching the constants from [Color] used to help with rich text coloring.
 ## There may be a way to obtain these Color values without this dictionary if one can somehow check for the 
 ## existence and value of a constant on the Color class (since they're already there),
