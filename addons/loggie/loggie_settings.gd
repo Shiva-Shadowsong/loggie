@@ -23,6 +23,14 @@ static var loggie_singleton_name = "Loggie"
 ## relevant to Loggie, particularly important for the default way of loading [LoggieSettings] and
 ## setting up Godot Project Settings related to Loggie.
 const project_settings = {
+	"update_check_mode" = {
+		"path": "loggie/general/check_for_updates",
+		"default_value" : LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_UPDATER_WINDOW,
+		"type" : TYPE_INT,
+		"hint" : PROPERTY_HINT_ENUM,
+		"hint_string" : "Never:0,Yes and print notification:1,Yes and show updater window:2",
+		"doc" : "Sets which behavior Loggie should use when checking for updates.",
+	},
 	"remove_settings_if_plugin_disabled" = {
 		"path": "loggie/general/remove_settings_if_plugin_disabled",
 		"default_value" : true,
@@ -262,6 +270,9 @@ const project_settings = {
 #region Variables
 # ----------------------------------------------- #
 
+## The current behavior Loggie uses to check for updates.
+var update_check_mode : LoggieEnums.UpdateCheckType
+
 ## The current Message Format Mode of Loggie.
 ## Message Format Mode determines whether BBCode, ANSI or some other type of
 ## formatting is used to convey text effects, such as bold, italic, colors, etc.
@@ -412,6 +423,7 @@ var box_symbols_pretty = {
 ## [br][br]Extend this class and override this function to write your own logic for 
 ## how loggie should obtain these settings if you have a need for a different approach.
 func load():
+	update_check_mode = ProjectSettings.get_setting(project_settings.update_check_mode.path, project_settings.update_check_mode.default_value)
 	msg_format_mode = ProjectSettings.get_setting(project_settings.msg_format_mode.path, project_settings.msg_format_mode.default_value)
 	log_level = ProjectSettings.get_setting(project_settings.log_level.path, project_settings.log_level.default_value)
 	show_loggie_specs = ProjectSettings.get_setting(project_settings.show_loggie_specs.path, project_settings.show_loggie_specs.default_value)

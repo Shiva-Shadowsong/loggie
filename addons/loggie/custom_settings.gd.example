@@ -7,6 +7,7 @@ func load():
 	# You could also have them loaded here in some custom way, for example, from a .json or .ini file.
 	# See the documentation of the [LoggieSettings] class to see all available options and their descriptions.
 	
+	self.update_check_mode = LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_UPDATER_WINDOW
 	self.msg_format_mode = LoggieEnums.MsgFormatMode.BBCODE
 	self.log_level = LoggieEnums.LogLevel.INFO
 	self.show_loggie_specs = LoggieEnums.ShowLoggieSpecsMode.ESSENTIAL
