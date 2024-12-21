@@ -573,7 +573,9 @@ custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme = ExtResource("11_5uxhl")
-theme_override_colors/font_color = Color(0.98, 0.49, 0.5635, 1)
+theme_override_colors/font_color = Color(0.980919, 0.500031, 0.570874, 1)
+theme_override_colors/font_outline_color = Color(0.224555, 0.120107, 0.0255992, 1)
+theme_override_constants/outline_size = 8
 disabled = true
 text = "Exit"
 
