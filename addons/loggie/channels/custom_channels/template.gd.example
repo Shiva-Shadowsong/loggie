@@ -1,0 +1,28 @@
+extends LoggieMsgChannel
+
+func _init() -> void:
+	self.ID = "<your-custom-id>"
+	
+	# Example - Customize preprocess flags:
+	# self.preprocess_flags = LoggieEnums.PreprocessStep.APPEND_TIMESTAMPS | LoggieEnums.PreprocessStep.APPEND_DOMAIN_NAME | LoggieEnums.PreprocessStep.APPEND_CLASS_NAME
+
+func send(msg : LoggieMsg, msg_type : LoggieEnums.MsgType):
+	# Validate that the message is coming from a valid logger if you are going to be requiring access to a [Loggie] instance.
+	var loggie = msg.get_logger() # Access a [Loggie] instance directly from the message.
+	if loggie == null:
+		push_error("Attempt to send a message that's coming from an invalid logger.")
+		return
+
+	# To access the most recently preprocessed version of the message - use:
+	# msg.last_preprocess_result
+	
+	# To access a string version of the message (no preprocessing) - use:
+	var msg_text = msg.string()
+	
+	# Optionally
+	# We can use `LoggieTools.convert_string_to_format_mode` to apply one of the Loggie format modes to it.
+	# Explore more functions in [LoggieTools] and [LoggieMsg].
+	# var converted = LoggieTools.convert_string_to_format_mode(msg.last_preprocess_result, loggie.settings.msg_format_mode)
+
+	# Do something with the message.
+	print(msg_text)
