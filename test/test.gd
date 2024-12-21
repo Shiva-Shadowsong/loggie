@@ -1,5 +1,5 @@
 ## This script serves as a playground for testing out Loggie features.
-## It is not an actual test suite with assertions, but it can serve well 
+## It is not an actual test suite with assertions, but it can serve well
 ## for testing core functionality during development.
 class_name LoggieTestPlayground extends Control
 
@@ -16,6 +16,10 @@ const SCRIPT_LOGGIE_TALKER_NAMED_CHILD = preload("res://test/testing_props/talke
 func _init() -> void:
 	Loggie.msg("Test message from test.gd _init.").warn()
 
+	var logpath : String = Loggie.get_script().resource_path
+	Loggie.info("Loggie path:", logpath, " -> dir:", logpath.get_base_dir())
+
+
 func _ready() -> void:
 	original_settings = Loggie.settings.duplicate()
 	setup_gui()
@@ -23,7 +27,7 @@ func _ready() -> void:
 	#print_setting_values_from_project_settings()
 	#print_actual_current_settings()
 	#print_talker_scripts_data()
-	
+
 	#test_all_log_level_outputs()
 	#test_decors()
 	#test_output_from_classes_of_various_inheritances_and_origins()
@@ -32,18 +36,6 @@ func _ready() -> void:
 	#test_bbcode_to_markdown()
 	#test_discord_channel()
 	#test_slack_channel()
-	
-	#var msgtosplit = "my test sentence has a lot of words"
-	#var chunk_size = 2000
-	#var chunked = LoggieTools.chunk_string2(msgtosplit, chunk_size)
-	#print("Chunked:", chunked)
-
-	var v1 = Loggie.version_manager.get_version_breakdown_from_string("v1.55-red")
-	var v2 = Loggie.version_manager.get_version_breakdown_from_string("2.43.4")
-	var v3 = Loggie.version_manager.get_version_breakdown_from_string("v1.5")
-	print("V1:", v1)
-	print("V2:", v2)
-	print("V3:", v3)
 
 func setup_gui():
 	$Label.text = "Loggie {version}".format({"version": Loggie.VERSION})
@@ -78,11 +70,11 @@ func test_output_from_classes_of_various_inheritances_and_origins():
 	for proxy : LoggieEnums.NamelessClassExtensionNameProxy in LoggieEnums.NamelessClassExtensionNameProxy.values():
 		Loggie.class_names = {}
 		Loggie.settings.nameless_class_name_proxy = proxy
-		
+
 		Loggie.msg("Using proxy: {proxy}".format({
 			"proxy": LoggieEnums.NamelessClassExtensionNameProxy.keys()[proxy]
 		})).header().info()
-		
+
 		LoggieAutoloadedTalker.say("This is an autoload class.")
 
 		# Test outputting a message from a different script.
@@ -91,19 +83,19 @@ func test_output_from_classes_of_various_inheritances_and_origins():
 		# class_name is empty.
 		var talker = LoggieTalker.new()
 		talker.say("This is a named class that extends a base type (Node).")
-		
+
 		# Test how it looks when code from an inner-class defined in LoggieTalker produces a log.
 		talker.say_from_inner("This is an inner-class defined in that class.")
 
 		# Test how it looks when a script that has a `class_name` and extends LoggieTalker produces a log.
 		SCRIPT_LOGGIE_TALKER_NAMED_CHILD.new().say("This is a named class that extends a named class and has its own implementation of a method.")
-		
+
 		# Test how it looks when a script that has no `class_name` and extends LoggieTalker produces a log.
 		SCRIPT_LOGGIE_TALKER_CHILD.new().say("This is an unnamed class that extends a named class and has its own implementation of a method'.")
-		
+
 		# Test how it looks when a script that has a `class_name` and extends a LoggieTalker extender produces a log.
 		SCRIPT_LOGGIE_TALKER_NAMED_GRANDCHILD.new().say("This is a named class that extends a named class that extends a named class.")
-		
+
 		# Test how it looks when a script that has no `class_name` and extends a LoggieTalker extender produces a log.
 		SCRIPT_LOGGIE_TALKER_GRANDCHILD.new().say("This is an unnamed class that extends an unnamed class that extends a named class.")
 
@@ -137,7 +129,7 @@ func test_decors():
 	Loggie.msg("Supported color warning.").color("cyan").warn()
 	Loggie.msg("Supported color error.").color("cyan").error()
 	Loggie.msg("Supported color debug.").color("cyan").debug()
-	
+
 	# Test a godot colored message of all types.
 	# Godot-colors are colors defined as consts in the 'Color' class but not
 	# explicitly supported by 'print_rich'.
@@ -146,7 +138,7 @@ func test_decors():
 	Loggie.msg("Custom colored warning.").color(Color.SLATE_BLUE).warn()
 	Loggie.msg("Custom colored error.").color(Color.SLATE_BLUE).error()
 	Loggie.msg("Custom colored debug.").color(Color.SLATE_BLUE).debug()
-	
+
 	# Test a custom colored message.
 	# (Arbitrary hex codes).
 	Loggie.msg("Custom colored info msg.").color("#3afabc").info()
@@ -154,7 +146,7 @@ func test_decors():
 	Loggie.msg("Custom colored warning.").color("#3afabc").warn()
 	Loggie.msg("Custom colored error.").color("#3afabc").error()
 	Loggie.msg("Custom colored debug.").color("#3afabc").debug()
-	
+
 	# Test pretty printing a dictionary.
 	var testDict = {
 		"a" : "Hello",
@@ -165,7 +157,7 @@ func test_decors():
 		"c" : ["A", {"B" : "2"}, 3]
 	}
 	Loggie.msg(testDict).info()
-	
+
 
 func test_segments():
 	# Test basic segmenting.
@@ -180,19 +172,19 @@ func test_segments():
 
 	print("\n\n")
 	Loggie.msg("Segment1: ").color("orange").msg("Segment2").info()
-	
+
 func test_bbcode_to_markdown():
 	var msg = Loggie.msg("Hello world").italic().color(Color.RED).msg(" - part 2 is bold").bold()
 	print("Text to convert:\n{msg}".format({"msg": msg.string()}))
 	var converted_text = LoggieTools.convert_BBCode_to_markdown(msg.string())
-	
+
 	# Print with standard print to see what the actual output looks like without Loggie interfering with any other conversion.
 	print("Converted: [", converted_text, "]")
 
 func test_discord_channel():
 	# Standard test with decorations.
 	Loggie.msg("Hello world").italic().msg(" - from Godot!").bold().channel("discord").info()
-	
+
 	# Test long message.
 	var msg_2k_long = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, quis gravida magna mi a libero. Fusce vulputate eleifend sapien. Vestibulum purus quam, scelerisque ut, mollis sed, nonummy id, metus. Nullam accumsan lorem in dui. Cras ultricies mi eu turpis hendrerit fringilla. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In ac dui quis mi consectetuer lacinia. Nam pretium turpis et arcu. Duis arcu tortor, suscipit eget, imperdiet nec, imperdiet iaculis, ipsum. Sed aliquam ultrices mauris. Integer ante arcu, accumsan a, consectetuer eget, posuere ut, mauris. Praesent adipiscing. Phasellus ullamcorper ipsum rutrum nunc. Nunc nonummy metus. Vestibzzz"
 	Loggie.msg(msg_2k_long, msg_2k_long).channel("discord").info()
@@ -200,7 +192,7 @@ func test_discord_channel():
 func test_slack_channel():
 	# Standard test.
 	Loggie.msg("Hello world").italic().msg(" - from Godot!").bold().channel("slack").info()
-	
+
 	# Test long message.
 	var msg_2k_long = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, quis gravida magna mi a libero. Fusce vulputate eleifend sapien. Vestibulum purus quam, scelerisque ut, mollis sed, nonummy id, metus. Nullam accumsan lorem in dui. Cras ultricies mi eu turpis hendrerit fringilla. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In ac dui quis mi consectetuer lacinia. Nam pretium turpis et arcu. Duis arcu tortor, suscipit eget, imperdiet nec, imperdiet iaculis, ipsum. Sed aliquam ultrices mauris. Integer ante arcu, accumsan a, consectetuer eget, posuere ut, mauris. Praesent adipiscing. Phasellus ullamcorper ipsum rutrum nunc. Nunc nonummy metus. Vestibzzz"
 	Loggie.msg(msg_2k_long, msg_2k_long).channel("slack").info()
@@ -213,9 +205,9 @@ func test_slack_channel():
 ## Prints helpful data about some test-related scripts.
 func print_talker_scripts_data() -> void:
 	var scripts = [
-		SCRIPT_LOGGIE_TALKER, 
+		SCRIPT_LOGGIE_TALKER,
 		SCRIPT_LOGGIE_TALKER_CHILD,
-		SCRIPT_LOGGIE_TALKER_NAMED_CHILD, 
+		SCRIPT_LOGGIE_TALKER_NAMED_CHILD,
 		SCRIPT_LOGGIE_TALKER_GRANDCHILD,
 		SCRIPT_LOGGIE_TALKER_NAMED_GRANDCHILD
 	]
@@ -245,6 +237,6 @@ func print_actual_current_settings():
 
 func reset_settings():
 	Loggie.settings = original_settings.duplicate()
-	
+
 #endregion
 # -----------------------------------------
