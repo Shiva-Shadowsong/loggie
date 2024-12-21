@@ -250,7 +250,6 @@ static func extract_class_name_from_gd_script(path_or_script : Variant, proxy : 
 					_class_name = script.get_script_property_list().front()["name"]
 
 	file.close()
-
 	return _class_name
 
 ## Takes the given [param string] and returns an array made out of chunks of the given size.
@@ -277,7 +276,7 @@ static func chunk_string(string : String, chunk_size : int) -> Array:
 ## [br]`messages` : Array[LoggieMsg] # An array of messages describing the process, including informational or error related content.
 ## [/code]
 static func copy_dir_absolute(path_dir_to_copy: String, path_dir_to_copy_into: String, overwrite_existing_files_with_same_name : bool = false) -> Dictionary:
-	const debug_enabled = true
+	const debug_enabled = false
 	var result = {
 		"errors" : [],
 		"messages" : []
@@ -304,18 +303,17 @@ static func copy_dir_absolute(path_dir_to_copy: String, path_dir_to_copy_into: S
 	for file_name : String in source_dir.get_files():
 		var file_path_abs = ProjectSettings.globalize_path(path_dir_to_copy.path_join(file_name))
 		var target_file_path_abs = target_dir_path_abs.path_join(file_name)
-		var copying_msg = LoggieMsg.new("Copying file...")
-		copying_msg.msg("\n\t📝").msg("From: ", file_path_abs).color(Color.CORNFLOWER_BLUE)
-		copying_msg.msg("\n\t📝").msg("To:   ", target_file_path_abs).color(Color.CORNFLOWER_BLUE)
-		copying_msg.nl()
+		var copying_msg = LoggieMsg.new("📝 Copying file...")
+		copying_msg.msg(file_path_abs).italic().color(Color.CORNFLOWER_BLUE).add(" -> ")
+		copying_msg.msg(target_file_path_abs).bold().color(Color.CORNFLOWER_BLUE)
 		
 		var is_overwrite_required = false
 		if FileAccess.file_exists(target_file_path_abs):
 			is_overwrite_required = true
 			if overwrite_existing_files_with_same_name:
-				copying_msg.msg("\t[!] Target file already exists and will be overwritten.").bold().color(Color.DARK_KHAKI)
+				copying_msg.nl().msg("\t[!] Target file already exists and will be overwritten.").bold().color(Color.DARK_KHAKI)
 			else:
-				copying_msg.msg("\t🛑 File will not be copied as overwriting existing files is disabled.").bold().color(Color.SALMON)
+				copying_msg.nl().msg("\t🛑 File will not be copied as overwriting existing files is disabled.").bold().color(Color.SALMON)
 
 		result.messages.push_back(copying_msg)
 		
