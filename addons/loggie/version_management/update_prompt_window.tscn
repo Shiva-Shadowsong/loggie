@@ -405,7 +405,7 @@ theme_override_icons/radio_checked_disabled = ExtResource("8_4h2cx")
 theme_override_icons/radio_unchecked_disabled = ExtResource("9_51n7f")
 text = "do not show this again"
 
-[node name="Overview" type="Control" parent="."]
+[node name="UpdateMonitor" type="Control" parent="."]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -416,7 +416,7 @@ offset_bottom = -673.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="BackgroundUnder" type="TextureRect" parent="Overview"]
+[node name="BackgroundUnder" type="TextureRect" parent="UpdateMonitor"]
 modulate = Color(1, 1, 1, 0.811765)
 layout_mode = 1
 anchors_preset = 15
@@ -426,7 +426,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("GradientTexture1D_k1b6u")
 
-[node name="BackgroundOver" type="TextureRect" parent="Overview"]
+[node name="BackgroundOver" type="TextureRect" parent="UpdateMonitor"]
 modulate = Color(1, 1, 1, 0.752941)
 layout_mode = 1
 anchors_preset = 15
@@ -436,7 +436,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("GradientTexture2D_p6ad4")
 
-[node name="ProgressBar" type="ProgressBar" parent="Overview"]
+[node name="ProgressBar" type="ProgressBar" parent="UpdateMonitor"]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 7
@@ -456,7 +456,7 @@ theme_override_font_sizes/font_size = 31
 theme_override_styles/background = SubResource("StyleBoxFlat_y40yc")
 theme_override_styles/fill = SubResource("StyleBoxFlat_h3ybw")
 
-[node name="LabelMainStatus" type="Label" parent="Overview"]
+[node name="LabelMainStatus" type="Label" parent="UpdateMonitor"]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 8
@@ -479,7 +479,8 @@ theme_override_font_sizes/font_size = 81
 text = "status"
 horizontal_alignment = 1
 
-[node name="LabelOldVersion" type="Label" parent="Overview"]
+[node name="LabelOldVersion" type="Label" parent="UpdateMonitor"]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -498,9 +499,10 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 14
 theme_override_fonts/font = ExtResource("3_a36jf")
 theme_override_font_sizes/font_size = 25
-text = "1.5"
+text = "v_old"
 
-[node name="LabelNewVersion" type="Label" parent="Overview"]
+[node name="LabelNewVersion" type="Label" parent="UpdateMonitor"]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -519,10 +521,10 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 14
 theme_override_fonts/font = ExtResource("3_a36jf")
 theme_override_font_sizes/font_size = 25
-text = "1.6"
+text = "V_NEW"
 horizontal_alignment = 2
 
-[node name="LoggieIcon" type="TextureRect" parent="Overview"]
+[node name="LoggieIcon" type="TextureRect" parent="UpdateMonitor"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -537,7 +539,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("10_abt8m")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Overview"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UpdateMonitor"]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -549,41 +551,44 @@ grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/separation = 5
 
-[node name="OptionButtons" type="HBoxContainer" parent="Overview/VBoxContainer"]
+[node name="OptionButtons" type="HBoxContainer" parent="UpdateMonitor/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 24
 alignment = 1
 
-[node name="OptionRetryUpdateBtn" type="Button" parent="Overview/VBoxContainer/OptionButtons"]
+[node name="OptionRetryUpdateBtn" type="Button" parent="UpdateMonitor/VBoxContainer/OptionButtons"]
 unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
+mouse_default_cursor_shape = 2
 theme = ExtResource("11_5uxhl")
 disabled = true
 text = "Retry"
 
-[node name="OptionExitBtn" type="Button" parent="Overview/VBoxContainer/OptionButtons"]
+[node name="OptionExitBtn" type="Button" parent="UpdateMonitor/VBoxContainer/OptionButtons"]
 unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
+mouse_default_cursor_shape = 2
 theme = ExtResource("11_5uxhl")
 theme_override_colors/font_color = Color(0.98, 0.49, 0.5635, 1)
 disabled = true
 text = "Exit"
 
-[node name="LabelUpdateStatus" type="Label" parent="Overview/VBoxContainer"]
+[node name="LabelUpdateStatus" type="Label" parent="UpdateMonitor/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 theme = ExtResource("11_5uxhl")
+theme_override_font_sizes/font_size = 20
 text = "UPDATE_STATUS_DETAILED"
 horizontal_alignment = 1
 autowrap_mode = 2
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 unique_name_in_owner = true
-root_node = NodePath("../Overview")
+root_node = NodePath("../UpdateMonitor")
 libraries = {
 "": SubResource("AnimationLibrary_lwiu5")
 }
