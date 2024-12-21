@@ -1,11 +1,10 @@
 @tool
+## A class that can be used to inquire about, generate, and operate on [LoggieVersion]s. 
+## It is also responsible for notifying about an available update, and starting it, if configured to do so.
 class_name LoggieVersionManager extends RefCounted
 
 ## Emitted when this version manager updates the known [member latest_version].
 signal latest_version_updated()
-
-## Emitted when this version manager detects that an update is available.
-signal update_available_detected()
 
 ## The path to Loggie's plugin.cfg file. Required to read the current version of Loggie.
 const CONFIG_PATH = "res://addons/loggie/plugin.cfg"
@@ -19,7 +18,7 @@ var version : LoggieVersion = null
 ## Stores the result of reading the latest Loggie version with [method get_latest_version].
 var latest_version : LoggieVersion = null
 
-## Stores a reference to a ConfigFile which will be dynamically loaded from the current connected logger.
+## Stores a reference to a ConfigFile which will be loaded from [member CONFIG_PATH] during [method find_and_store_current_version].
 var config : ConfigFile = ConfigFile.new()
 
 ## Stores a reference to the logger that's using this version manager.
@@ -34,7 +33,6 @@ var _version_proxy : LoggieVersion = LoggieVersion.new(1, 2)
 ## which will further prompt the emission of signals in this class, and so on.
 func connect_logger(logger : Variant) -> void:
 	self.latest_version_updated.connect(on_latest_version_updated)
-	self.update_available_detected.connect(on_update_available_detected)
 	self._logger = logger
 	update_version_cache()
 
@@ -71,7 +69,24 @@ func find_and_store_latest_version():
 
 ## Defines what happens once this version manager emits the signal saying that an update is available.
 func on_update_available_detected() -> void:
-	show_updater_widget()
+	var loggie= self.get_logger()
+	if loggie.settings.update_check_mode == LoggieEnums.UpdateCheckType.DONT_CHECK:
+		return
+	
+	var update : LoggieUpdate = LoggieUpdate.new(self.version, self.latest_version)
+	update._logger = loggie
+
+	var github_data = self.latest_version.get_meta("github_data")
+	var latest_release_notes_url = github_data.html_url
+	update.set_release_notes_url(latest_release_notes_url)
+	loggie.add_child(update)
+	
+	match loggie.settings.update_check_mode:
+		LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_UPDATER_WINDOW:
+			create_and_show_updater_widget(update)
+		LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_MSG:
+			loggie.set_domain_enabled("loggie_update_status_reports", true)
+			update.try_start()
 
 ## Defines what happens when the request to GitHub API which grabs all the Loggie releases is completed.
 func _on_get_latest_version_request_completed(result : int, response_code : int, headers : PackedStringArray, body: PackedByteArray):
@@ -102,12 +117,12 @@ func on_latest_version_updated() -> void:
 
 	# Check if update is available.
 	if is_update_available():
-		update_available_detected.emit()
+		on_update_available_detected()
 	else:
 		loggie.debug("You are using the latest version.")
 		
 ## Displays the widget which informs the user of the available update and offers actions that they can take next.
-func show_updater_widget() -> void:
+func create_and_show_updater_widget(update : LoggieUpdate) -> LoggieUpdatePrompt:
 	var loggie = self.get_logger()
 	var widget : LoggieUpdatePrompt = load("res://addons/loggie/version_management/update_prompt_window.tscn").instantiate()
 	widget.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -118,6 +133,7 @@ func show_updater_widget() -> void:
 	var on_close_requested = func():
 		_popup.queue_free()
 
+	widget.connect_to_update(update)
 	widget._logger = loggie
 	widget.close_requested.connect(on_close_requested, CONNECT_ONE_SHOT)
 	_popup.close_requested.connect(on_close_requested, CONNECT_ONE_SHOT)
@@ -127,12 +143,7 @@ func show_updater_widget() -> void:
 	_popup.title = "Update Available"
 	_popup.popup_centered(widget.host_window_size)
 	_popup.add_child(widget)
-	
-	if self.latest_version.has_meta("github_data"):
-		var github_data = self.latest_version.get_meta("github_data")
-		if github_data:
-			var latest_release_notes_url = github_data.html_url
-			widget.set_release_notes_url(latest_release_notes_url)
+	return widget
 
 ## Updates the local variables which point to the current and latest version of Loggie.
 func update_version_cache():
@@ -159,41 +170,3 @@ func is_update_available() -> bool:
 		loggie.error("The latest version of Loggie is not valid. Run `find_and_store_latest_version` once to obtain this value first.")
 		return false
 	return self.latest_version.is_higher_than(self.version)
-
-## A utility class that helps with converting and comparing version strings.
-class LoggieVersion:
-	var minor : int = -1 ## The minor component of the version.
-	var major : int = -1 ## The major component of the version.
-	
-	func _init(_major : int = -1, _minor : int = -1) -> void:
-		self.minor = _minor
-		self.major = _major
-		
-	func _to_string() -> String:
-		return str(self.major) + "." + str(self.minor)
-
-	## Checks if this version is valid.
-	## (neither minor nor major component can be less than 0).
-	func is_valid() -> bool:
-		return (minor >= 0 and major >= 0)
-
-	## Checks if the given [param version] if higher than this version.
-	func is_higher_than(version : LoggieVersion):
-		if self.major > version.major:
-			return true
-		if self.minor > version.minor:
-			return true
-		return false
-
-	## Given a string that has 2 sets of digits separated by a ".", breaks that down
-	## into a version with a major and minor version component (ints).
-	static func from_string(version_string : String) -> LoggieVersion:
-		var version : LoggieVersion = LoggieVersion.new()
-		var regex = RegEx.new()
-		regex.compile("(\\d+)\\.(\\d+)")
-		
-		var result = regex.search(version_string)
-		if result:
-			version.major = result.get_string(1).to_int()
-			version.minor = result.get_string(2).to_int()
-		return version
