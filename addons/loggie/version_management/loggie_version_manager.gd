@@ -124,16 +124,17 @@ func on_latest_version_updated() -> void:
 ## Displays the widget which informs the user of the available update and offers actions that they can take next.
 func create_and_show_updater_widget(update : LoggieUpdate) -> LoggieUpdatePrompt:
 	var loggie = self.get_logger()
-	var widget : LoggieUpdatePrompt = load("res://addons/loggie/version_management/update_prompt_window.tscn").instantiate()
-	widget.set_anchors_preset(Control.PRESET_FULL_RECT)
 	var _popup = Window.new()
+	
+	var widget : LoggieUpdatePrompt = load("res://addons/loggie/version_management/update_prompt_window.tscn").instantiate()
+	widget.connect_to_update(update)
+	widget.set_anchors_preset(Control.PRESET_FULL_RECT)
 	
 	EditorInterface.get_base_control().add_child(_popup)
 		
 	var on_close_requested = func():
 		_popup.queue_free()
 
-	widget.connect_to_update(update)
 	widget._logger = loggie
 	widget.close_requested.connect(on_close_requested, CONNECT_ONE_SHOT)
 	_popup.close_requested.connect(on_close_requested, CONNECT_ONE_SHOT)
@@ -143,6 +144,7 @@ func create_and_show_updater_widget(update : LoggieUpdate) -> LoggieUpdatePrompt
 	_popup.title = "Update Available"
 	_popup.popup_centered(widget.host_window_size)
 	_popup.add_child(widget)
+
 	return widget
 
 ## Updates the local variables which point to the current and latest version of Loggie.
