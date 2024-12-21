@@ -240,7 +240,7 @@ func _on_download_request_completed(result: int, response_code: int, headers: Pa
 	#endregion
 
 	#region || Step 4: Move the user's 'custom_settings.gd' to the new version directory if it existed in prev version.
-	send_progress_update(85, "Processing Files", "Reapplying custom settings...")
+	send_progress_update(70, "Processing Files", "Reapplying custom settings...")
 	var CUSTOM_SETTINGS_IN_PREV_VER_PATH = TEMP_PREV_VER_FILES_DIR_PATH.path_join("custom_settings.gd")
 	if FileAccess.file_exists(CUSTOM_SETTINGS_IN_PREV_VER_PATH):
 		var CUSTOM_SETTINGS_IN_NEW_VER_PATH = ProjectSettings.globalize_path(LOGGIE_PLUGIN_DIR.path_join("custom_settings.gd"))
@@ -253,12 +253,31 @@ func _on_download_request_completed(result: int, response_code: int, headers: Pa
 			}))
 	#endregion
 
-	#region || Step 5: Clean up temporarily created files and close filewrite.
+	#region || Step 5: Move the user's 'custom_settings.gd' to the new version directory if it existed in prev version.
+	send_progress_update(80, "Processing Files", "Reapplying custom channels...")
+	var CUSTOM_CHANNELS_IN_PREV_VER_PATH = ProjectSettings.globalize_path(TEMP_PREV_VER_FILES_DIR_PATH.path_join("channels/custom_channels/"))
+	if DirAccess.dir_exists_absolute(CUSTOM_CHANNELS_IN_PREV_VER_PATH):
+		var CUSTOM_CHANNELS_IN_NEW_VER_PATH = ProjectSettings.globalize_path(LOGGIE_PLUGIN_DIR.path_join("channels/custom_channels/"))
+		var copy_prev_ver_custom_channels_result = LoggieTools.copy_dir_absolute(CUSTOM_CHANNELS_IN_PREV_VER_PATH, CUSTOM_CHANNELS_IN_NEW_VER_PATH, true)
+		if copy_prev_ver_custom_channels_result.errors.size() > 0:
+			var copy_prev_var_result_errors_msg = LoggieMsg.new("Errors encountered:")
+			for error in copy_prev_ver_result.errors:
+				copy_prev_var_result_errors_msg.nl().add(error_string(error))
+			push_error("Attempt to copy the 'channels/custom_channels' directory from {p1} to {p2} failed with error: {error}".format({
+				"p1" : CUSTOM_CHANNELS_IN_PREV_VER_PATH,
+				"p2" : CUSTOM_CHANNELS_IN_NEW_VER_PATH,
+				"error" : copy_prev_var_result_errors_msg.string()
+			}))
+	else:
+		print("DIR NO EXISTS")
+	#endregion
+
+	#region || Step 6: Clean up temporarily created files and close filewrite.
 	send_progress_update(90, "Processing Files", "Cleaning up...")
 	clean_up.call()
 	#endregion
 	
-	#region || Step 6: Declare successful. Wrap up.
+	#region || Step 7: Declare successful. Wrap up.
 	send_progress_update(100, "Finishing up", "")
 	_success()
 	#endregion
