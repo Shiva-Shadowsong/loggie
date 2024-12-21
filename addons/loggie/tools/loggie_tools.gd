@@ -107,7 +107,7 @@ static func rich_to_ANSI(text: String) -> String:
 	var regex_color = RegEx.new()
 	regex_color.compile("\\[color=(.*?)\\](.*?)\\[/color\\]")
 	
-	# Process color tags first
+	# Process color tags first.
 	while regex_color.search(text):
 		var match = regex_color.search(text)
 		var color_str = match.get_string(1).to_upper()
@@ -130,7 +130,7 @@ static func rich_to_ANSI(text: String) -> String:
 		var replacement = color_code + match.get_string(2) + reset_code
 		text = text.replace(match.get_string(0), replacement)
 	
-	# Process bold and italic tags
+	# Process bold and italic tags.
 	var bold_on = "\u001b[1m"
 	var bold_off = "\u001b[22m"
 	var italic_on = "\u001b[3m"
@@ -139,7 +139,7 @@ static func rich_to_ANSI(text: String) -> String:
 	text = text.replace("[b]", bold_on).replace("[/b]", bold_off)
 	text = text.replace("[i]", italic_on).replace("[/i]", italic_off)
 
-	# Remove any other BBCode tags but retain the text between them
+	# Remove any other BBCode tags but retain the text between them.
 	var regex_bbcode = RegEx.new()
 	regex_bbcode.compile("\\[(b|/b|i|/i|color=[^\\]]+|/color)\\]")
 	text = regex_bbcode.sub(text, "", true)
