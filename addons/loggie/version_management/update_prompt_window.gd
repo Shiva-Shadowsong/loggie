@@ -40,6 +40,7 @@ func connect_to_update(p_update : LoggieUpdate) -> void:
 	_update.succeeded.connect(on_update_succeeded)
 	_update.failed.connect(on_update_failed)
 	_update.progress.connect(on_update_progress)
+	_update.status_changed.connect(on_update_status_changed)
 
 ## Returns a reference to the logger object that is using this widget.
 func get_logger() -> Variant:
@@ -88,6 +89,13 @@ func connect_control_effects():
 	
 	# Connect behavior which executes when the "Retry" button is pressed.
 	%OptionRetryUpdateBtn.pressed.connect(self._update.try_start)
+	
+	# Connect behavior which executes when the "Restart Godot" button is pressed.
+	%OptionRestartGodotBtn.pressed.connect(func():
+		close_requested.emit()
+		var editor_plugin : EditorPlugin = Engine.get_meta("LoggieEditorPlugin")
+		editor_plugin.get_editor_interface().restart_editor(true)
+	)
 
 	# The "Don't show again checkbox" updates project settings whenever it is toggled.
 	%DontShowAgainCheckbox.toggled.connect(func(toggled_on : bool):
@@ -120,29 +128,38 @@ func on_update_starting():
 	%OptionExitBtn.visible = false
 	%OptionRetryUpdateBtn.disabled = true
 	%OptionRetryUpdateBtn.visible = false
+	%OptionRestartGodotBtn.disabled = true
+	%OptionRestartGodotBtn.visible = false
 
 ## Defines what happens when the [member _update] declares it has made progress.
-func on_update_progress(value : float, status_msg : String, substatus_msg : String):
+func on_update_progress(value : float):
 	%ProgressBar.value = value
-	%LabelMainStatus.text = status_msg
-	%LabelUpdateStatus.text = substatus_msg
 
 ## Defines what happens when the [member _update] declares it has succeeded.
-func on_update_succeeded(status_msg : String):
+func on_update_succeeded():
 	%LabelMainStatus.text = "Updated"
-	%LabelUpdateStatus.text = status_msg
 	%OptionExitBtn.disabled = false
 	%OptionExitBtn.visible = true
+	%OptionRestartGodotBtn.disabled = false
+	%OptionRestartGodotBtn.visible = true
+
+## Defines what happens when the [member _update] declares it wants the status message to change.
+func on_update_status_changed(status_msg : Variant, substatus_msg : Variant):
+	if status_msg is String:
+		%LabelMainStatus.text = status_msg
+	if substatus_msg is String:
+		%LabelUpdateStatus.text = substatus_msg
 
 ## Defines what happens when the [member _update] declares it has failed.
-func on_update_failed(status : String):
+func on_update_failed():
 	%ProgressBar.value = 0
 	%LabelMainStatus.text = "Failed"
-	%LabelUpdateStatus.text = status
 	%OptionExitBtn.disabled = false
 	%OptionExitBtn.visible = true
 	%OptionRetryUpdateBtn.disabled = false
 	%OptionRetryUpdateBtn.visible = true
+	%OptionRestartGodotBtn.disabled = true
+	%OptionRestartGodotBtn.visible = false
 
 func _on_button_focus_entered(button : Button):
 	if button.has_meta("scale_tween"):

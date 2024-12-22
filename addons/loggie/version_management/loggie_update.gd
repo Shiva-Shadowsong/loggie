@@ -2,13 +2,16 @@
 class_name LoggieUpdate extends Node
 
 ## Emitted when this update fails.
-signal failed(status_msg : String)
+signal failed()
 
 ## Emitted when this update succeeds.
-signal succeeded(status_msg : String)
+signal succeeded()
 
 ## Emitted when this declares that it has made some progress.
-signal progress(value : float, status_msg : String, substatus_msg : String)
+signal progress(value : float)
+
+## Emitted when this declares that it wants a new status/substatus message to be used.
+signal status_changed(status_msg : Variant, substatus_msg : Variant)
 
 ## Emitted when this update is starting.
 signal starting()
@@ -285,7 +288,8 @@ func _on_download_request_completed(result: int, response_code: int, headers: Pa
 ## Internal function used at the end of the updating process if it is successfully completed.
 func _success():
 	set_is_in_progress(false)
-	succeeded.emit("You may see temporary errors in the console due to Loggie files being re-scanned and reloaded on the spot. For the best experience, reload the Godot editor.")
+	status_changed.emit(null, "You may see temporary errors in the console due to Loggie files being re-scanned and reloaded on the spot. For the best experience, reload the Godot editor.")
+	succeeded.emit()
 
 	print_rich(LoggieMsg.new("👀 Loggie updated!").bold().color(Color.ORANGE).string())
 	print_rich(LoggieMsg.new("\t📚 Release Notes: ").bold().msg(release_notes_url).color(Color.CORNFLOWER_BLUE).string())
@@ -297,15 +301,17 @@ func _success():
 	editor_plugin.get_editor_interface().set_plugin_enabled("Loggie", false)
 
 ## Internal function used to interrupt an ongoing update and cause it to fail.
-func _failure(status : String):
+func _failure(status_msg : String):
 	var loggie = self.get_logger()
-	loggie.msg("•• ").msg(status).color(Color.SALMON).preprocessed(false).error()
+	loggie.msg(status_msg).color(Color.SALMON).preprocessed(false).error()
 	loggie.msg("\t💬 If this issue persists, consider reporting: ").bold().msg("https://github.com/Shiva-Shadowsong/loggie/issues").color(Color.CORNFLOWER_BLUE).preprocessed(false).info()
 	set_is_in_progress(false)
-	failed.emit(status)
+	failed.emit()
+	status_changed.emit(null, status_msg)
 	
 func send_progress_update(progress_amount : float, status_msg : String, substatus_msg : String):
 	var loggie = self.get_logger()
 	if !substatus_msg.is_empty():
 		loggie.msg("•• ").msg(substatus_msg).domain(reports_domain).preprocessed(false).info()
-	progress.emit(progress_amount, status_msg, substatus_msg)
+	progress.emit(progress_amount)
+	status_changed.emit(status_msg, substatus_msg)
