@@ -284,11 +284,17 @@ func _on_download_request_completed(result: int, response_code: int, headers: Pa
 
 ## Internal function used at the end of the updating process if it is successfully completed.
 func _success():
+	set_is_in_progress(false)
+	succeeded.emit("You may see temporary errors in the console due to Loggie files being re-scanned and reloaded on the spot. For the best experience, reload the Godot editor.")
+
 	print_rich(LoggieMsg.new("👀 Loggie updated!").bold().color(Color.ORANGE).string())
 	print_rich(LoggieMsg.new("\t📚 Release Notes: ").bold().msg(release_notes_url).color(Color.CORNFLOWER_BLUE).string())
 	print_rich(LoggieMsg.new("\t💬 Support, Development & Feature Requests: ").bold().msg("https://discord.gg/XPdxpMqmcs").color(Color.CORNFLOWER_BLUE).string())
-	set_is_in_progress(false)
-	succeeded.emit("Loggie is ready for action! You may now close this window.")
+
+	var editor_plugin : EditorPlugin = Engine.get_meta("LoggieEditorPlugin")
+	editor_plugin.get_editor_interface().get_resource_filesystem().scan()
+	editor_plugin.get_editor_interface().call_deferred("set_plugin_enabled", "Loggie", true)
+	editor_plugin.get_editor_interface().set_plugin_enabled("Loggie", false)
 
 ## Internal function used to interrupt an ongoing update and cause it to fail.
 func _failure(status : String):
