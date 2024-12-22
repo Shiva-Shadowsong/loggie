@@ -125,6 +125,10 @@ func on_latest_version_updated() -> void:
 func create_and_show_updater_widget(update : LoggieUpdate) -> LoggieUpdatePrompt:
 	var loggie = self.get_logger()
 	var _popup = Window.new()
+	update.succeeded.connect(func():
+		_popup.request_attention()
+		_popup.grab_focus()
+	)
 	
 	var widget : LoggieUpdatePrompt = load("res://addons/loggie/version_management/update_prompt_window.tscn").instantiate()
 	widget.connect_to_update(update)
