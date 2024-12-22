@@ -402,6 +402,7 @@ script = ExtResource("1_xb7je")
 animator = NodePath("AnimationPlayer")
 
 [node name="Notice" type="Control" parent="."]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -498,12 +499,13 @@ layout_mode = 2
 size_flags_vertical = 4
 alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Notice/VBoxContainer/HBoxContainer"]
+[node name="NoticeButtons" type="HBoxContainer" parent="Notice/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 6
 theme_override_constants/separation = 51
 
-[node name="ReleaseNotesBtn" type="Button" parent="Notice/VBoxContainer/HBoxContainer/HBoxContainer"]
+[node name="ReleaseNotesBtn" type="Button" parent="Notice/VBoxContainer/HBoxContainer/NoticeButtons"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
@@ -531,7 +533,7 @@ theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_3sc8x")
 theme_override_styles/normal = SubResource("StyleBoxEmpty_ndum7")
 text = "release notes"
 
-[node name="UpdateNowBtn" type="Button" parent="Notice/VBoxContainer/HBoxContainer/HBoxContainer"]
+[node name="UpdateNowBtn" type="Button" parent="Notice/VBoxContainer/HBoxContainer/NoticeButtons"]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -558,7 +560,7 @@ theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_3sc8x")
 theme_override_styles/normal = SubResource("StyleBoxEmpty_ndum7")
 text = "update now"
 
-[node name="RemindLaterBtn" type="Button" parent="Notice/VBoxContainer/HBoxContainer/HBoxContainer"]
+[node name="RemindLaterBtn" type="Button" parent="Notice/VBoxContainer/HBoxContainer/NoticeButtons"]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -756,7 +758,7 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = -140.0
-offset_bottom = 77.0001
+offset_bottom = 77.0002
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/separation = 5
