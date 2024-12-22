@@ -297,8 +297,8 @@ func _success():
 
 	var editor_plugin : EditorPlugin = Engine.get_meta("LoggieEditorPlugin")
 	editor_plugin.get_editor_interface().get_resource_filesystem().scan()
-	editor_plugin.get_editor_interface().call_deferred("set_plugin_enabled", "Loggie", true)
-	editor_plugin.get_editor_interface().set_plugin_enabled("Loggie", false)
+	editor_plugin.get_editor_interface().call_deferred("set_plugin_enabled", "loggie", true)
+	editor_plugin.get_editor_interface().set_plugin_enabled("loggie", false)
 
 ## Internal function used to interrupt an ongoing update and cause it to fail.
 func _failure(status_msg : String):
