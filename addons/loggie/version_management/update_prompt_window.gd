@@ -49,9 +49,15 @@ func get_logger() -> Variant:
 ## Defines what happens when the update this window is representing updates its "is in progress" status.
 func is_update_in_progress_changed(is_in_progress : bool) -> void:
 	self.is_currently_updating = is_in_progress
-	%ReleaseNotesBtn.disabled = is_in_progress
-	%UpdateNowBtn.disabled = is_in_progress
-	%RemindLaterBtn.disabled = is_in_progress
+	
+	# The first time we enter the UpdateMonitor view and start an update,
+	# the %Notice node and its children should no longer (ever) be interactive or processing,
+	# since there is no way to get back to that view anymore.
+	if is_in_progress and %Notice.process_mode != Node.PROCESS_MODE_DISABLED:
+		%Notice.process_mode = Node.PROCESS_MODE_DISABLED
+		for child in %NoticeButtons.get_children():
+			if child is Button:
+				child.focus_mode = Button.FOCUS_NONE
 	
 ## Connects the effects and functionalities of various controls in this window.
 func connect_control_effects():
@@ -62,7 +68,7 @@ func connect_control_effects():
 	%LabelNewVersion.text = str(self._update.new_version)
 	
 	# Configure onhover/focused effects.
-	var buttons_with_on_focushover_effect = [%ReleaseNotesBtn, %RemindLaterBtn, %UpdateNowBtn]
+	var buttons_with_on_focushover_effect = [%OptionExitBtn, %OptionRestartGodotBtn, %OptionRetryUpdateBtn, %ReleaseNotesBtn, %RemindLaterBtn, %UpdateNowBtn]
 	for button : Button in buttons_with_on_focushover_effect:
 		button.focus_entered.connect(_on_button_focus_entered.bind(button))
 		button.focus_exited.connect(_on_button_focus_exited.bind(button))
@@ -142,6 +148,9 @@ func on_update_succeeded():
 	%OptionExitBtn.visible = true
 	%OptionRestartGodotBtn.disabled = false
 	%OptionRestartGodotBtn.visible = true
+	if animator.is_playing():
+		animator.stop()
+	animator.play("finish_success")
 
 ## Defines what happens when the [member _update] declares it wants the status message to change.
 func on_update_status_changed(status_msg : Variant, substatus_msg : Variant):
