@@ -129,7 +129,7 @@ func _on_download_request_completed(result: int, response_code: int, headers: Pa
 	# The path to the directory which is supposed to contain the plugin directory.
 	# This will usually be 'res://addons/', but could be anything else too. We'll read it dynamically
 	# from the connected logger to guarantee correctness.
-	var LOGGIE_PLUGIN_CONTAINER_DIR = "user://addons/" # loggie.get_directory_path()
+	var LOGGIE_PLUGIN_CONTAINER_DIR = loggie.get_directory_path().get_base_dir().path_join("/")
 	
 	# The path to the `loggie` plugin directory.
 	var LOGGIE_PLUGIN_DIR = ProjectSettings.globalize_path(LOGGIE_PLUGIN_CONTAINER_DIR.path_join("loggie/"))
