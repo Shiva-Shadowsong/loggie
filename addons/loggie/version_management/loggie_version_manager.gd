@@ -85,7 +85,7 @@ func on_update_available_detected() -> void:
 		LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_UPDATER_WINDOW:
 			create_and_show_updater_widget(update)
 		LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_MSG:
-			loggie.set_domain_enabled("loggie_update_status_reports", true)
+			loggie.set_domain_enabled(update.REPORTS_DOMAIN, true)
 			update.try_start()
 
 ## Defines what happens when the request to GitHub API which grabs all the Loggie releases is completed.

@@ -42,7 +42,7 @@ var is_in_progress : bool = false
 var _clean_up_backup_files : bool = false
 
 ## The domain from which status report [LoggieMsg]s from this update will be logged from.
-var reports_domain : String = "loggie_update_status_reports"
+const REPORTS_DOMAIN : String = "loggie_update_status_reports"
 
 func _init(_prev_version : LoggieVersion, _new_version : LoggieVersion) -> void:
 	self.prev_version = _prev_version
@@ -99,7 +99,7 @@ func _start():
 	loggie.msg("Loggie is updating from version {v_prev} to {v_new}.".format({
 		"v_prev" : self.prev_version,
 		"v_new" : self.new_version
-	})).domain(reports_domain).color(Color.ORANGE).box(12).info()
+	})).domain(REPORTS_DOMAIN).color(Color.ORANGE).box(12).info()
 	
 	set_is_in_progress(true)
 	starting.emit()
@@ -310,6 +310,6 @@ func _failure(status_msg : String):
 func send_progress_update(progress_amount : float, status_msg : String, substatus_msg : String):
 	var loggie = self.get_logger()
 	if !substatus_msg.is_empty():
-		loggie.msg("•• ").msg(substatus_msg).domain(reports_domain).preprocessed(false).info()
+		loggie.msg("•• ").msg(substatus_msg).domain(REPORTS_DOMAIN).preprocessed(false).info()
 	progress.emit(progress_amount)
 	status_changed.emit(status_msg, substatus_msg)
