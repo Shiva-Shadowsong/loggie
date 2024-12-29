@@ -271,8 +271,6 @@ func _on_download_request_completed(result: int, response_code: int, headers: Pa
 				"p2" : CUSTOM_CHANNELS_IN_NEW_VER_PATH,
 				"error" : copy_prev_var_result_errors_msg.string()
 			}))
-	else:
-		print("DIR NO EXISTS")
 	#endregion
 
 	#region || Step 6: Clean up temporarily created files and close filewrite.
@@ -291,7 +289,7 @@ func _success():
 	status_changed.emit(null, "You may see temporary errors in the console due to Loggie files being re-scanned and reloaded on the spot. For the best experience, reload the Godot editor.")
 	succeeded.emit()
 
-	print_rich(LoggieMsg.new("👀 Loggie updated!").bold().color(Color.ORANGE).string())
+	print_rich(LoggieMsg.new("👀 Loggie updated to version {new_ver}!".format({"new_ver": self.new_version})).bold().color(Color.ORANGE).string())
 	print_rich(LoggieMsg.new("\t📚 Release Notes: ").bold().msg(release_notes_url).color(Color.CORNFLOWER_BLUE).string())
 	print_rich(LoggieMsg.new("\t💬 Support, Development & Feature Requests: ").bold().msg("https://discord.gg/XPdxpMqmcs").color(Color.CORNFLOWER_BLUE).string())
 
