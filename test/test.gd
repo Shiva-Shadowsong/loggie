@@ -36,7 +36,7 @@ func _ready() -> void:
 	#test_bbcode_to_markdown()
 	#test_discord_channel()
 	#test_slack_channel()
-	test_update_widget()
+	#test_update_widget()
 	
 
 func setup_gui():
