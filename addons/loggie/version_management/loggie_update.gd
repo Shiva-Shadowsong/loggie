@@ -25,7 +25,7 @@ const TEMP_FILES_DIR = "user://"
 ## If this is set to a non-empty string, it will be used as the directory into which the new update will be
 ## installed. Used for testing/debugging. When set to empty string, Loggie will automatically figure out
 ## where it is being updated from and use that directory instead.
-const ALT_LOGGIE_PLUGIN_CONTAINER_DIR = ""
+const ALT_LOGGIE_PLUGIN_CONTAINER_DIR = "user://addons/"
 
 ## The domain from which status report [LoggieMsg]s from this update will be logged from.
 const REPORTS_DOMAIN : String = "loggie_update_status_reports"
