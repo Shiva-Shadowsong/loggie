@@ -6,6 +6,7 @@ class_name LoggieVersionManager extends RefCounted
 ## Emitted when this version manager updates the known [member latest_version].
 signal latest_version_updated()
 
+## Emitted when this version manager has created a valid [LoggieUpdate] and is ready to use it.
 signal update_ready()
 
 ## The path to Loggie's plugin.cfg file. Required to read the current version of Loggie.
@@ -20,9 +21,6 @@ var version : LoggieVersion = null
 ## Stores the result of reading the latest Loggie version with [method get_latest_version].
 var latest_version : LoggieVersion = null
 
-## Stores a reference to a ConfigFile which will be loaded from [member CONFIG_PATH] during [method find_and_store_current_version].
-var config : ConfigFile = ConfigFile.new()
-
 ## Stores a reference to the logger that's using this version manager.
 var _logger : Variant = null
 
@@ -32,7 +30,7 @@ var _update : LoggieUpdate = null
 ## Internal debug variable.
 ## If not null, this version manager will treat the [LoggieVersion] provided under this variable to be the current [param version].
 ## Useful for debugging this module when you want to simulate that the current version is something different than it actually is.
-var _version_proxy : LoggieVersion = LoggieVersion.new(1, 2)
+var _version_proxy : LoggieVersion = null
 
 ## Initializes this version manager, connecting it to the logger that's using it and updating the version cache based on that logger,
 ## which will further prompt the emission of signals in this class, and so on.
@@ -47,21 +45,27 @@ func get_logger() -> Variant:
 
 ## Reads the current version of Loggie from plugin.cfg and stores it in [member version].
 func find_and_store_current_version():
-	# Load data from a file.
-	var err = config.load(CONFIG_PATH)
+	# If there is a version proxy configured, use that.
+	if self._version_proxy != null:
+		self.version = self._version_proxy
+		self.get_logger().debug("Current version of Loggie:", self.version)
+		return
 
-	# If the file didn't load, ignore it.
-	if err == OK:
-		for section in config.get_sections():
-			if section == "plugin":
-				if self._version_proxy != null:
-					self.version = self._version_proxy
-				else:
-					var version_string = config.get_value(section, "version", "")
-					self.version = LoggieVersion.from_string(version_string)
-				self.get_logger().debug("Current version of Loggie:", self.version)
-	else:
+	# Otherwise, load data from the plugin.cfg file.
+	var config = ConfigFile.new()
+	var err = config.load(CONFIG_PATH)
+	if err != OK:
 		push_error("Failed to load the Loggie plugin.cfg file. Ensure that loggie_version_manager.gd -> CONFIG_PATH is pointing correctly to a valid plugin.cfg file.")
+		return
+
+	for section in config.get_sections():
+		if section != "plugin":
+			continue
+
+		var version_string = config.get_value(section, "version", "")
+		self.version = LoggieVersion.from_string(version_string)
+		self.get_logger().debug("Current version of Loggie:", self.version)
+		break	
 
 ## Reads the latest version of Loggie from a GitHub API response and stores it in [member latest_version].
 func find_and_store_latest_version():
@@ -74,7 +78,7 @@ func find_and_store_latest_version():
 
 ## Defines what happens once this version manager emits the signal saying that an update is available.
 func on_update_available_detected() -> void:
-	var loggie= self.get_logger()
+	var loggie = self.get_logger()
 	if loggie.settings.update_check_mode == LoggieEnums.UpdateCheckType.DONT_CHECK:
 		return
 	
