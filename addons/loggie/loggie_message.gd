@@ -73,7 +73,8 @@ func channel(channels : Variant):
 	return self
 
 ## Returns a processed version of the content of this message, which has modifications applied to
-## it based on the requested [param level] and other external Loggie settings.
+## it based on the requested [param level] and other settings defined by the provided preprocess [param flags].
+## Available preprocess flags are found in [enum LoggieEnums.PreprocessStep].
 func get_preprocessed(flags : int, level : LoggieEnums.LogLevel) -> String:
 	var loggie = get_logger()
 	var message = self.string()
@@ -154,12 +155,7 @@ func output(level : LoggieEnums.LogLevel, msg_type : LoggieEnums.MsgType = Loggi
 func error() -> LoggieMsg:
 	output(LoggieEnums.LogLevel.ERROR, LoggieEnums.MsgType.ERROR)
 	return self
-enum PreprocessStep {
-	DO_NOTHING = 1 << 0,
-	APPEND_TIMESTAMPS = 1 << 1, ## A timestamp will be added to the message.
-	APPEND_DOMAIN_NAME = 1 << 2, ## The name of the domain from which the message is coming will be added to the message.
-	APPEND_CLASS_NAME = 1 << 4, ## The name of the class (or an appropriate proxy) that requested this message to be logged will be added to the message.
-}
+
 ## Outputs this message from Loggie as an Warning type message.
 ## The [Loggie.settings.log_level] must be equal to or higher to the WARN level for this to work.
 func warn() -> LoggieMsg:

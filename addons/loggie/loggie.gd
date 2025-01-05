@@ -36,7 +36,12 @@ var available_channels = {}
 ## The value gets loaded in from [LoggieSettings] automatically.
 var default_channels = []
 
+## Stores a reference to a [LoggieVersionManager] that will be used to manage the
+## version of this instance.
+var version_manager : LoggieVersionManager = LoggieVersionManager.new()
+
 func _init() -> void:
+	# Load and initialize the settings.
 	var uses_original_settings_file = true
 	var default_settings_path = get_script().get_path().get_base_dir().path_join("loggie_settings.gd")
 	var custom_settings_path = get_script().get_path().get_base_dir().path_join("custom_settings.gd")
@@ -79,7 +84,7 @@ func _init() -> void:
 
 	# Already cache the name of the singleton found at loggie's script path.
 	class_names[self.get_script().resource_path] = LoggieSettings.loggie_singleton_name
-	
+
 	# Prepopulate class data from ProjectSettings to avoid needing to read files.
 	if OS.has_feature("debug"):
 		for class_data: Dictionary in ProjectSettings.get_global_class_list():
@@ -92,10 +97,11 @@ func _init() -> void:
 			if not class_names.has(class_path):
 				class_names[class_path] = autoload_class
 
-	# Don't print Loggie boot messages if Loggie is running only from the editor.
+	# And don't proceed further if we're in Editor mode, since we don't need to show loggie boot messages in that case.
 	if Engine.is_editor_hint():
-		return
+		return 
 	
+	# Print the Loggie boot messages.
 	if self.settings.show_loggie_specs != LoggieEnums.ShowLoggieSpecsMode.DISABLED:
 		msg("👀 Loggie {version} booted.".format({"version" : self.VERSION})).color(Color.ORANGE).header().nl().info()
 		var loggie_specs_msg = LoggieSystemSpecsMsg.new().use_logger(self)
@@ -112,6 +118,12 @@ func _init() -> void:
 	if self.settings.show_system_specs:
 		var system_specs_msg = LoggieSystemSpecsMsg.new().use_logger(self)
 		system_specs_msg.embed_specs().preprocessed(false).info()
+
+func _ready() -> void:
+	# Only deal with Loggie version management when ready as a plugin in the editor.
+	if !Engine.is_editor_hint():
+		return 
+	version_manager.connect_logger(self) 
 
 ## Attempts to instantiate and use a LoggieSettings object from the script at the given [param path].
 ## Returns true if successful, otherwise false and prints an error.
@@ -208,3 +220,7 @@ func debug(message = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg
 ## For customization, use [method msg] instead.
 func notice(message = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
 	return msg(message, arg1, arg2, arg3, arg4, arg5).notice()
+
+## Returns the path to the directory from which within this script is running.
+func get_directory_path() -> String:
+	return get_script().resource_path.get_base_dir()

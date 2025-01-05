@@ -1,0 +1,95 @@
+[gd_resource type="Theme" load_steps=10 format=3 uid="uid://bntkg3oi4b314"]
+
+[ext_resource type="FontFile" uid="uid://btuvtbhws7p8s" path="res://addons/loggie/assets/theme/fonts/PatrickHandSC-Regular.ttf" id="1_ucfms"]
+[ext_resource type="Texture2D" uid="uid://bfnp2a0sbhi2x" path="res://addons/loggie/assets/theme/checkbox/checkbox_checked.png" id="2_tqabx"]
+[ext_resource type="Texture2D" uid="uid://dqf5cye21gyw8" path="res://addons/loggie/assets/theme/checkbox/checkbox_checked_disabled.png" id="3_plx1a"]
+[ext_resource type="Texture2D" uid="uid://bib1lwikra5kr" path="res://addons/loggie/assets/theme/checkbox/checkbox_unchecked.png" id="4_yp55b"]
+[ext_resource type="Texture2D" uid="uid://cloe7vx2ej0nf" path="res://addons/loggie/assets/theme/checkbox/checkbox_unchecked_disabled.png" id="5_0424s"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gb03k"]
+bg_color = Color(0.349691, 0.30101, 0.201282, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.361244, 0.323458, 0.213348, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+expand_margin_left = 2.0
+expand_margin_top = 1.0
+expand_margin_right = 2.0
+expand_margin_bottom = 1.0
+anti_aliasing_size = 0.537
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_73pt3"]
+bg_color = Color(0.767332, 0.598222, 0.330864, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.943861, 0.775452, 0.522251, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+expand_margin_left = 2.0
+expand_margin_top = 1.0
+expand_margin_right = 2.0
+expand_margin_bottom = 1.0
+anti_aliasing_size = 0.537
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xxk7l"]
+bg_color = Color(0.661808, 0.507874, 0.261375, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.83, 0.629555, 0.3071, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+expand_margin_left = 2.0
+expand_margin_top = 1.0
+expand_margin_right = 2.0
+expand_margin_bottom = 1.0
+anti_aliasing_size = 0.537
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i1fiu"]
+bg_color = Color(0.6, 0.4574, 0.228, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.83, 0.629555, 0.3071, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+expand_margin_left = 2.0
+expand_margin_top = 1.0
+expand_margin_right = 2.0
+expand_margin_bottom = 1.0
+anti_aliasing_size = 0.537
+
+[resource]
+Button/constants/outline_size = 6
+Button/font_sizes/font_size = 30
+Button/fonts/font = ExtResource("1_ucfms")
+Button/styles/disabled = SubResource("StyleBoxFlat_gb03k")
+Button/styles/focus = SubResource("StyleBoxFlat_73pt3")
+Button/styles/hover = SubResource("StyleBoxFlat_xxk7l")
+Button/styles/normal = SubResource("StyleBoxFlat_i1fiu")
+CheckBox/icons/checked = ExtResource("2_tqabx")
+CheckBox/icons/checked_disabled = ExtResource("3_plx1a")
+CheckBox/icons/radio_checked = ExtResource("2_tqabx")
+CheckBox/icons/radio_checked_disabled = ExtResource("3_plx1a")
+CheckBox/icons/radio_unchecked = ExtResource("4_yp55b")
+CheckBox/icons/radio_unchecked_disabled = ExtResource("5_0424s")
+CheckBox/icons/unchecked = ExtResource("4_yp55b")
+CheckBox/icons/unchecked_disabled = ExtResource("5_0424s")
+Label/colors/font_color = Color(0.980392, 0.843137, 0.619608, 1)
+Label/constants/outline_size = 3
+Label/font_sizes/font_size = 21
