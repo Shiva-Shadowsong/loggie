@@ -6,6 +6,8 @@ class_name LoggieVersionManager extends RefCounted
 ## Emitted when this version manager updates the known [member latest_version].
 signal latest_version_updated()
 
+signal update_ready()
+
 ## The path to Loggie's plugin.cfg file. Required to read the current version of Loggie.
 const CONFIG_PATH = "res://addons/loggie/plugin.cfg"
 
@@ -23,6 +25,9 @@ var config : ConfigFile = ConfigFile.new()
 
 ## Stores a reference to the logger that's using this version manager.
 var _logger : Variant = null
+
+## Stores a reference to the [LoggieUpdate] that has been created to handle an available update.
+var _update : LoggieUpdate = null
 
 ## Internal debug variable.
 ## If not null, this version manager will treat the [LoggieVersion] provided under this variable to be the current [param version].
@@ -73,20 +78,22 @@ func on_update_available_detected() -> void:
 	if loggie.settings.update_check_mode == LoggieEnums.UpdateCheckType.DONT_CHECK:
 		return
 	
-	var update : LoggieUpdate = LoggieUpdate.new(self.version, self.latest_version)
-	update._logger = loggie
+	self._update = LoggieUpdate.new(self.version, self.latest_version)
+	self._update._logger = loggie
 
 	var github_data = self.latest_version.get_meta("github_data")
 	var latest_release_notes_url = github_data.html_url
-	update.set_release_notes_url(latest_release_notes_url)
-	loggie.add_child(update)
+	self._update.set_release_notes_url(latest_release_notes_url)
+	loggie.add_child(self._update)
+	update_ready.emit()
 	
-	match loggie.settings.update_check_mode:
-		LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_UPDATER_WINDOW:
-			create_and_show_updater_widget(update)
-		LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_MSG:
-			loggie.set_domain_enabled(update.REPORTS_DOMAIN, true)
-			update.try_start()
+	if Engine.is_editor_hint():
+		match loggie.settings.update_check_mode:
+			LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_UPDATER_WINDOW:
+				create_and_show_updater_widget(self._update)
+			LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_MSG:
+				loggie.set_domain_enabled(self._update.REPORTS_DOMAIN, true)
+				self._update.try_start()
 
 ## Defines what happens when the request to GitHub API which grabs all the Loggie releases is completed.
 func _on_get_latest_version_request_completed(result : int, response_code : int, headers : PackedStringArray, body: PackedByteArray):
@@ -122,7 +129,7 @@ func on_latest_version_updated() -> void:
 		loggie.debug("You are using the latest version.")
 		
 ## Displays the widget which informs the user of the available update and offers actions that they can take next.
-func create_and_show_updater_widget(update : LoggieUpdate) -> LoggieUpdatePrompt:
+func create_and_show_updater_widget(update : LoggieUpdate) -> Window:
 	var loggie = self.get_logger()
 	var _popup = Window.new()
 	update.succeeded.connect(func():
@@ -134,7 +141,8 @@ func create_and_show_updater_widget(update : LoggieUpdate) -> LoggieUpdatePrompt
 	widget.connect_to_update(update)
 	widget.set_anchors_preset(Control.PRESET_FULL_RECT)
 	
-	EditorInterface.get_base_control().add_child(_popup)
+	if Engine.is_editor_hint():
+		EditorInterface.get_base_control().add_child(_popup)
 		
 	var on_close_requested = func():
 		_popup.queue_free()
@@ -149,7 +157,7 @@ func create_and_show_updater_widget(update : LoggieUpdate) -> LoggieUpdatePrompt
 	_popup.popup_centered(widget.host_window_size)
 	_popup.add_child(widget)
 
-	return widget
+	return _popup
 
 ## Updates the local variables which point to the current and latest version of Loggie.
 func update_version_cache():
