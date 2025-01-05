@@ -22,16 +22,24 @@ signal is_in_progress_changed(new_value : bool)
 ## The path to the directory that should have a temporary file created and filled with the patch zipball buffer.
 const TEMP_FILES_DIR = "user://"
 
+## If this is set to a non-empty string, it will be used as the directory into which the new update will be
+## installed. Used for testing/debugging. When set to empty string, Loggie will automatically figure out
+## where it is being updated from and use that directory instead.
+const ALT_LOGGIE_PLUGIN_CONTAINER_DIR = ""
+
+## The domain from which status report [LoggieMsg]s from this update will be logged from.
+const REPORTS_DOMAIN : String = "loggie_update_status_reports"
+
 ## Stores a reference to the logger that's requesting this update.
 var _logger : Variant
 
 ## The URL used to visit a page that contains the release notes for this update.
 var release_notes_url = ""
 
-## Stores a reference to the previous version the connected [param _logger] is/was using.
+## Stores a reference to the previous version the connected [member _logger] is/was using.
 var prev_version : LoggieVersion = null
 
-## Stores a reference to the new version the connected [param _logger] should be using after the update.
+## Stores a reference to the new version the connected [member _logger] should be using after the update.
 var new_version : LoggieVersion = null
 
 ## Indicates whether this update is currently in progress.
@@ -40,9 +48,6 @@ var is_in_progress : bool = false
 ## Whether the update should retain or purge the backup it makes of the previous version files once it is done
 ## installing and applying the new update.
 var _clean_up_backup_files : bool = false
-
-## The domain from which status report [LoggieMsg]s from this update will be logged from.
-const REPORTS_DOMAIN : String = "loggie_update_status_reports"
 
 func _init(_prev_version : LoggieVersion, _new_version : LoggieVersion) -> void:
 	self.prev_version = _prev_version
@@ -65,7 +70,7 @@ func set_is_in_progress(value : bool) -> void:
 ## if something is not configured correctly and pushes a warning/error.
 func try_start():
 	if self._logger == null:
-		push_warning("Attempt to start Loggie update failed - member '_logger' on the update object is null.")
+		push_warning("Attempt to start Loggie update failed - member '_logger' on the LoggieUpdate object is null.")
 		return
 
 	if self.is_in_progress:
@@ -112,7 +117,7 @@ func _start():
 	http_request.request(update_data.zipball_url)
 
 ## Internal callback function. 
-## Defines what happens when new update content is successfully downloaded from GitHUb.
+## Defines what happens when new update content is successfully downloaded from GitHub.
 ## Called automatically during [method _start] if everything is going according to plan.
 func _on_download_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
 	var loggie = self.get_logger()
@@ -129,7 +134,7 @@ func _on_download_request_completed(result: int, response_code: int, headers: Pa
 	# The path to the directory which is supposed to contain the plugin directory.
 	# This will usually be 'res://addons/', but could be anything else too. We'll read it dynamically
 	# from the connected logger to guarantee correctness.
-	var LOGGIE_PLUGIN_CONTAINER_DIR = loggie.get_directory_path().get_base_dir().path_join("/")
+	var LOGGIE_PLUGIN_CONTAINER_DIR = ALT_LOGGIE_PLUGIN_CONTAINER_DIR if !ALT_LOGGIE_PLUGIN_CONTAINER_DIR.is_empty() else loggie.get_directory_path().get_base_dir().path_join("/")
 	
 	# The path to the `loggie` plugin directory.
 	var LOGGIE_PLUGIN_DIR = ProjectSettings.globalize_path(LOGGIE_PLUGIN_CONTAINER_DIR.path_join("loggie/"))
@@ -238,6 +243,7 @@ func _on_download_request_completed(result: int, response_code: int, headers: Pa
 			else:
 				var file_content = zip_reader.read_file(path)
 				file.store_buffer(file_content)
+				file.close()
 
 	zip_reader.close()
 	#endregion
@@ -306,7 +312,8 @@ func _failure(status_msg : String):
 	set_is_in_progress(false)
 	failed.emit()
 	status_changed.emit(null, status_msg)
-	
+
+## Informs the listeners of the [signal progress] / [signal status_changed] signals about a change in the progress of the update.
 func send_progress_update(progress_amount : float, status_msg : String, substatus_msg : String):
 	var loggie = self.get_logger()
 	if !substatus_msg.is_empty():
