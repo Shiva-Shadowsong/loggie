@@ -15,6 +15,9 @@ const CONFIG_PATH = "res://addons/loggie/plugin.cfg"
 ## The URL where loggie releases on GitHub can be found.
 const REMOTE_RELEASES_URL = "https://api.github.com/repos/Shiva-Shadowsong/loggie/releases"
 
+## The domain from which [LoggieMsg]s from this version manager will be logged from.
+const REPORTS_DOMAIN : String = "loggie_version_check_reports"
+
 ## Stores the result of reading the Loggie version with [method get_current_Version].
 var version : LoggieVersion = null
 
@@ -37,6 +40,10 @@ var _version_proxy : LoggieVersion = null
 func connect_logger(logger : Variant) -> void:
 	self.latest_version_updated.connect(on_latest_version_updated)
 	self._logger = logger
+
+	# Set to true during development to enable debug prints related to version management.
+	self._logger.set_domain_enabled(self.REPORTS_DOMAIN, false)
+
 	update_version_cache()
 
 ## Returns a reference to the logger object that is using this version manager.
@@ -46,9 +53,12 @@ func get_logger() -> Variant:
 ## Reads the current version of Loggie from plugin.cfg and stores it in [member version].
 func find_and_store_current_version():
 	# If there is a version proxy configured, use that.
+	var loggie = self.get_logger()
+	var current_ver_message = "Current version of Loggie:"
+
 	if self._version_proxy != null:
 		self.version = self._version_proxy
-		self.get_logger().debug("Current version of Loggie:", self.version)
+		loggie.msg(current_ver_message, self.version).domain(REPORTS_DOMAIN).debug()
 		return
 
 	# Otherwise, load data from the plugin.cfg file.
@@ -64,15 +74,15 @@ func find_and_store_current_version():
 
 		var version_string = config.get_value(section, "version", "")
 		self.version = LoggieVersion.from_string(version_string)
-		self.get_logger().debug("Current version of Loggie:", self.version)
-		break	
+		loggie.msg(current_ver_message, self.version).domain(REPORTS_DOMAIN).debug()
+		break
 
 ## Reads the latest version of Loggie from a GitHub API response and stores it in [member latest_version].
 func find_and_store_latest_version():
 	var loggie = self.get_logger()
 	var http_request = HTTPRequest.new()
 	loggie.add_child(http_request)
-	loggie.debug("Retrieving version(s) info from endpoint:", REMOTE_RELEASES_URL)
+	loggie.msg("Retrieving version(s) info from endpoint:", REMOTE_RELEASES_URL).domain(REPORTS_DOMAIN).debug()
 	http_request.request_completed.connect(_on_get_latest_version_request_completed, CONNECT_ONE_SHOT)
 	http_request.request(REMOTE_RELEASES_URL)
 
@@ -102,7 +112,7 @@ func on_update_available_detected() -> void:
 ## Defines what happens when the request to GitHub API which grabs all the Loggie releases is completed.
 func _on_get_latest_version_request_completed(result : int, response_code : int, headers : PackedStringArray, body: PackedByteArray):
 	var loggie = self.get_logger()
-	loggie.debug("Response for request received:", response_code)
+	loggie.msg("Response for request received:", response_code).domain(REPORTS_DOMAIN).debug()
 
 	if result != HTTPRequest.RESULT_SUCCESS: 
 		return
@@ -117,7 +127,7 @@ func _on_get_latest_version_request_completed(result : int, response_code : int,
 	self.latest_version = LoggieVersion.from_string(latest_version_data.tag_name)
 	self.latest_version.set_meta("github_data", latest_version_data)
 
-	loggie.debug("Latest version of Loggie:", self.latest_version)
+	loggie.msg("Latest version of Loggie:", self.latest_version).domain(REPORTS_DOMAIN).debug()
 	latest_version_updated.emit()
 
 ## Executes every time this version manager updates the known latest_version.
@@ -127,10 +137,11 @@ func on_latest_version_updated() -> void:
 		return
 
 	# Check if update is available.
+	loggie.msg("Loggie is checking for updates...").info()
 	if is_update_available():
 		on_update_available_detected()
 	else:
-		loggie.debug("You are using the latest version.")
+		loggie.msg("Loggie is up to date. ✔️").color(Color.LIGHT_GREEN).info()
 		
 ## Displays the widget which informs the user of the available update and offers actions that they can take next.
 func create_and_show_updater_widget(update : LoggieUpdate) -> Window:
