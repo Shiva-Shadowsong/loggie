@@ -61,6 +61,9 @@ func is_update_in_progress_changed(is_in_progress : bool) -> void:
 	
 ## Connects the effects and functionalities of various controls in this window.
 func connect_control_effects():
+	if !is_instance_valid(self._update):
+		return
+
 	# Configure version(s) labels.
 	%LabelCurrentVersion.text = str(self._update.prev_version)
 	%LabelLatestVersion.text = str(self._update.new_version)
