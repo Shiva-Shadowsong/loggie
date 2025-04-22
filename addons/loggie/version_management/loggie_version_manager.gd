@@ -169,7 +169,7 @@ func create_and_show_updater_widget(update : LoggieUpdate) -> Window:
 	update.succeeded.connect(func():
 		_popup.queue_free()
 		var success_dialog = AcceptDialog.new()
-		var msg = "Update finished.\n\n💬 You may see temporary errors in the console due to Loggie files being re-scanned and reloaded on the spot. It should be safe to dismiss them, but for the best experience, reload the Godot editor (and the plugin, if something seems wrong).\n\n🚩 If you see a 'File have been modified on disk' window pop up, choose 'Discard local changes and reload' to accept incoming changes."
+		var msg = "💬 You may see temporary errors in the console due to Loggie files being re-scanned and reloaded on the spot.\nIt should be safe to dismiss them, but for the best experience, reload the Godot editor (and the plugin, if something seems wrong).\n\n🚩 If you see a 'Files have been modified on disk' window pop up, choose 'Discard local changes and reload' to accept incoming changes."
 		success_dialog.dialog_text = msg
 		success_dialog.title = "Loggie Updater"
 		EditorInterface.get_base_control().add_child(success_dialog)

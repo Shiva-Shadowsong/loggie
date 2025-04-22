@@ -301,7 +301,7 @@ func _on_download_request_completed(result: int, response_code: int, headers: Pa
 func _success():
 	set_is_in_progress(false)
 
-	var msg = "💬 You may see temporary errors in the console due to Loggie files being re-scanned and reloaded on the spot. It should be safe to dismiss them, but for the best experience, reload the Godot editor (and the plugin, if something seems wrong).\n\n🚩 If you see a 'File have been modified on disk' window pop up, choose 'Discard local changes and reload' to accept incoming changes."
+	var msg = "💬 You may see temporary errors in the console due to Loggie files being re-scanned and reloaded on the spot.\nIt should be safe to dismiss them, but for the best experience, reload the Godot editor (and the plugin, if something seems wrong).\n\n🚩 If you see a 'Files have been modified on disk' window pop up, choose 'Discard local changes and reload' to accept incoming changes."
 	status_changed.emit(null, msg)
 	succeeded.emit()
 
