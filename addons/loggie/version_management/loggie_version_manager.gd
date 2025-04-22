@@ -24,6 +24,9 @@ var version : LoggieVersion = null
 ## Stores the result of reading the latest Loggie version with [method get_latest_version].
 var latest_version : LoggieVersion = null
 
+## Stores a reference to a ConfigFile which will be loaded from [member CONFIG_PATH] during [method find_and_store_current_version].
+var config : ConfigFile = ConfigFile.new()
+
 ## Stores a reference to the logger that's using this version manager.
 var _logger : Variant = null
 
@@ -102,7 +105,7 @@ func on_update_available_detected() -> void:
 		LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_UPDATER_WINDOW:
 			if hasUpdatedAlready:
 				return
-			create_and_show_updater_widget(update)
+			create_and_show_updater_widget(self._update)
 		LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_MSG:
 			loggie.msg("👀 Loggie update available!").color(Color.ORANGE).header().msg(" > Current version: {version}, Latest version: {latest}".format({
 				"version" : self.version,
@@ -112,7 +115,7 @@ func on_update_available_detected() -> void:
 			if hasUpdatedAlready:
 				return
 			loggie.set_domain_enabled("loggie_update_status_reports", true)
-			update.try_start()
+			self._update.try_start()
 
 ## Defines what happens when the request to GitHub API which grabs all the Loggie releases is completed.
 func _on_get_latest_version_request_completed(result : int, response_code : int, headers : PackedStringArray, body: PackedByteArray):
@@ -150,7 +153,7 @@ func on_latest_version_updated() -> void:
 		loggie.msg("Loggie is up to date. ✔️").color(Color.LIGHT_GREEN).info()
 		
 ## Displays the widget which informs the user of the available update and offers actions that they can take next.
-func create_and_show_updater_widget(update : LoggieUpdate) -> LoggieUpdatePrompt:
+func create_and_show_updater_widget(update : LoggieUpdate) -> Window:
 	const PATH_TO_WIDGET_SCENE = "addons/loggie/version_management/update_prompt_window.tscn"
 	var WIDGET_SCENE = load(PATH_TO_WIDGET_SCENE)
 	if !is_instance_valid(WIDGET_SCENE):
@@ -190,7 +193,7 @@ func create_and_show_updater_widget(update : LoggieUpdate) -> LoggieUpdatePrompt
 	_popup.popup_centered(widget.host_window_size)
 	_popup.add_child(widget)
 
-	return widget
+	return _popup
 
 ## Updates the local variables which point to the current and latest version of Loggie.
 func update_version_cache():
