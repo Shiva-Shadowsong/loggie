@@ -97,7 +97,7 @@ func _init() -> void:
 			if not class_names.has(class_path):
 				class_names[class_path] = autoload_class
 
-	# And don't proceed further since we don't need to show loggie boot messages in Editor mode.
+	# And don't proceed further if we're in Editor mode, since we don't need to show loggie boot messages in that case.
 	if Engine.is_editor_hint():
 		return 
 	

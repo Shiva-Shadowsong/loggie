@@ -22,16 +22,24 @@ signal is_in_progress_changed(new_value : bool)
 ## The path to the directory that should have a temporary file created and filled with the patch zipball buffer.
 const TEMP_FILES_DIR = "user://"
 
+## If this is set to a non-empty string, it will be used as the directory into which the new update will be
+## installed. Used for testing/debugging. When set to empty string, Loggie will automatically figure out
+## where it is being updated from and use that directory instead.
+const ALT_LOGGIE_PLUGIN_CONTAINER_DIR = "user://addons/"
+
+## The domain from which status report [LoggieMsg]s from this update will be logged from.
+const REPORTS_DOMAIN : String = "loggie_update_status_reports"
+
 ## Stores a reference to the logger that's requesting this update.
 var _logger : Variant
 
 ## The URL used to visit a page that contains the release notes for this update.
 var release_notes_url = ""
 
-## Stores a reference to the previous version the connected [param _logger] is/was using.
+## Stores a reference to the previous version the connected [member _logger] is/was using.
 var prev_version : LoggieVersion = null
 
-## Stores a reference to the new version the connected [param _logger] should be using after the update.
+## Stores a reference to the new version the connected [member _logger] should be using after the update.
 var new_version : LoggieVersion = null
 
 ## Indicates whether this update is currently in progress.
@@ -40,9 +48,6 @@ var is_in_progress : bool = false
 ## Whether the update should retain or purge the backup it makes of the previous version files once it is done
 ## installing and applying the new update.
 var _clean_up_backup_files : bool = true
-
-## The domain from which status report [LoggieMsg]s from this update will be logged from.
-var reports_domain : String = "loggie_update_status_reports"
 
 func _init(_prev_version : LoggieVersion, _new_version : LoggieVersion) -> void:
 	self.prev_version = _prev_version
@@ -71,7 +76,7 @@ func try_start():
 		return
 
 	if self._logger == null:
-		push_warning("Attempt to start Loggie update failed - member '_logger' on the update object is null.")
+		push_warning("Attempt to start Loggie update failed - member '_logger' on the LoggieUpdate object is null.")
 		return
 
 	if self.is_in_progress:
@@ -105,7 +110,7 @@ func _start():
 	loggie.msg("Loggie is updating from version {v_prev} to {v_new}.".format({
 		"v_prev" : self.prev_version,
 		"v_new" : self.new_version
-	})).domain(reports_domain).color(Color.ORANGE).box(12).info()
+	})).domain(REPORTS_DOMAIN).color(Color.ORANGE).box(12).info()
 	
 	set_is_in_progress(true)
 	starting.emit()
@@ -118,7 +123,7 @@ func _start():
 	http_request.request(update_data.zipball_url)
 
 ## Internal callback function. 
-## Defines what happens when new update content is successfully downloaded from GitHUb.
+## Defines what happens when new update content is successfully downloaded from GitHub.
 ## Called automatically during [method _start] if everything is going according to plan.
 func _on_download_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
 	var loggie = self.get_logger()
@@ -135,8 +140,8 @@ func _on_download_request_completed(result: int, response_code: int, headers: Pa
 	# The path to the directory which is supposed to contain the plugin directory.
 	# This will usually be 'res://addons/', but could be anything else too. We'll read it dynamically
 	# from the connected logger to guarantee correctness.
-	var LOGGIE_PLUGIN_CONTAINER_DIR = loggie.get_directory_path().get_base_dir() + "/"
-
+	var LOGGIE_PLUGIN_CONTAINER_DIR = ALT_LOGGIE_PLUGIN_CONTAINER_DIR if !ALT_LOGGIE_PLUGIN_CONTAINER_DIR.is_empty() else loggie.get_directory_path().get_base_dir() + "/"
+	
 	# The path to the `loggie` plugin directory.
 	var LOGGIE_PLUGIN_DIR = ProjectSettings.globalize_path(LOGGIE_PLUGIN_CONTAINER_DIR.path_join("loggie/"))
 	
@@ -244,6 +249,7 @@ func _on_download_request_completed(result: int, response_code: int, headers: Pa
 			else:
 				var file_content = zip_reader.read_file(path)
 				file.store_buffer(file_content)
+				file.close()
 
 	zip_reader.close()
 	#endregion
@@ -262,7 +268,7 @@ func _on_download_request_completed(result: int, response_code: int, headers: Pa
 			}))
 	#endregion
 
-	#region || Step 5: Move the user's custom channels to the new version if they existed in prev version.
+	#region || Step 5: Move the user's 'channels/custom_channels' directory to the new version if it existed in prev version.
 	send_progress_update(80, "Processing Files", "Reapplying custom channels...")
 	var CUSTOM_CHANNELS_IN_PREV_VER_PATH = ProjectSettings.globalize_path(TEMP_PREV_VER_FILES_DIR_PATH.path_join("channels/custom_channels/"))
 	if DirAccess.dir_exists_absolute(CUSTOM_CHANNELS_IN_PREV_VER_PATH):
@@ -299,16 +305,17 @@ func _success():
 	status_changed.emit(null, msg)
 	succeeded.emit()
 
-	print_rich(LoggieMsg.new("👀 Loggie updated!").bold().color(Color.ORANGE).string())
+	print_rich(LoggieMsg.new("👀 Loggie updated to version {new_ver}!".format({"new_ver": self.new_version})).bold().color(Color.ORANGE).string())
 	print_rich(LoggieMsg.new("\t📚 Release Notes: ").bold().msg(release_notes_url).color(Color.CORNFLOWER_BLUE).string())
 	print_rich(LoggieMsg.new("\t💬 Support, Development & Feature Requests: ").bold().msg("https://discord.gg/XPdxpMqmcs").color(Color.CORNFLOWER_BLUE).string())
 
-	var editor_plugin : EditorPlugin = Engine.get_meta("LoggieEditorPlugin")
-	editor_plugin.get_editor_interface().get_resource_filesystem().scan()
-	editor_plugin.get_editor_interface().call_deferred("set_plugin_enabled", "loggie", true)
-	editor_plugin.get_editor_interface().set_plugin_enabled("loggie", false)
-	Engine.set_meta("LoggieUpdateSuccessful", true)
-	print_rich("[b]Updater:[/b] ", msg)
+	if Engine.is_editor_hint():
+		var editor_plugin : EditorPlugin = Engine.get_meta("LoggieEditorPlugin")
+		editor_plugin.get_editor_interface().get_resource_filesystem().scan()
+		editor_plugin.get_editor_interface().call_deferred("set_plugin_enabled", "loggie", true)
+		editor_plugin.get_editor_interface().set_plugin_enabled("loggie", false)
+		Engine.set_meta("LoggieUpdateSuccessful", true)
+		print_rich("[b]Updater:[/b] ", msg)
 
 ## Internal function used to interrupt an ongoing update and cause it to fail.
 func _failure(status_msg : String):
@@ -319,10 +326,10 @@ func _failure(status_msg : String):
 	failed.emit()
 	status_changed.emit(null, status_msg)
 
-## Internal function used to send a progress update to listeners.
+## Informs the listeners of the [signal progress] / [signal status_changed] signals about a change in the progress of the update.
 func send_progress_update(progress_amount : float, status_msg : String, substatus_msg : String):
 	var loggie = self.get_logger()
 	if !substatus_msg.is_empty():
-		loggie.msg("•• ").msg(substatus_msg).domain(reports_domain).preprocessed(false).info()
+		loggie.msg("•• ").msg(substatus_msg).domain(REPORTS_DOMAIN).preprocessed(false).info()
 	progress.emit(progress_amount)
 	status_changed.emit(status_msg, substatus_msg)

@@ -6,11 +6,17 @@ class_name LoggieVersionManager extends RefCounted
 ## Emitted when this version manager updates the known [member latest_version].
 signal latest_version_updated()
 
+## Emitted when this version manager has created a valid [LoggieUpdate] and is ready to use it.
+signal update_ready()
+
 ## The path to Loggie's plugin.cfg file. Required to read the current version of Loggie.
 const CONFIG_PATH = "res://addons/loggie/plugin.cfg"
 
 ## The URL where loggie releases on GitHub can be found.
 const REMOTE_RELEASES_URL = "https://api.github.com/repos/Shiva-Shadowsong/loggie/releases"
+
+## The domain from which [LoggieMsg]s from this version manager will be logged from.
+const REPORTS_DOMAIN : String = "loggie_version_check_reports"
 
 ## Stores the result of reading the Loggie version with [method get_current_Version].
 var version : LoggieVersion = null
@@ -18,22 +24,26 @@ var version : LoggieVersion = null
 ## Stores the result of reading the latest Loggie version with [method get_latest_version].
 var latest_version : LoggieVersion = null
 
-## Stores a reference to a ConfigFile which will be loaded from [member CONFIG_PATH] during [method find_and_store_current_version].
-var config : ConfigFile = ConfigFile.new()
-
 ## Stores a reference to the logger that's using this version manager.
 var _logger : Variant = null
+
+## Stores a reference to the [LoggieUpdate] that has been created to handle an available update.
+var _update : LoggieUpdate = null
 
 ## Internal debug variable.
 ## If not null, this version manager will treat the [LoggieVersion] provided under this variable to be the current [param version].
 ## Useful for debugging this module when you want to simulate that the current version is something different than it actually is.
-var _version_proxy : LoggieVersion = LoggieVersion.new(1, 2)
+var _version_proxy : LoggieVersion = null
 
 ## Initializes this version manager, connecting it to the logger that's using it and updating the version cache based on that logger,
 ## which will further prompt the emission of signals in this class, and so on.
 func connect_logger(logger : Variant) -> void:
 	self.latest_version_updated.connect(on_latest_version_updated)
 	self._logger = logger
+
+	# Set to true during development to enable debug prints related to version management.
+	self._logger.set_domain_enabled(self.REPORTS_DOMAIN, false)
+
 	update_version_cache()
 
 ## Returns a reference to the logger object that is using this version manager.
@@ -63,23 +73,24 @@ func find_and_store_latest_version():
 	var loggie = self.get_logger()
 	var http_request = HTTPRequest.new()
 	loggie.add_child(http_request)
-	loggie.debug("Retrieving version(s) info from endpoint:", REMOTE_RELEASES_URL)
+	loggie.msg("Retrieving version(s) info from endpoint:", REMOTE_RELEASES_URL).domain(REPORTS_DOMAIN).debug()
 	http_request.request_completed.connect(_on_get_latest_version_request_completed, CONNECT_ONE_SHOT)
 	http_request.request(REMOTE_RELEASES_URL)
 
 ## Defines what happens once this version manager emits the signal saying that an update is available.
 func on_update_available_detected() -> void:
-	var loggie= self.get_logger()
+	var loggie = self.get_logger()
 	if loggie.settings.update_check_mode == LoggieEnums.UpdateCheckType.DONT_CHECK:
 		return
 	
-	var update : LoggieUpdate = LoggieUpdate.new(self.version, self.latest_version)
-	update._logger = loggie
+	self._update = LoggieUpdate.new(self.version, self.latest_version)
+	self._update._logger = loggie
 
 	var github_data = self.latest_version.get_meta("github_data")
 	var latest_release_notes_url = github_data.html_url
-	update.set_release_notes_url(latest_release_notes_url)
-	loggie.add_child(update)
+	self._update.set_release_notes_url(latest_release_notes_url)
+	loggie.add_child(self._update)
+	update_ready.emit()
 	
 	
 	# No plan to allow multiple updates to run during a single Engine session anyway so no need to start another one.
@@ -106,7 +117,7 @@ func on_update_available_detected() -> void:
 ## Defines what happens when the request to GitHub API which grabs all the Loggie releases is completed.
 func _on_get_latest_version_request_completed(result : int, response_code : int, headers : PackedStringArray, body: PackedByteArray):
 	var loggie = self.get_logger()
-	loggie.debug("Response for request received:", response_code)
+	loggie.msg("Response for request received:", response_code).domain(REPORTS_DOMAIN).debug()
 
 	if result != HTTPRequest.RESULT_SUCCESS: 
 		return
@@ -132,10 +143,11 @@ func on_latest_version_updated() -> void:
 		return
 
 	# Check if update is available.
+	loggie.msg("Loggie is checking for updates...").info()
 	if is_update_available():
 		on_update_available_detected()
 	else:
-		loggie.debug("You are using the latest version.")
+		loggie.msg("Loggie is up to date. ✔️").color(Color.LIGHT_GREEN).info()
 		
 ## Displays the widget which informs the user of the available update and offers actions that they can take next.
 func create_and_show_updater_widget(update : LoggieUpdate) -> LoggieUpdatePrompt:

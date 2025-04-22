@@ -7,9 +7,6 @@ class_name LoggieUpdatePrompt extends Panel
 ## Emitted when the user requests to close the update prompt.
 signal close_requested()
 
-## The path to the directory that should have a temporary file created and filled with the patch zipball buffer.
-const TEMP_FILES_DIR = "user://"
-
 ## The animation player that will be used to animate the appearance of this window.
 @export var animator : AnimationPlayer
 
