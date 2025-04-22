@@ -36,7 +36,7 @@ var _update : LoggieUpdate = null
 ## Internal debug variable.
 ## If not null, this version manager will treat the [LoggieVersion] provided under this variable to be the current [param version].
 ## Useful for debugging this module when you want to simulate that the current version is something different than it actually is.
-var _version_proxy : LoggieVersion = null
+var _version_proxy : LoggieVersion = LoggieVersion.new(1,2)
 
 ## Initializes this version manager, connecting it to the logger that's using it and updating the version cache based on that logger,
 ## which will further prompt the emission of signals in this class, and so on.
@@ -104,6 +104,7 @@ func on_update_available_detected() -> void:
 	match loggie.settings.update_check_mode:
 		LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_UPDATER_WINDOW:
 			if hasUpdatedAlready:
+				loggie.info("Update already performed. ✔️")
 				return
 			create_and_show_updater_widget(self._update)
 		LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_MSG:
@@ -113,6 +114,7 @@ func on_update_available_detected() -> void:
 			})).info()
 		LoggieEnums.UpdateCheckType.CHECK_DOWNLOAD_AND_SHOW_MSG:
 			if hasUpdatedAlready:
+				loggie.info("Update already performed. ✔️")
 				return
 			loggie.set_domain_enabled("loggie_update_status_reports", true)
 			self._update.try_start()
