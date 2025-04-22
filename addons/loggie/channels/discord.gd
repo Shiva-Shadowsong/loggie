@@ -35,7 +35,7 @@ func send(msg : LoggieMsg, msg_type : LoggieEnums.MsgType):
 	if chunks.size() > 1:
 		Loggie.debug("Chunking a long (", output_text.length(), "length ) message while sending to Discord into:", chunks.size(), "chunks.")
 	for chunk : String in chunks:
-		send_post_request(loggie, chunk, webhook_url)
+		call_deferred("send_post_request", loggie, chunk, webhook_url)
 
 func send_post_request(logger : Variant, output_text : String, webhook_url : String):
 	# Enable debug messages if configured.
