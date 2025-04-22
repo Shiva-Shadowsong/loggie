@@ -130,29 +130,42 @@ func on_latest_version_updated() -> void:
 		
 ## Displays the widget which informs the user of the available update and offers actions that they can take next.
 func create_and_show_updater_widget(update : LoggieUpdate) -> LoggieUpdatePrompt:
+	const PATH_TO_WIDGET_SCENE = "addons/loggie/version_management/update_prompt_window.tscn"
+	var WIDGET_SCENE = load(PATH_TO_WIDGET_SCENE)
+	if !is_instance_valid(WIDGET_SCENE):
+		push_error("Loggie Update Prompt Window scene not found on expected path: {path}".format({"path": PATH_TO_WIDGET_SCENE}))
+		return
+
 	var loggie = self.get_logger()
+
+	# Configure popup window.
 	var _popup = Window.new()
 	update.succeeded.connect(func():
-		_popup.request_attention()
-		_popup.grab_focus()
+		_popup.queue_free()
+		var success_dialog = AcceptDialog.new()
+		var msg = "Update finished.\n\n💬 You may see temporary errors in the console due to Loggie files being re-scanned and reloaded on the spot. It should be safe to dismiss them, but for the best experience, reload the Godot editor (and the plugin, if something seems wrong).\n\n🚩 If you see a 'File have been modified on disk' window pop up, choose 'Discard local changes and reload' to accept incoming changes."
+		success_dialog.dialog_text = msg
+		success_dialog.title = "Loggie Updater"
+		EditorInterface.get_base_control().add_child(success_dialog)
+		success_dialog.popup_centered()
 	)
-	
-	var widget : LoggieUpdatePrompt = load("res://addons/loggie/version_management/update_prompt_window.tscn").instantiate()
-	widget.connect_to_update(update)
-	widget.set_anchors_preset(Control.PRESET_FULL_RECT)
-	
-	EditorInterface.get_base_control().add_child(_popup)
-		
 	var on_close_requested = func():
 		_popup.queue_free()
 
-	widget._logger = loggie
-	widget.close_requested.connect(on_close_requested, CONNECT_ONE_SHOT)
 	_popup.close_requested.connect(on_close_requested, CONNECT_ONE_SHOT)
 	_popup.borderless = false
 	_popup.unresizable = true
 	_popup.transient = true
 	_popup.title = "Update Available"
+	
+	# Configure window widget and add it as a child of the popup window.
+	var widget : LoggieUpdatePrompt = WIDGET_SCENE.instantiate()
+	widget.connect_to_update(update)
+	widget.set_anchors_preset(Control.PRESET_FULL_RECT)
+	widget._logger = loggie
+	widget.close_requested.connect(on_close_requested, CONNECT_ONE_SHOT)
+	
+	EditorInterface.get_base_control().add_child(_popup)
 	_popup.popup_centered(widget.host_window_size)
 	_popup.add_child(widget)
 
