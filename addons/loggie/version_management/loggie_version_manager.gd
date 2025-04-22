@@ -36,7 +36,7 @@ var _update : LoggieUpdate = null
 ## Internal debug variable.
 ## If not null, this version manager will treat the [LoggieVersion] provided under this variable to be the current [param version].
 ## Useful for debugging this module when you want to simulate that the current version is something different than it actually is.
-var _version_proxy : LoggieVersion = LoggieVersion.new(1,2)
+var _version_proxy : LoggieVersion = null
 
 ## Initializes this version manager, connecting it to the logger that's using it and updating the version cache based on that logger,
 ## which will further prompt the emission of signals in this class, and so on.
