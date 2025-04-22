@@ -39,7 +39,7 @@ var is_in_progress : bool = false
 
 ## Whether the update should retain or purge the backup it makes of the previous version files once it is done
 ## installing and applying the new update.
-var _clean_up_backup_files : bool = false
+var _clean_up_backup_files : bool = true
 
 ## The domain from which status report [LoggieMsg]s from this update will be logged from.
 var reports_domain : String = "loggie_update_status_reports"
