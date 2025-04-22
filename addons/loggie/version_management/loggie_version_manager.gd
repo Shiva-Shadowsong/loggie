@@ -94,8 +94,7 @@ func on_update_available_detected() -> void:
 	self._update.set_release_notes_url(latest_release_notes_url)
 	loggie.add_child(self._update)
 	update_ready.emit()
-	
-	
+
 	# No plan to allow multiple updates to run during a single Engine session anyway so no need to start another one.
 	# Also, this helps with internal testing of the updater and prevents an updated plugin from auto-starting another update
 	# when dealing with proxy versions.
@@ -148,11 +147,12 @@ func on_latest_version_updated() -> void:
 		return
 
 	# Check if update is available.
-	loggie.msg("Loggie is checking for updates...").info()
-	if is_update_available():
-		on_update_available_detected()
-	else:
-		loggie.msg("Loggie is up to date. ✔️").color(Color.LIGHT_GREEN).info()
+	if loggie.settings.update_check_mode != LoggieEnums.UpdateCheckType.DONT_CHECK:
+		loggie.msg("Loggie is checking for updates...").info()
+		if is_update_available():
+			on_update_available_detected()
+		else:
+			loggie.msg("Loggie is up to date. ✔️").color(Color.LIGHT_GREEN).info()
 		
 ## Displays the widget which informs the user of the available update and offers actions that they can take next.
 func create_and_show_updater_widget(update : LoggieUpdate) -> Window:
