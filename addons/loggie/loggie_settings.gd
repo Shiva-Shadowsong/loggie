@@ -28,7 +28,7 @@ const project_settings = {
 		"default_value" : LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_UPDATER_WINDOW,
 		"type" : TYPE_INT,
 		"hint" : PROPERTY_HINT_ENUM,
-		"hint_string" : "Never:0,Yes and print notification:1,Yes and show updater window:2",
+		"hint_string" : "Never:0,Only print notice if available:1,Print notice and auto-install:2,Yes and show updater window:2",
 		"doc" : "Sets which behavior Loggie should use when checking for updates.",
 	},
 	"remove_settings_if_plugin_disabled" = {

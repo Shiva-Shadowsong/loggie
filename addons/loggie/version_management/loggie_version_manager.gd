@@ -86,6 +86,12 @@ func on_update_available_detected() -> void:
 			create_and_show_updater_widget(update)
 		LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_MSG:
 			loggie.set_domain_enabled("loggie_update_status_reports", true)
+			loggie.msg("👀 Loggie update available!").color(Color.ORANGE).header().msg(" > Current version: {version}, Latest version: {latest}".format({
+				"version" : self.version,
+				"latest" : self.latest_version
+			})).info()
+		LoggieEnums.UpdateCheckType.CHECK_DOWNLOAD_AND_SHOW_MSG:
+			loggie.set_domain_enabled("loggie_update_status_reports", true)
 			update.try_start()
 
 ## Defines what happens when the request to GitHub API which grabs all the Loggie releases is completed.
@@ -106,6 +112,7 @@ func _on_get_latest_version_request_completed(result : int, response_code : int,
 	self.latest_version = LoggieVersion.from_string(latest_version_data.tag_name)
 	self.latest_version.set_meta("github_data", latest_version_data)
 
+	loggie.msg("Current version of Loggie:", self.version).msg(" (proxy for: {value})".format({"value": self.version.proxy_for})).debug()
 	loggie.debug("Latest version of Loggie:", self.latest_version)
 	latest_version_updated.emit()
 
