@@ -256,7 +256,7 @@ func _on_download_request_completed(result: int, response_code: int, headers: Pa
 			}))
 	#endregion
 
-	#region || Step 5: Move the user's 'custom_settings.gd' to the new version directory if it existed in prev version.
+	#region || Step 5: Move the user's custom channels to the new version if they existed in prev version.
 	send_progress_update(80, "Processing Files", "Reapplying custom channels...")
 	var CUSTOM_CHANNELS_IN_PREV_VER_PATH = ProjectSettings.globalize_path(TEMP_PREV_VER_FILES_DIR_PATH.path_join("channels/custom_channels/"))
 	if DirAccess.dir_exists_absolute(CUSTOM_CHANNELS_IN_PREV_VER_PATH):
@@ -272,7 +272,7 @@ func _on_download_request_completed(result: int, response_code: int, headers: Pa
 				"error" : copy_prev_var_result_errors_msg.string()
 			}))
 	else:
-		print("DIR NO EXISTS")
+		print("The {path} directory doesn't exist.".format({"path": CUSTOM_CHANNELS_IN_PREV_VER_PATH}))
 	#endregion
 
 	#region || Step 6: Clean up temporarily created files and close filewrite.
