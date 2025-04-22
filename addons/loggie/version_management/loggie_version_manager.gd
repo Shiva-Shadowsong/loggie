@@ -81,16 +81,25 @@ func on_update_available_detected() -> void:
 	update.set_release_notes_url(latest_release_notes_url)
 	loggie.add_child(update)
 	
+	
+	# No plan to allow multiple updates to run during a single Engine session anyway so no need to start another one.
+	# Also, this helps with internal testing of the updater and prevents an updated plugin from auto-starting another update
+	# when dealing with proxy versions.
+	var hasUpdatedAlready = Engine.has_meta("LoggieUpdateSuccessful") and Engine.get_meta("LoggieUpdateSuccessful")
+
 	match loggie.settings.update_check_mode:
 		LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_UPDATER_WINDOW:
+			if hasUpdatedAlready:
+				return
 			create_and_show_updater_widget(update)
 		LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_MSG:
-			loggie.set_domain_enabled("loggie_update_status_reports", true)
 			loggie.msg("👀 Loggie update available!").color(Color.ORANGE).header().msg(" > Current version: {version}, Latest version: {latest}".format({
 				"version" : self.version,
 				"latest" : self.latest_version
 			})).info()
 		LoggieEnums.UpdateCheckType.CHECK_DOWNLOAD_AND_SHOW_MSG:
+			if hasUpdatedAlready:
+				return
 			loggie.set_domain_enabled("loggie_update_status_reports", true)
 			update.try_start()
 
