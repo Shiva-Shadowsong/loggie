@@ -24,6 +24,9 @@ var version : LoggieVersion = null
 ## Stores the result of reading the latest Loggie version with [method get_latest_version].
 var latest_version : LoggieVersion = null
 
+## Stores a reference to a ConfigFile which will be loaded from [member CONFIG_PATH] during [method find_and_store_current_version].
+var config : ConfigFile = ConfigFile.new()
+
 ## Stores a reference to the logger that's using this version manager.
 var _logger : Variant = null
 
@@ -52,30 +55,21 @@ func get_logger() -> Variant:
 
 ## Reads the current version of Loggie from plugin.cfg and stores it in [member version].
 func find_and_store_current_version():
-	# If there is a version proxy configured, use that.
-	var loggie = self.get_logger()
-	var current_ver_message = "Current version of Loggie:"
-
-	if self._version_proxy != null:
-		self.version = self._version_proxy
-		loggie.msg(current_ver_message, self.version).domain(REPORTS_DOMAIN).debug()
-		return
-
-	# Otherwise, load data from the plugin.cfg file.
-	var config = ConfigFile.new()
+	# Load data from a file.
 	var err = config.load(CONFIG_PATH)
-	if err != OK:
+
+	# If the file didn't load, ignore it.
+	if err == OK:
+		for section in config.get_sections():
+			if section == "plugin":
+				var detected_version = LoggieVersion.from_string(config.get_value(section, "version", ""))
+				if self._version_proxy != null:
+					self.version = self._version_proxy
+					self.version.proxy_for = detected_version
+				else:
+					self.version = detected_version
+	else:
 		push_error("Failed to load the Loggie plugin.cfg file. Ensure that loggie_version_manager.gd -> CONFIG_PATH is pointing correctly to a valid plugin.cfg file.")
-		return
-
-	for section in config.get_sections():
-		if section != "plugin":
-			continue
-
-		var version_string = config.get_value(section, "version", "")
-		self.version = LoggieVersion.from_string(version_string)
-		loggie.msg(current_ver_message, self.version).domain(REPORTS_DOMAIN).debug()
-		break
 
 ## Reads the latest version of Loggie from a GitHub API response and stores it in [member latest_version].
 func find_and_store_latest_version():
@@ -100,14 +94,29 @@ func on_update_available_detected() -> void:
 	self._update.set_release_notes_url(latest_release_notes_url)
 	loggie.add_child(self._update)
 	update_ready.emit()
-	
-	if Engine.is_editor_hint():
-		match loggie.settings.update_check_mode:
-			LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_UPDATER_WINDOW:
-				create_and_show_updater_widget(self._update)
-			LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_MSG:
-				loggie.set_domain_enabled(self._update.REPORTS_DOMAIN, true)
-				self._update.try_start()
+
+	# No plan to allow multiple updates to run during a single Engine session anyway so no need to start another one.
+	# Also, this helps with internal testing of the updater and prevents an updated plugin from auto-starting another update
+	# when dealing with proxy versions.
+	var hasUpdatedAlready = Engine.has_meta("LoggieUpdateSuccessful") and Engine.get_meta("LoggieUpdateSuccessful")
+
+	match loggie.settings.update_check_mode:
+		LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_UPDATER_WINDOW:
+			if hasUpdatedAlready:
+				loggie.info("Update already performed. ✔️")
+				return
+			create_and_show_updater_widget(self._update)
+		LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_MSG:
+			loggie.msg("👀 Loggie update available!").color(Color.ORANGE).header().msg(" > Current version: {version}, Latest version: {latest}".format({
+				"version" : self.version,
+				"latest" : self.latest_version
+			})).info()
+		LoggieEnums.UpdateCheckType.CHECK_DOWNLOAD_AND_SHOW_MSG:
+			if hasUpdatedAlready:
+				loggie.info("Update already performed. ✔️")
+				return
+			loggie.set_domain_enabled("loggie_update_status_reports", true)
+			self._update.try_start()
 
 ## Defines what happens when the request to GitHub API which grabs all the Loggie releases is completed.
 func _on_get_latest_version_request_completed(result : int, response_code : int, headers : PackedStringArray, body: PackedByteArray):
@@ -127,6 +136,7 @@ func _on_get_latest_version_request_completed(result : int, response_code : int,
 	self.latest_version = LoggieVersion.from_string(latest_version_data.tag_name)
 	self.latest_version.set_meta("github_data", latest_version_data)
 
+	loggie.msg("Current version of Loggie:", self.version).msg(" (proxy for: {value})".format({"value": self.version.proxy_for})).domain(REPORTS_DOMAIN).debug()
 	loggie.msg("Latest version of Loggie:", self.latest_version).domain(REPORTS_DOMAIN).debug()
 	latest_version_updated.emit()
 
@@ -137,38 +147,51 @@ func on_latest_version_updated() -> void:
 		return
 
 	# Check if update is available.
-	loggie.msg("Loggie is checking for updates...").info()
-	if is_update_available():
-		on_update_available_detected()
-	else:
-		loggie.msg("Loggie is up to date. ✔️").color(Color.LIGHT_GREEN).info()
+	if loggie.settings.update_check_mode != LoggieEnums.UpdateCheckType.DONT_CHECK:
+		loggie.msg("Loggie is checking for updates...").info()
+		if is_update_available():
+			on_update_available_detected()
+		else:
+			loggie.msg("Loggie is up to date. ✔️").color(Color.LIGHT_GREEN).info()
 		
 ## Displays the widget which informs the user of the available update and offers actions that they can take next.
 func create_and_show_updater_widget(update : LoggieUpdate) -> Window:
+	const PATH_TO_WIDGET_SCENE = "addons/loggie/version_management/update_prompt_window.tscn"
+	var WIDGET_SCENE = load(PATH_TO_WIDGET_SCENE)
+	if !is_instance_valid(WIDGET_SCENE):
+		push_error("Loggie Update Prompt Window scene not found on expected path: {path}".format({"path": PATH_TO_WIDGET_SCENE}))
+		return
+
 	var loggie = self.get_logger()
+
+	# Configure popup window.
 	var _popup = Window.new()
 	update.succeeded.connect(func():
-		_popup.request_attention()
-		_popup.grab_focus()
+		_popup.queue_free()
+		var success_dialog = AcceptDialog.new()
+		var msg = "💬 You may see temporary errors in the console due to Loggie files being re-scanned and reloaded on the spot.\nIt should be safe to dismiss them, but for the best experience, reload the Godot editor (and the plugin, if something seems wrong).\n\n🚩 If you see a 'Files have been modified on disk' window pop up, choose 'Discard local changes and reload' to accept incoming changes."
+		success_dialog.dialog_text = msg
+		success_dialog.title = "Loggie Updater"
+		EditorInterface.get_base_control().add_child(success_dialog)
+		success_dialog.popup_centered()
 	)
-	
-	var widget : LoggieUpdatePrompt = load("res://addons/loggie/version_management/update_prompt_window.tscn").instantiate()
-	widget.connect_to_update(update)
-	widget.set_anchors_preset(Control.PRESET_FULL_RECT)
-	
-	if Engine.is_editor_hint():
-		EditorInterface.get_base_control().add_child(_popup)
-		
 	var on_close_requested = func():
 		_popup.queue_free()
 
-	widget._logger = loggie
-	widget.close_requested.connect(on_close_requested, CONNECT_ONE_SHOT)
 	_popup.close_requested.connect(on_close_requested, CONNECT_ONE_SHOT)
 	_popup.borderless = false
 	_popup.unresizable = true
 	_popup.transient = true
 	_popup.title = "Update Available"
+	
+	# Configure window widget and add it as a child of the popup window.
+	var widget : LoggieUpdatePrompt = WIDGET_SCENE.instantiate()
+	widget.connect_to_update(update)
+	widget.set_anchors_preset(Control.PRESET_FULL_RECT)
+	widget._logger = loggie
+	widget.close_requested.connect(on_close_requested, CONNECT_ONE_SHOT)
+	
+	EditorInterface.get_base_control().add_child(_popup)
 	_popup.popup_centered(widget.host_window_size)
 	_popup.add_child(widget)
 
@@ -180,8 +203,11 @@ func update_version_cache():
 	find_and_store_current_version()
 
 	# Read and cache the latest version of Loggie from GitHub.
+	# (Do it only if running in editor, no need for this if running in a game).
 	var logger = self.get_logger()
 	if logger is Node:
+		if !Engine.is_editor_hint():
+			return
 		if logger.is_node_ready():
 			find_and_store_latest_version()
 		else:

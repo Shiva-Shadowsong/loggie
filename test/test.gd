@@ -40,7 +40,7 @@ func _ready() -> void:
 	
 
 func setup_gui():
-	$Label.text = "Loggie {version}".format({"version": Loggie.VERSION})
+	$Label.text = "Loggie {version}".format({"version": Loggie.get("version_manager").version if Loggie.get("version_manager") != null else "<?>"})
 	Loggie.msg("Edit the test.tscn _ready function and uncomment the calls to features you want to test out.").italic().color(Color.GRAY).preprocessed(false).info()
 
 # -----------------------------------------
@@ -178,10 +178,11 @@ func test_segments():
 func test_bbcode_to_markdown():
 	var msg = Loggie.msg("Hello world").italic().color(Color.RED).msg(" - part 2 is bold").bold()
 	print("Text to convert:\n{msg}".format({"msg": msg.string()}))
-	var converted_text = LoggieTools.convert_BBCode_to_markdown(msg.string())
+
+	#var converted_text = LoggieTools.convert_BBCode_to_markdown(msg.string())
 
 	# Print with standard print to see what the actual output looks like without Loggie interfering with any other conversion.
-	print("Converted: [", converted_text, "]")
+	#print("Converted: [", converted_text, "]")
 
 func test_discord_channel():
 	# Standard test with decorations.

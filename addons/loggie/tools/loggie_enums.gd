@@ -74,5 +74,6 @@ enum LogAttemptResult {
 enum UpdateCheckType {
 	DONT_CHECK, ## If the user doesn't want Loggie to check for updates at all.
 	CHECK_AND_SHOW_MSG, ## If the user wants Loggie to check for updates, and display info in a terminal message.
+	CHECK_DOWNLOAD_AND_SHOW_MSG, ## If the user wants Loggie to check for updates, download the update, and display info in a terminal message.
 	CHECK_AND_SHOW_UPDATER_WINDOW, ## If the user wants Loggie to check for updats, and display the updater window.
 }

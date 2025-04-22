@@ -117,7 +117,7 @@ func output(level : LoggieEnums.LogLevel, msg_type : LoggieEnums.MsgType = Loggi
 		return
 		
 	if loggie.settings == null:
-		push_error("Attempt to use a _logger with invalid settings.")
+		push_error("Attempt to use a _logger with invalid settings to print: {msg}".format({"msg": message}))
 		return
 
 	# We don't output the message if the settings dictate that messages of that level shouldn't be outputted.

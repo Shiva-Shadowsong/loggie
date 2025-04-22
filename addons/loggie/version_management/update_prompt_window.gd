@@ -58,6 +58,9 @@ func is_update_in_progress_changed(is_in_progress : bool) -> void:
 	
 ## Connects the effects and functionalities of various controls in this window.
 func connect_control_effects():
+	if !is_instance_valid(self._update):
+		return
+
 	# Configure version(s) labels.
 	%LabelCurrentVersion.text = str(self._update.prev_version)
 	%LabelLatestVersion.text = str(self._update.new_version)
@@ -105,8 +108,8 @@ func connect_control_effects():
 		var loggie = self.get_logger()
 		if Engine.is_editor_hint() and loggie != null:
 			if toggled_on:
-				loggie.settings.update_check_mode = LoggieEnums.UpdateCheckType.DONT_CHECK
-				ProjectSettings.set_setting(loggie.settings.project_settings.update_check_mode.path, LoggieEnums.UpdateCheckType.DONT_CHECK)
+				loggie.settings.update_check_mode = LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_MSG
+				ProjectSettings.set_setting(loggie.settings.project_settings.update_check_mode.path, LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_MSG)
 			else:
 				loggie.settings.update_check_mode = LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_UPDATER_WINDOW
 				ProjectSettings.set_setting(loggie.settings.project_settings.update_check_mode.path, LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_UPDATER_WINDOW)

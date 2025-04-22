@@ -25,7 +25,7 @@ const TEMP_FILES_DIR = "user://"
 ## If this is set to a non-empty string, it will be used as the directory into which the new update will be
 ## installed. Used for testing/debugging. When set to empty string, Loggie will automatically figure out
 ## where it is being updated from and use that directory instead.
-const ALT_LOGGIE_PLUGIN_CONTAINER_DIR = "user://addons/"
+const ALT_LOGGIE_PLUGIN_CONTAINER_DIR = ""
 
 ## The domain from which status report [LoggieMsg]s from this update will be logged from.
 const REPORTS_DOMAIN : String = "loggie_update_status_reports"
@@ -47,7 +47,7 @@ var is_in_progress : bool = false
 
 ## Whether the update should retain or purge the backup it makes of the previous version files once it is done
 ## installing and applying the new update.
-var _clean_up_backup_files : bool = false
+var _clean_up_backup_files : bool = true
 
 func _init(_prev_version : LoggieVersion, _new_version : LoggieVersion) -> void:
 	self.prev_version = _prev_version
@@ -69,6 +69,12 @@ func set_is_in_progress(value : bool) -> void:
 ## Tries to start the version update. Prevents the update from starting
 ## if something is not configured correctly and pushes a warning/error.
 func try_start():
+	if Engine.has_meta("LoggieUpdateSuccessful") and Engine.get_meta("LoggieUpdateSuccessful"):
+		# No plan to allow multiple updates to run during a single Engine session anyway so no need to start another one.
+		# Also, this helps with internal testing of the updater and prevents an updated plugin from auto-starting another update
+		# when dealing with proxy versions.
+		return
+
 	if self._logger == null:
 		push_warning("Attempt to start Loggie update failed - member '_logger' on the LoggieUpdate object is null.")
 		return
@@ -134,7 +140,7 @@ func _on_download_request_completed(result: int, response_code: int, headers: Pa
 	# The path to the directory which is supposed to contain the plugin directory.
 	# This will usually be 'res://addons/', but could be anything else too. We'll read it dynamically
 	# from the connected logger to guarantee correctness.
-	var LOGGIE_PLUGIN_CONTAINER_DIR = ALT_LOGGIE_PLUGIN_CONTAINER_DIR if !ALT_LOGGIE_PLUGIN_CONTAINER_DIR.is_empty() else loggie.get_directory_path().get_base_dir().path_join("/")
+	var LOGGIE_PLUGIN_CONTAINER_DIR = ALT_LOGGIE_PLUGIN_CONTAINER_DIR if !ALT_LOGGIE_PLUGIN_CONTAINER_DIR.is_empty() else loggie.get_directory_path().get_base_dir() + "/"
 	
 	# The path to the `loggie` plugin directory.
 	var LOGGIE_PLUGIN_DIR = ProjectSettings.globalize_path(LOGGIE_PLUGIN_CONTAINER_DIR.path_join("loggie/"))
@@ -277,6 +283,8 @@ func _on_download_request_completed(result: int, response_code: int, headers: Pa
 				"p2" : CUSTOM_CHANNELS_IN_NEW_VER_PATH,
 				"error" : copy_prev_var_result_errors_msg.string()
 			}))
+	else:
+		print("The {path} directory doesn't exist.".format({"path": CUSTOM_CHANNELS_IN_PREV_VER_PATH}))
 	#endregion
 
 	#region || Step 6: Clean up temporarily created files and close filewrite.
@@ -292,7 +300,9 @@ func _on_download_request_completed(result: int, response_code: int, headers: Pa
 ## Internal function used at the end of the updating process if it is successfully completed.
 func _success():
 	set_is_in_progress(false)
-	status_changed.emit(null, "You may see temporary errors in the console due to Loggie files being re-scanned and reloaded on the spot. For the best experience, reload the Godot editor.")
+
+	var msg = "💬 You may see temporary errors in the console due to Loggie files being re-scanned and reloaded on the spot.\nIt should be safe to dismiss them, but for the best experience, reload the Godot editor (and the plugin, if something seems wrong).\n\n🚩 If you see a 'Files have been modified on disk' window pop up, choose 'Discard local changes and reload' to accept incoming changes."
+	status_changed.emit(null, msg)
 	succeeded.emit()
 
 	print_rich(LoggieMsg.new("👀 Loggie updated to version {new_ver}!".format({"new_ver": self.new_version})).bold().color(Color.ORANGE).string())
@@ -304,6 +314,8 @@ func _success():
 		editor_plugin.get_editor_interface().get_resource_filesystem().scan()
 		editor_plugin.get_editor_interface().call_deferred("set_plugin_enabled", "loggie", true)
 		editor_plugin.get_editor_interface().set_plugin_enabled("loggie", false)
+		Engine.set_meta("LoggieUpdateSuccessful", true)
+		print_rich("[b]Updater:[/b] ", msg)
 
 ## Internal function used to interrupt an ongoing update and cause it to fail.
 func _failure(status_msg : String):
