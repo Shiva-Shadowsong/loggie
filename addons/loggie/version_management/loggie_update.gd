@@ -308,7 +308,7 @@ func _success():
 	editor_plugin.get_editor_interface().call_deferred("set_plugin_enabled", "loggie", true)
 	editor_plugin.get_editor_interface().set_plugin_enabled("loggie", false)
 	Engine.set_meta("LoggieUpdateSuccessful", true)
-	print_rich("[b]👀 Loggie - Update Complete[/b]: ", msg)
+	print_rich("[b]Updater:[/b] ", msg)
 
 ## Internal function used to interrupt an ongoing update and cause it to fail.
 func _failure(status_msg : String):
