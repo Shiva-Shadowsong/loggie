@@ -137,8 +137,8 @@ func _on_get_latest_version_request_completed(result : int, response_code : int,
 	self.latest_version = LoggieVersion.from_string(latest_version_data.tag_name)
 	self.latest_version.set_meta("github_data", latest_version_data)
 
-	loggie.msg("Current version of Loggie:", self.version).msg(" (proxy for: {value})".format({"value": self.version.proxy_for})).debug()
-	loggie.debug("Latest version of Loggie:", self.latest_version)
+	loggie.msg("Current version of Loggie:", self.version).msg(" (proxy for: {value})".format({"value": self.version.proxy_for})).domain(REPORTS_DOMAIN).debug()
+	loggie.msg("Latest version of Loggie:", self.latest_version).domain(REPORTS_DOMAIN).debug()
 	latest_version_updated.emit()
 
 ## Executes every time this version manager updates the known latest_version.
