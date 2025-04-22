@@ -3,6 +3,7 @@ class_name LoggieVersion extends Resource
 
 var minor : int = -1 ## The minor component of the version.
 var major : int = -1 ## The major component of the version.
+var proxy_for : LoggieVersion = null ## The version that this version is a proxy for. (Internal use only)
 
 func _init(_major : int = -1, _minor : int = -1) -> void:
 	self.minor = _minor

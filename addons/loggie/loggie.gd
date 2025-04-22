@@ -5,9 +5,6 @@
 ## then uses them to properly format, arrange and present them in the console and .log files. Loggie uses the default Godot logging mechanism under the hood.
 extends Node
 
-## Stores a string describing the current version of Loggie.
-const VERSION : String = "v1.5"
-
 ## Emitted any time Loggie attempts to log a message.
 ## Useful for capturing the messages that pass through Loggie.
 ## [br][param msg] is the message Loggie attempted to log (before any preprocessing).
@@ -41,6 +38,9 @@ var default_channels = []
 var version_manager : LoggieVersionManager = LoggieVersionManager.new()
 
 func _init() -> void:
+	# Connect the version manager to this logger.
+	version_manager.connect_logger(self)
+
 	# Load and initialize the settings.
 	var uses_original_settings_file = true
 	var default_settings_path = get_script().get_path().get_base_dir().path_join("loggie_settings.gd")
@@ -103,7 +103,10 @@ func _init() -> void:
 	
 	# Print the Loggie boot messages.
 	if self.settings.show_loggie_specs != LoggieEnums.ShowLoggieSpecsMode.DISABLED:
-		msg("👀 Loggie {version} booted.".format({"version" : self.VERSION})).color(Color.ORANGE).header().nl().info()
+		msg("👀 Loggie {version}{isproxy} booted.".format({
+			"version" : self.version_manager.version,
+			"isproxy" : " (proxy for {original})".format({"original": self.version_manager.version.proxy_for}) if self.version_manager.version.proxy_for != null else ""
+		})).color(Color.ORANGE).header().nl().info()
 		var loggie_specs_msg = LoggieSystemSpecsMsg.new().use_logger(self)
 		loggie_specs_msg.add(msg("|\t Using Custom Settings File: ").bold(), !uses_original_settings_file).nl().add("|\t ").hseparator(35).nl()
 		
@@ -118,12 +121,6 @@ func _init() -> void:
 	if self.settings.show_system_specs:
 		var system_specs_msg = LoggieSystemSpecsMsg.new().use_logger(self)
 		system_specs_msg.embed_specs().preprocessed(false).info()
-
-func _ready() -> void:
-	# Only deal with Loggie version management when ready as plugin in editor.
-	if !Engine.is_editor_hint():
-		return 
-	version_manager.connect_logger(self) 
 
 ## Attempts to instantiate and use a LoggieSettings object from the script at the given [param path].
 ## Returns true if successful, otherwise false and prints an error.

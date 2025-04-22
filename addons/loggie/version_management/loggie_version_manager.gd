@@ -49,12 +49,12 @@ func find_and_store_current_version():
 	if err == OK:
 		for section in config.get_sections():
 			if section == "plugin":
+				var detected_version = LoggieVersion.from_string(config.get_value(section, "version", ""))
 				if self._version_proxy != null:
 					self.version = self._version_proxy
+					self.version.proxy_for = detected_version
 				else:
-					var version_string = config.get_value(section, "version", "")
-					self.version = LoggieVersion.from_string(version_string)
-				self.get_logger().debug("Current version of Loggie:", self.version)
+					self.version = detected_version
 	else:
 		push_error("Failed to load the Loggie plugin.cfg file. Ensure that loggie_version_manager.gd -> CONFIG_PATH is pointing correctly to a valid plugin.cfg file.")
 
@@ -157,8 +157,11 @@ func update_version_cache():
 	find_and_store_current_version()
 
 	# Read and cache the latest version of Loggie from GitHub.
+	# (Do it only if running in editor, no need for this if running in a game).
 	var logger = self.get_logger()
 	if logger is Node:
+		if !Engine.is_editor_hint():
+			return
 		if logger.is_node_ready():
 			find_and_store_latest_version()
 		else:
