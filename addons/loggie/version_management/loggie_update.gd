@@ -294,7 +294,9 @@ func _on_download_request_completed(result: int, response_code: int, headers: Pa
 ## Internal function used at the end of the updating process if it is successfully completed.
 func _success():
 	set_is_in_progress(false)
-	status_changed.emit(null, "You may see temporary errors in the console due to Loggie files being re-scanned and reloaded on the spot. For the best experience, reload the Godot editor.")
+
+	var msg = "💬 You may see temporary errors in the console due to Loggie files being re-scanned and reloaded on the spot. It should be safe to dismiss them, but for the best experience, reload the Godot editor (and the plugin, if something seems wrong).\n\n🚩 If you see a 'File have been modified on disk' window pop up, choose 'Discard local changes and reload' to accept incoming changes."
+	status_changed.emit(null, msg)
 	succeeded.emit()
 
 	print_rich(LoggieMsg.new("👀 Loggie updated!").bold().color(Color.ORANGE).string())
@@ -316,7 +318,8 @@ func _failure(status_msg : String):
 	set_is_in_progress(false)
 	failed.emit()
 	status_changed.emit(null, status_msg)
-	
+
+## Internal function used to send a progress update to listeners.
 func send_progress_update(progress_amount : float, status_msg : String, substatus_msg : String):
 	var loggie = self.get_logger()
 	if !substatus_msg.is_empty():
