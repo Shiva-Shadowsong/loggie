@@ -64,6 +64,12 @@ func set_is_in_progress(value : bool) -> void:
 ## Tries to start the version update. Prevents the update from starting
 ## if something is not configured correctly and pushes a warning/error.
 func try_start():
+	if Engine.has_meta("LoggieUpdateSuccessful") and Engine.get_meta("LoggieUpdateSuccessful"):
+		# No plan to allow multiple updates to run during a single Engine session anyway so no need to start another one.
+		# Also, this helps with internal testing of the updater and prevents an updated plugin from auto-starting another update
+		# when dealing with proxy versions.
+		return
+
 	if self._logger == null:
 		push_warning("Attempt to start Loggie update failed - member '_logger' on the update object is null.")
 		return
@@ -299,6 +305,8 @@ func _success():
 	editor_plugin.get_editor_interface().get_resource_filesystem().scan()
 	editor_plugin.get_editor_interface().call_deferred("set_plugin_enabled", "loggie", true)
 	editor_plugin.get_editor_interface().set_plugin_enabled("loggie", false)
+	Engine.set_meta("LoggieUpdateSuccessful", true)
+	print_rich("[b]👀 Loggie - Update Complete[/b]: ", msg)
 
 ## Internal function used to interrupt an ongoing update and cause it to fail.
 func _failure(status_msg : String):
