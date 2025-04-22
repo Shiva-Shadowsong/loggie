@@ -108,8 +108,8 @@ func connect_control_effects():
 		var loggie = self.get_logger()
 		if Engine.is_editor_hint() and loggie != null:
 			if toggled_on:
-				loggie.settings.update_check_mode = LoggieEnums.UpdateCheckType.DONT_CHECK
-				ProjectSettings.set_setting(loggie.settings.project_settings.update_check_mode.path, LoggieEnums.UpdateCheckType.DONT_CHECK)
+				loggie.settings.update_check_mode = LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_MSG
+				ProjectSettings.set_setting(loggie.settings.project_settings.update_check_mode.path, LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_MSG)
 			else:
 				loggie.settings.update_check_mode = LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_UPDATER_WINDOW
 				ProjectSettings.set_setting(loggie.settings.project_settings.update_check_mode.path, LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_UPDATER_WINDOW)
