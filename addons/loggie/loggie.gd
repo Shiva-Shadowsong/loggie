@@ -137,9 +137,36 @@ func load_settings_from_path(path : String) -> bool:
 func is_in_production() -> bool:
 	return OS.has_feature("release")
 
+## Returns a custom list of channels that messages from the given [param domain_name] will be sent to.
+## This list can be set through the [method set_domain_enabled] method.
+## If the list is empty, default channels will be used.
+func get_domain_custom_target_channels(domain_name : String) -> Array:
+	if domains.has(domain_name):
+		return domains[domain_name].custom_target_channels
+	return []
+
 ## Sets whether the domain with the given name is enabled.
-func set_domain_enabled(domain_name : String, enabled : bool) -> void:
-	domains[domain_name] = enabled
+## If [param custom_target_channels] is provided, it will be used as the list of channels that messages from the given domain will be sent to.
+## It can be provided as a string (if only one channel is used), or an array of strings (if multiple channels are used).
+## Otherwise, the default channels will be used.
+func set_domain_enabled(domain_name : String, enabled : bool, custom_target_channels : Variant = []) -> void:
+	var pruned_target_channels = []
+
+	if custom_target_channels is String:
+		custom_target_channels = [custom_target_channels]
+
+	# Prune the array to ensure only string content is used.
+	if custom_target_channels is Array:
+		for entry in custom_target_channels:
+			if entry is String or entry is StringName:
+				pruned_target_channels.push_back(entry)
+	else:
+		push_error("Attempt to set a custom target channel for domain {domain_name} with an invalid value: {custom_target_channels}. The value must be a string or an array of strings. Default channels will be used instead.".format({
+			"domain_name": domain_name,
+			"custom_target_channels": custom_target_channels
+		}))
+
+	domains[domain_name] = {"enabled": enabled, "custom_target_channels": pruned_target_channels}
 
 ## Checks whether the domain with the given name is enabled.
 ## The domain name "" (empty string) is the default one for all newly created messages,
@@ -148,7 +175,7 @@ func is_domain_enabled(domain_name : String) -> bool:
 	if domain_name == "":
 		return true
 	
-	if domains.has(domain_name) and domains[domain_name] == true:
+	if domains.has(domain_name) and domains[domain_name].enabled == true:
 		return true
 	
 	return false

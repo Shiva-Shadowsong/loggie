@@ -117,6 +117,7 @@ func output(level : LoggieEnums.LogLevel, msg_type : LoggieEnums.MsgType = Loggi
 	var loggie = get_logger()
 	var message = self.string()
 	var target_domain = self.domain_name
+	var target_channels = self.used_channels
 	
 	if loggie == null:
 		push_error("Attempt to log output with an invalid _logger. Make sure to call LoggieMsg.use_logger to set the appropriate logger before working with the message.")
@@ -137,7 +138,11 @@ func output(level : LoggieEnums.LogLevel, msg_type : LoggieEnums.MsgType = Loggi
 		return
 
 	# Send the message on all configured channels.
-	for channel_id : String in self.used_channels:
+	var custom_target_channels = loggie.get_domain_custom_target_channels(target_domain)
+	if custom_target_channels.size() > 0:
+		target_channels = custom_target_channels
+
+	for channel_id : String in target_channels:
 		var channel : LoggieMsgChannel = loggie.get_channel(channel_id)
 
 		if channel == null:
