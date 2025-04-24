@@ -27,7 +27,7 @@ func _ready() -> void:
 	#test_all_log_level_outputs()
 	#test_decors()
 	#test_output_from_classes_of_various_inheritances_and_origins()
-	#test_domains()
+	test_domains()
 	#test_segments()
 	#test_bbcode_to_markdown()
 	#test_discord_channel()
@@ -110,6 +110,13 @@ func test_domains():
 	Loggie.set_domain_enabled("Domain1", false)
 	Loggie.msg("Another similar message should appear below this notice if something is broken.").italic().color(Color.DIM_GRAY).notice()
 	Loggie.msg("> This message is coming from a disabled domain (You shouldn't be seeing this).").domain("Domain1").error()
+	
+	# Test outputting a message from a domain that is configured to use custom channels.
+	Loggie.set_domain_enabled("Domain3", true, "discord")
+	Loggie.msg("> This message should be visible on discord. (You should be seeing this)").domain("Domain3").info()
+	Loggie.set_domain_enabled("Domain4", true, ["discord", 53, Color.RED, "terminal"]) # Purposefully provide a partially incorrect value to test error handling.
+	Loggie.msg("> This message should be visible on discord and terminal. (You should be seeing this)").domain("Domain4").info()
+
 
 func test_decors():
 	Loggie.msg("Test Decorations").box(25).info()
