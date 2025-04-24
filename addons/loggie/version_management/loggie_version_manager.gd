@@ -9,9 +9,6 @@ signal latest_version_updated()
 ## Emitted when this version manager has created a valid [LoggieUpdate] and is ready to use it.
 signal update_ready()
 
-## The path to Loggie's plugin.cfg file. Required to read the current version of Loggie.
-const CONFIG_PATH = "res://addons/loggie/plugin.cfg"
-
 ## The URL where loggie releases on GitHub can be found.
 const REMOTE_RELEASES_URL = "https://api.github.com/repos/Shiva-Shadowsong/loggie/releases"
 
@@ -55,21 +52,12 @@ func get_logger() -> Variant:
 
 ## Reads the current version of Loggie from plugin.cfg and stores it in [member version].
 func find_and_store_current_version():
-	# Load data from a file.
-	var err = config.load(CONFIG_PATH)
-
-	# If the file didn't load, ignore it.
-	if err == OK:
-		for section in config.get_sections():
-			if section == "plugin":
-				var detected_version = LoggieVersion.from_string(config.get_value(section, "version", ""))
-				if self._version_proxy != null:
-					self.version = self._version_proxy
-					self.version.proxy_for = detected_version
-				else:
-					self.version = detected_version
+	var detected_version = self._logger.version
+	if self._version_proxy != null:
+		self.version = self._version_proxy
+		self.version.proxy_for = detected_version
 	else:
-		push_error("Failed to load the Loggie plugin.cfg file. Ensure that loggie_version_manager.gd -> CONFIG_PATH is pointing correctly to a valid plugin.cfg file.")
+		self.version = detected_version
 
 ## Reads the latest version of Loggie from a GitHub API response and stores it in [member latest_version].
 func find_and_store_latest_version():

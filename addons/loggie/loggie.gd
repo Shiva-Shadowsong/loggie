@@ -5,6 +5,10 @@
 ## then uses them to properly format, arrange and present them in the console and .log files. Loggie uses the default Godot logging mechanism under the hood.
 extends Node
 
+## The current version of Loggie.
+## Needs to be updated manually when changing the version.
+var version : LoggieVersion = LoggieVersion.new(1,5)
+
 ## Emitted any time Loggie attempts to log a message.
 ## Useful for capturing the messages that pass through Loggie.
 ## [br][param msg] is the message Loggie attempted to log (before any preprocessing).
