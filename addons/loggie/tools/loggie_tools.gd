@@ -149,11 +149,19 @@ static func rich_to_ANSI(text: String) -> String:
 ## Returns a dictionary of call stack data related to the stack the call to this function is a part of.
 static func get_current_stack_frame_data() -> Dictionary:
 	var stack = get_stack()
-	const callerIndex = 5
-	var targetIndex = callerIndex if stack.size() - 1 >= callerIndex else stack.size() - 1
-
 	if stack.size() > 0:
-		return stack[targetIndex]
+		stack.reverse()
+		# Prune the frames starting from the first one that comes from loggie_message and onwards.
+		var pruned_stack = []
+		for index in stack.size():
+			var source : String = stack[index].source
+			var prune_breakpoint_files = ["loggie", "loggie_message"]
+			if prune_breakpoint_files.has(source.get_file().get_basename()):
+				break
+			pruned_stack.push_back(stack[index])
+		
+		# The back-most remaining entry in the pruned stack is the first non-Loggie caller.
+		return pruned_stack.back()
 	else:
 		return {
 			"source" : "UnknownStackFrameSource",
