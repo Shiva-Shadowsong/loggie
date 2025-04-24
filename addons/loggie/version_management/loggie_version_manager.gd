@@ -163,6 +163,14 @@ func create_and_show_updater_widget(update : LoggieUpdate) -> Window:
 		return
 
 	var loggie = self.get_logger()
+	if loggie == null:
+		return
+	
+	var popup_parent = null
+	if Engine.is_editor_hint() and Engine.has_meta("LoggieEditorInterfaceBaseControl"):
+		popup_parent = Engine.get_meta("LoggieEditorInterfaceBaseControl")
+	else:
+		popup_parent = SceneTree.current_scene
 
 	# Configure popup window.
 	var _popup = Window.new()
@@ -172,8 +180,9 @@ func create_and_show_updater_widget(update : LoggieUpdate) -> Window:
 		var msg = "💬 You may see temporary errors in the console due to Loggie files being re-scanned and reloaded on the spot.\nIt should be safe to dismiss them, but for the best experience, reload the Godot editor (and the plugin, if something seems wrong).\n\n🚩 If you see a 'Files have been modified on disk' window pop up, choose 'Discard local changes and reload' to accept incoming changes."
 		success_dialog.dialog_text = msg
 		success_dialog.title = "Loggie Updater"
-		EditorInterface.get_base_control().add_child(success_dialog)
-		success_dialog.popup_centered()
+		if is_instance_valid(popup_parent):
+			popup_parent.add_child(success_dialog)
+			success_dialog.popup_centered()
 	)
 	var on_close_requested = func():
 		_popup.queue_free()
@@ -191,8 +200,9 @@ func create_and_show_updater_widget(update : LoggieUpdate) -> Window:
 	widget._logger = loggie
 	widget.close_requested.connect(on_close_requested, CONNECT_ONE_SHOT)
 	
-	EditorInterface.get_base_control().add_child(_popup)
-	_popup.popup_centered(widget.host_window_size)
+	if is_instance_valid(popup_parent):
+		popup_parent.add_child(_popup)
+		_popup.popup_centered(widget.host_window_size)
 	_popup.add_child(widget)
 
 	return _popup

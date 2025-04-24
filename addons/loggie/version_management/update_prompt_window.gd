@@ -99,8 +99,9 @@ func connect_control_effects():
 	# Connect behavior which executes when the "Restart Godot" button is pressed.
 	%OptionRestartGodotBtn.pressed.connect(func():
 		close_requested.emit()
-		var editor_plugin : EditorPlugin = Engine.get_meta("LoggieEditorPlugin")
-		editor_plugin.get_editor_interface().restart_editor(true)
+		if Engine.is_editor_hint():
+			var editor_plugin = Engine.get_meta("LoggieEditorPlugin")
+			editor_plugin.get_editor_interface().restart_editor(true)
 	)
 
 	# The "Don't show again checkbox" updates project settings whenever it is toggled.

@@ -310,7 +310,7 @@ func _success():
 	print_rich(LoggieMsg.new("\t💬 Support, Development & Feature Requests: ").bold().msg("https://discord.gg/XPdxpMqmcs").color(Color.CORNFLOWER_BLUE).string())
 
 	if Engine.is_editor_hint():
-		var editor_plugin : EditorPlugin = Engine.get_meta("LoggieEditorPlugin")
+		var editor_plugin = Engine.get_meta("LoggieEditorPlugin")
 		editor_plugin.get_editor_interface().get_resource_filesystem().scan()
 		editor_plugin.get_editor_interface().call_deferred("set_plugin_enabled", "loggie", true)
 		editor_plugin.get_editor_interface().set_plugin_enabled("loggie", false)
