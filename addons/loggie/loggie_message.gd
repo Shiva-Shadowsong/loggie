@@ -60,7 +60,7 @@ func get_logger() -> Variant:
 ## settings. The given logger should be of class [Loggie] or an extension of it.
 func use_logger(logger_to_use : Variant) -> LoggieMsg:
 	self._logger = logger_to_use
-	self.used_channels = self._logger.default_channels
+	self.used_channels = self._logger.settings.default_channels
 	return self
 
 ## Sets the list of channels this message should be sent to when outputted.
