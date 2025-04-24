@@ -212,3 +212,34 @@ func notice(message = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, ar
 ## Returns the path to the directory from which within this script is running.
 func get_directory_path() -> String:
 	return get_script().resource_path.get_base_dir()
+
+## Returns a [LoggieMsg] that comes inserted with stylized content describing the stack trace obtained via [method get_stack].
+func stack() -> LoggieMsg:
+	const FALLBACK_TXT_TO_FORMAT = "{index}: {fn_name}:{line} (in {source_path})"
+	var stack = get_stack()
+	var stack_msg = msg()
+	var text_to_format = settings.format_stacktrace_entry if is_instance_valid(settings) else FALLBACK_TXT_TO_FORMAT
+	
+	stack.reverse()
+	
+	for index in stack.size():
+		var file_name = stack[index].source.get_file().get_basename()
+
+		if settings.skipped_filenames_in_stack_trace.has(file_name):
+			continue
+
+		var entry_msg = LoggieMsg.new()
+		entry_msg.add(text_to_format.format({
+			"index": index,
+			"source_path": stack[index].source,
+			"fn_name": stack[index].function,
+			"line": stack[index].line
+		}))
+
+		if index == 0 or index < stack.size():
+			entry_msg.prefix("\n  ")
+			entry_msg.endseg()
+
+		stack_msg.add(entry_msg)
+
+	return stack_msg

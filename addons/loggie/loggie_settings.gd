@@ -87,6 +87,14 @@ const project_settings = {
 		"hint_string" : "",
 		"doc" : "The channels messages outputted from Loggie will be sent to by default (if not modified with LoggieMsg.channel method).",
 	},
+	"skipped_filenames_in_stack_trace" = {
+		"path": "loggie/general/skipped_filenames_in_stack_trace",
+		"default_value" : ["loggie", "loggie_message"],
+		"type" : TYPE_PACKED_STRING_ARRAY,
+		"hint" : PROPERTY_HINT_TYPE_STRING,
+		"hint_string" : "",
+		"doc" : "The file names, which, when appearing in a stack trace, should be omitted from the output.",
+	},
 	"discord_webhook_url_live" = {
 		"path": "loggie/general/discord/live_webhook",
 		"default_value" : "",
@@ -151,6 +159,14 @@ const project_settings = {
 		"hint_string" : "",
 		"doc" : "If true, 'debug' level messages outputted by Loggie will be printed using Godot's 'print_debug' function, which is more verbose.",
 	},
+	"use_print_stack_with_debug_msg" = {
+		"path": "loggie/preprocessing/terminal/use_print_stack_with_debug_msg",
+		"default_value" : false,
+		"type" : TYPE_BOOL,
+		"hint" : PROPERTY_HINT_NONE,
+		"hint_string" : "",
+		"doc" : "If true, 'debug' level messages outputted by Loggie will also print the stack trace.",
+	},
 	"nameless_class_name_proxy" = {
 		"path": "loggie/preprocessing/nameless_class_name_proxy",
 		"default_value" : LoggieEnums.NamelessClassExtensionNameProxy.BASE_TYPE,
@@ -190,6 +206,14 @@ const project_settings = {
 		"hint" : PROPERTY_HINT_NONE,
 		"hint_string" : "",
 		"doc" : "The format used for timestamps which are prepended to the message when the appending of timestamps is enabled.",
+	},
+	"format_stacktrace_entry" = {
+		"path": "loggie/formats/stacktrace_entry",
+		"default_value" : "{index}: [color=#ff7085]func[/color] [color=#53b1c3][b]{fn_name}[/b]:{line}[/color] [color=slate_gray][i](in {source_path})[/i][/color]",
+		"type" : TYPE_STRING,
+		"hint" : PROPERTY_HINT_NONE,
+		"hint_string" : "",
+		"doc" : "The format used for stack trace entries when trace logging is enabled.",
 	},
 	"format_debug_msg" = {
 		"path": "loggie/formats/debug_message",
@@ -311,6 +335,9 @@ var nameless_class_name_proxy : LoggieEnums.NamelessClassExtensionNameProxy
 ## Whether the outputted timestamps use UTC or local machine time.
 var timestamps_use_utc : bool
 
+## If true, when using [method print_debug], the stack trace will also be printed.
+var use_print_stack_with_debug_msg : bool
+
 ## Whether Loggie should enforce optimal values for certain settings when in a Release/Production build.
 ## [br]If true, Loggie will enforce:
 ## [br]  * [member msg_format_mode] to [member LoggieEnums.MsgFormatMode.PLAIN]
@@ -334,6 +361,9 @@ var preprocess_flags_slack_channel = LoggieEnums.PreprocessStep.APPEND_DOMAIN_NA
 
 ## The list of channels a message outputted from Loggie should be sent to by default.
 var default_channels : PackedStringArray
+
+## The list of file names, which, when appearing in a stack trace, should be omitted from the output..
+var skipped_filenames_in_stack_trace : PackedStringArray = ["loggie", "loggie_message"]
 
 #endregion
 # ----------------------------------------------- #
@@ -383,6 +413,11 @@ var format_debug_msg = "[b][color=pink][DEBUG]:[/color][/b] {msg}"
 ## You can customize this in your ProjectSettings, or custom_settings.gd (if using it).[br]
 var format_timestamp = "[{day}.{month}.{year} {hour}:{minute}:{second}]"
 
+## The format used for each entry in a stack trace that is obtained through [method Loggie.stack].
+## The variables [param {fn_name}], [param {index}], [param {source_path}], [param {line}] are supported.
+## You can customize this in your ProjectSettings, or custom_settings.gd (if using it).[br]
+var format_stacktrace_entry = "{index}: [color=#ff7085]func[/color] [color=#53b1c3][b]{fn_name}[/b]:{line}[/color] [color=slate_gray][i](in {source_path})[/i][/color]"
+
 ## The symbol which will be used for the HSeparator.
 var h_separator_symbol = "-"
 
@@ -431,15 +466,18 @@ func load():
 	timestamps_use_utc = ProjectSettings.get_setting(project_settings.timestamps_use_utc.path, project_settings.timestamps_use_utc.default_value)
 	enforce_optimal_settings_in_release_build = ProjectSettings.get_setting(project_settings.enforce_optimal_settings_in_release_build.path, project_settings.enforce_optimal_settings_in_release_build.default_value)
 	default_channels = ProjectSettings.get_setting(project_settings.default_channels.path, project_settings.default_channels.default_value)
+	skipped_filenames_in_stack_trace = ProjectSettings.get_setting(project_settings.skipped_filenames_in_stack_trace.path, project_settings.skipped_filenames_in_stack_trace.default_value)
 
 	print_errors_to_console = ProjectSettings.get_setting(project_settings.output_errors_to_console.path, project_settings.output_errors_to_console.default_value)
 	print_warnings_to_console = ProjectSettings.get_setting(project_settings.output_warnings_to_console.path, project_settings.output_warnings_to_console.default_value)
 	use_print_debug_for_debug_msg = ProjectSettings.get_setting(project_settings.use_print_debug_for_debug_msgs.path, project_settings.use_print_debug_for_debug_msgs.default_value)
+	use_print_stack_with_debug_msg = ProjectSettings.get_setting(project_settings.use_print_stack_with_debug_msg.path, project_settings.use_print_stack_with_debug_msg.default_value)
 
 	nameless_class_name_proxy = ProjectSettings.get_setting(project_settings.nameless_class_name_proxy.path, project_settings.nameless_class_name_proxy.default_value)
 	box_characters_mode = ProjectSettings.get_setting(project_settings.box_characters_mode.path, project_settings.box_characters_mode.default_value)
 
 	format_timestamp = ProjectSettings.get_setting(project_settings.format_timestamp.path, project_settings.format_timestamp.default_value)
+	format_stacktrace_entry = ProjectSettings.get_setting(project_settings.format_stacktrace_entry.path, project_settings.format_stacktrace_entry.default_value)
 	format_info_msg = ProjectSettings.get_setting(project_settings.format_info_msg.path, project_settings.format_info_msg.default_value)
 	format_notice_msg = ProjectSettings.get_setting(project_settings.format_notice_msg.path, project_settings.format_notice_msg.default_value)
 	format_warning_msg = ProjectSettings.get_setting(project_settings.format_warning_msg.path, project_settings.format_warning_msg.default_value)
@@ -461,9 +499,9 @@ func to_dict() -> Dictionary:
 	var dict = {}
 	var included = [
 		"preprocess_flags_discord_channel", "preprocess_flags_slack_channel", "preprocess_flags_terminal_channel",
-		"default_channels", "msg_format_mode", "log_level", "show_loggie_specs", "show_system_specs", "enforce_optimal_settings_in_release_build",
+		"default_channels", "skipped_filenames_in_stack_trace", "msg_format_mode", "log_level", "show_loggie_specs", "show_system_specs", "enforce_optimal_settings_in_release_build",
 		"print_errors_to_console", "print_warnings_to_console",
-		"use_print_debug_for_debug_msg", "nameless_class_name_proxy",
+		"use_print_debug_for_debug_msg", "use_print_stack_with_debug_msg", "nameless_class_name_proxy",
 		"timestamps_use_utc", "format_header", "format_domain_prefix", "format_error_msg",
 		"format_warning_msg", "format_notice_msg", "format_info_msg", "format_debug_msg", "format_timestamp",
 		"h_separator_symbol", "box_characters_mode", "box_symbols_compatible", "box_symbols_pretty",
