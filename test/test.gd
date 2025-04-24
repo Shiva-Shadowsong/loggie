@@ -45,21 +45,21 @@ func setup_gui():
 func test_all_log_level_outputs():
 	# Test all types of messages.
 	Loggie.msg("Test logging methods").box(25).info()
-	Loggie.msg("Test info").info()
-	Loggie.msg("Test", "info", "multi", "argument").info()
 	Loggie.msg("Test error.").error()
 	Loggie.msg("Test warning.").warn()
 	Loggie.msg("Test notice.").notice()
+	Loggie.msg("Test info").info()
+	Loggie.msg("Test", "info", "multi", "argument").info()
 	Loggie.msg("Test debug message.").debug()
 	print()
 
 	# Test shortcut wrappers.
 	Loggie.msg("Test logging method wrappers").box(25).info()
-	Loggie.debug("Debug wrapper test.")
-	Loggie.info("Info wrapper test.")
-	Loggie.notice("Notice wrapper test.")
-	Loggie.warn("Warn wrapper test.")
 	Loggie.error("Error wrapper test.")
+	Loggie.warn("Warn wrapper test.")
+	Loggie.notice("Notice wrapper test.")
+	Loggie.info("Info wrapper test.")
+	Loggie.debug("Debug wrapper test.")
 	print()
 
 func test_output_from_classes_of_various_inheritances_and_origins():
@@ -184,7 +184,7 @@ func test_bbcode_to_markdown():
 	#var converted_text = LoggieTools.convert_BBCode_to_markdown(msg.string())
 
 	# Print with standard print to see what the actual output looks like without Loggie interfering with any other conversion.
-	#print("Converted: [", converted_text, "]")
+	#print("Converted:\n[", converted_text, "]")
 
 func test_discord_channel():
 	# Standard test with decorations.
