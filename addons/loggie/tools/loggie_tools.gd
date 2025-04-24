@@ -161,13 +161,14 @@ static func get_current_stack_frame_data() -> Dictionary:
 			pruned_stack.push_back(stack[index])
 		
 		# The back-most remaining entry in the pruned stack is the first non-Loggie caller.
-		return pruned_stack.back()
-	else:
-		return {
-			"source" : "UnknownStackFrameSource",
-			"line" : 0,
-			"function" : "UnknownFunction"
-		}
+		if pruned_stack.size() >= 1:
+			return pruned_stack.back()
+
+	return {
+		"source" : "UnknownStackFrameSource",
+		"line" : 0,
+		"function" : "UnknownFunction"
+	}
 
 ## Returns the `class_name` of a script.
 ## [br][param path_or_script] should be either an absolute path to the script 
