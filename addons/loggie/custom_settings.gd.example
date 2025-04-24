@@ -18,6 +18,7 @@ func load():
 	self.print_errors_to_console = true
 	self.print_warnings_to_console = true
 	self.use_print_debug_for_debug_msg = true
+	self.use_print_stack_with_debug_msg = true
 	self.derive_and_show_class_names = true
 	self.nameless_class_name_proxy = LoggieEnums.NamelessClassExtensionNameProxy.BASE_TYPE
 	self.output_timestamps = true

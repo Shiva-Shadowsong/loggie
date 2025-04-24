@@ -49,6 +49,9 @@ var custom_preprocess_flags : int = -1
 ## You need to call it at least once for this to have any results.
 var last_preprocess_result : String = ""
 
+## Whether this message should append the stack trace during preprocessing.
+var appends_stack : bool = false
+
 func _init(message = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> void:
 	self.content[current_segment_index] = LoggieTools.concatenate_msg_and_args(message, arg1, arg2, arg3, arg4, arg5)
 
@@ -60,7 +63,7 @@ func get_logger() -> Variant:
 ## settings. The given logger should be of class [Loggie] or an extension of it.
 func use_logger(logger_to_use : Variant) -> LoggieMsg:
 	self._logger = logger_to_use
-	self.used_channels = self._logger.default_channels
+	self.used_channels = self._logger.settings.default_channels
 	return self
 
 ## Sets the list of channels this message should be sent to when outputted.
@@ -99,6 +102,9 @@ func get_preprocessed(flags : int, level : LoggieEnums.LogLevel) -> String:
 
 	if (flags & LoggieEnums.PreprocessStep.APPEND_TIMESTAMPS != 0):
 		message = _apply_format_timestamp(message)
+
+	if self.appends_stack or (loggie.settings.use_print_stack_with_debug_msg and level == LoggieEnums.LogLevel.DEBUG):
+		message = _apply_format_stack(message)
 
 	return message
 
@@ -236,6 +242,11 @@ func italic() -> LoggieMsg:
 func header() -> LoggieMsg:
 	var loggie = get_logger()
 	self.content[current_segment_index] = loggie.settings.format_header.format({"msg": self.content[current_segment_index]})
+	return self
+
+## Sets whether this message should append the stack trace during preprocessing.
+func stack(enabled : bool = true) -> LoggieMsg:
+	self.appends_stack = enabled
 	return self
 
 ## Constructs a decorative box with the given horizontal padding around the current segment
@@ -386,4 +397,11 @@ func _apply_format_timestamp(message : String) -> String:
 		"formatted_time" : loggie.settings.format_timestamp.format(format_dict),
 		"msg" : message
 	})
+	return message
+
+## Adds the stack trace to the given [param message] and returns the modified version of it.
+func _apply_format_stack(message : String) -> String:
+	var loggie = get_logger()
+	var stack_msg = loggie.stack()
+	message = message + stack_msg.string()
 	return message

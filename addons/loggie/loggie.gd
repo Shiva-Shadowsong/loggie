@@ -29,10 +29,6 @@ var class_names : Dictionary = {}
 ## [LoggieMsgChannel] objects those IDs are representing.
 var available_channels = {}
 
-## The default channel(s) messages outputted from ths logger will be sent to.
-## The value gets loaded in from [LoggieSettings] automatically.
-var default_channels = []
-
 ## Stores a reference to a [LoggieVersionManager] that will be used to manage the
 ## version of this instance.
 var version_manager : LoggieVersionManager = LoggieVersionManager.new()
@@ -60,11 +56,6 @@ func _init() -> void:
 		else:
 			push_error("Loggie loaded neither a custom nor a default settings file. This will break the plugin. Make sure that a valid loggie_settings.gd is in the same directory where loggie.gd is.")
 			return
-			
-	# Read the default channels from settings.
-	for channel_id in settings.default_channels:
-		if typeof(channel_id) == TYPE_STRING or typeof(channel_id) == TYPE_STRING_NAME:
-			default_channels.push_back(channel_id)
 
 	# Enforce certain settings if configured to do so.
 	if self.settings.enforce_optimal_settings_in_release_build == true and is_in_production():
@@ -221,3 +212,34 @@ func notice(message = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, ar
 ## Returns the path to the directory from which within this script is running.
 func get_directory_path() -> String:
 	return get_script().resource_path.get_base_dir()
+
+## Returns a [LoggieMsg] that comes inserted with stylized content describing the stack trace obtained via [method get_stack].
+func stack() -> LoggieMsg:
+	const FALLBACK_TXT_TO_FORMAT = "{index}: {fn_name}:{line} (in {source_path})"
+	var stack = get_stack()
+	var stack_msg = msg()
+	var text_to_format = settings.format_stacktrace_entry if is_instance_valid(settings) else FALLBACK_TXT_TO_FORMAT
+	
+	stack.reverse()
+	
+	for index in stack.size():
+		var file_name = stack[index].source.get_file().get_basename()
+
+		if settings.skipped_filenames_in_stack_trace.has(file_name):
+			continue
+
+		var entry_msg = LoggieMsg.new()
+		entry_msg.add(text_to_format.format({
+			"index": index,
+			"source_path": stack[index].source,
+			"fn_name": stack[index].function,
+			"line": stack[index].line
+		}))
+
+		if index == 0 or index < stack.size():
+			entry_msg.prefix("\n  ")
+			entry_msg.endseg()
+
+		stack_msg.add(entry_msg)
+
+	return stack_msg

@@ -16,10 +16,6 @@ const SCRIPT_LOGGIE_TALKER_NAMED_CHILD = preload("res://test/testing_props/talke
 func _init() -> void:
 	Loggie.msg("Test message from test.gd _init.").warn()
 
-	var logpath : String = Loggie.get_script().resource_path
-	Loggie.info("Loggie path:", logpath, " -> dir:", logpath.get_base_dir())
-
-
 func _ready() -> void:
 	original_settings = Loggie.settings.duplicate()
 	setup_gui()
@@ -37,7 +33,6 @@ func _ready() -> void:
 	#test_discord_channel()
 	#test_slack_channel()
 	#test_update_widget()
-	
 
 func setup_gui():
 	$Label.text = "Loggie {version}".format({"version": Loggie.get("version_manager").version if Loggie.get("version_manager") != null else "<?>"})
@@ -93,7 +88,7 @@ func test_output_from_classes_of_various_inheritances_and_origins():
 		SCRIPT_LOGGIE_TALKER_NAMED_CHILD.new().say("This is a named class that extends a named class and has its own implementation of a method.")
 
 		# Test how it looks when a script that has no `class_name` and extends LoggieTalker produces a log.
-		SCRIPT_LOGGIE_TALKER_CHILD.new().say("This is an unnamed class that extends a named class and has its own implementation of a method'.")
+		SCRIPT_LOGGIE_TALKER_CHILD.new().say("This is an unnamed class that extends a named class and has its own implementation of a method.")
 
 		# Test how it looks when a script that has a `class_name` and extends a LoggieTalker extender produces a log.
 		SCRIPT_LOGGIE_TALKER_NAMED_GRANDCHILD.new().say("This is a named class that extends a named class that extends a named class.")
