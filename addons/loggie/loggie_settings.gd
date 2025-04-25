@@ -151,14 +151,6 @@ const project_settings = {
 		"hint_string" : "",
 		"doc" : "If true, warnings printed by Loggie will also be visible through an additional print in the main output.",
 	},
-	"use_print_debug_for_debug_msgs" = {
-		"path": "loggie/preprocessing/terminal/use_print_debug_for_debug_msgs",
-		"default_value" : false,
-		"type" : TYPE_BOOL,
-		"hint" : PROPERTY_HINT_NONE,
-		"hint_string" : "",
-		"doc" : "If true, 'debug' level messages outputted by Loggie will be printed using Godot's 'print_debug' function, which is more verbose.",
-	},
 	"use_print_stack_with_debug_msg" = {
 		"path": "loggie/preprocessing/terminal/use_print_stack_with_debug_msg",
 		"default_value" : false,
@@ -324,10 +316,6 @@ var print_errors_to_console : bool
 ## Loggie should also print the error as a message in the standard output.
 var print_warnings_to_console : bool
 
-## If true, instead of [method print], [method print_debug] will be 
-## used when printing messages with [method LoggieMsg.debug].
-var use_print_debug_for_debug_msg : bool
-
 ## Defines which text will be used as a substitute for the 'class_name' of scripts that do not have a 'class_name'.
 ## Relevant only during the [member LoggieEnums.PreprocessStep.APPEND_CLASS_NAME] step of preprocessing.
 var nameless_class_name_proxy : LoggieEnums.NamelessClassExtensionNameProxy
@@ -470,7 +458,6 @@ func load():
 
 	print_errors_to_console = ProjectSettings.get_setting(project_settings.output_errors_to_console.path, project_settings.output_errors_to_console.default_value)
 	print_warnings_to_console = ProjectSettings.get_setting(project_settings.output_warnings_to_console.path, project_settings.output_warnings_to_console.default_value)
-	use_print_debug_for_debug_msg = ProjectSettings.get_setting(project_settings.use_print_debug_for_debug_msgs.path, project_settings.use_print_debug_for_debug_msgs.default_value)
 	use_print_stack_with_debug_msg = ProjectSettings.get_setting(project_settings.use_print_stack_with_debug_msg.path, project_settings.use_print_stack_with_debug_msg.default_value)
 
 	nameless_class_name_proxy = ProjectSettings.get_setting(project_settings.nameless_class_name_proxy.path, project_settings.nameless_class_name_proxy.default_value)
@@ -501,7 +488,7 @@ func to_dict() -> Dictionary:
 		"preprocess_flags_discord_channel", "preprocess_flags_slack_channel", "preprocess_flags_terminal_channel",
 		"default_channels", "skipped_filenames_in_stack_trace", "msg_format_mode", "log_level", "show_loggie_specs", "show_system_specs", "enforce_optimal_settings_in_release_build",
 		"print_errors_to_console", "print_warnings_to_console",
-		"use_print_debug_for_debug_msg", "use_print_stack_with_debug_msg", "nameless_class_name_proxy",
+		"use_print_stack_with_debug_msg", "nameless_class_name_proxy",
 		"timestamps_use_utc", "format_header", "format_domain_prefix", "format_error_msg",
 		"format_warning_msg", "format_notice_msg", "format_info_msg", "format_debug_msg", "format_timestamp",
 		"h_separator_symbol", "box_characters_mode", "box_symbols_compatible", "box_symbols_pretty",

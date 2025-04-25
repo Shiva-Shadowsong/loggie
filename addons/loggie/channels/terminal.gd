@@ -19,5 +19,3 @@ func send(msg : LoggieMsg, msg_type : LoggieEnums.MsgType):
 		push_error(LoggieTools.convert_string_to_format_mode(msg.string(), LoggieEnums.MsgFormatMode.PLAIN))
 	if msg_type == LoggieEnums.MsgType.WARNING and loggie.settings.print_warnings_to_console:
 		push_warning(LoggieTools.convert_string_to_format_mode(msg.string(), LoggieEnums.MsgFormatMode.PLAIN))
-	if msg_type == LoggieEnums.MsgType.DEBUG and loggie.settings.use_print_debug_for_debug_msg:
-		print_debug(LoggieTools.convert_string_to_format_mode(msg.string(), loggie.settings.msg_format_mode))
