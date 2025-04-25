@@ -2,7 +2,9 @@
 class_name LoggieTools extends Node
 
 ## Removes BBCode from the given text.
-## If [param specific_tags] is an array.
+## If [param specific_tags] is an array, it removes only the tags found in that array.
+## Otherwise, it removes the tags found in the default_tags array:[br]
+## [param ["b", "i", "u", "s", "indent", "code", "url", "center", "right", "color", "bgcolor", "fgcolor"]]
 static func remove_BBCode(text: String, specific_tags = null) -> String:
 	# The bbcode tags to remove.
 	var default_tags = ["b", "i", "u", "s", "indent", "code", "url", "center", "right", "color", "bgcolor", "fgcolor"]
@@ -74,6 +76,7 @@ static func convert_to_string(something : Variant) -> String:
 ## Takes the given [param str] and returns a terminal-ready version of it by converting its content
 ## to the appropriate format required to display the string correctly in the provided [param mode]
 ## msg format mode.
+## [b]The provided [param str] is expected to be either in Plain or BBCode format.[/b]
 static func convert_string_to_format_mode(str : String, mode : LoggieEnums.MsgFormatMode) -> String:
 	match mode:
 		LoggieEnums.MsgFormatMode.ANSI:
@@ -147,6 +150,8 @@ static func rich_to_ANSI(text: String) -> String:
 	return text
 
 ## Returns a dictionary of call stack data related to the stack the call to this function is a part of.
+## This function only works in debug builds because it uses [method get_stack].
+## Read more about why in that function's documentation.
 static func get_current_stack_frame_data() -> Dictionary:
 	var stack = get_stack()
 	if stack.size() > 0:
@@ -280,10 +285,10 @@ static func chunk_string(string : String, chunk_size : int) -> Array:
 
 ## Copies the directory at the given [param path_dir_to_copy] path and places the copy at the given [param path_dir_to_copy_into] path.
 ## Returns a dictionary with 2 keys:
-## [code]
-## [br]`errors` : Array[Error] # An array of all errors that occured during the process. ('Error.OK' is an exception and won't be included here)
-## [br]`messages` : Array[LoggieMsg] # An array of messages describing the process, including informational or error related content.
-## [/code]
+##[codeblock]
+##`errors` : Array[Error] # An array of all errors that occured during the process. ('Error.OK' is an exception and won't be included here)
+##`messages` : Array[LoggieMsg] # An array of messages describing the process, including informational or error related content.
+##[/codeblock]
 static func copy_dir_absolute(path_dir_to_copy: String, path_dir_to_copy_into: String, overwrite_existing_files_with_same_name : bool = false) -> Dictionary:
 	const debug_enabled = false
 	var result = {
