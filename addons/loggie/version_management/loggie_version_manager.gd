@@ -136,11 +136,11 @@ func on_latest_version_updated() -> void:
 
 	# Check if update is available.
 	if loggie.settings.update_check_mode != LoggieEnums.UpdateCheckType.DONT_CHECK:
-		loggie.msg("Loggie is checking for updates...").info()
+		loggie.msg("👀 Loggie:").bold().color("orange").msg(" Checking for updates...").info()
 		if is_update_available():
 			on_update_available_detected()
 		else:
-			loggie.msg("Loggie is up to date. ✔️").color(Color.LIGHT_GREEN).info()
+			loggie.msg("👀 Loggie:").bold().color("orange").msg(" Up to date. ✔️").color(Color.LIGHT_GREEN).info()
 		
 ## Displays the widget which informs the user of the available update and offers actions that they can take next.
 func create_and_show_updater_widget(update : LoggieUpdate) -> Window:
