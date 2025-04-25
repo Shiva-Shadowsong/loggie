@@ -332,11 +332,25 @@ var debug_msgs_print_stack_trace : bool
 ## [br]  * [member box_characters_mode] to [member LoggieEnums.BoxCharactersMode.COMPATIBLE]
 var enforce_optimal_settings_in_release_build : bool
 
-var discord_webhook_url_dev : String = "" ## Endpoint URL for the Discord webhook (used in dev environment)
-var discord_webhook_url_live : String = "" ## Endpoint URL for the Discord webhook (used in production/release environment)
+## Endpoint URL for the Discord webhook (used in dev environment)
+## [br][b]NEVER[/b] distribute your webhook in your project's repository, source code, or built game, where it can be accessed by other people.
+## This is meant to be used only in controlled circumstances.
+var discord_webhook_url_dev : String = "" 
 
-var slack_webhook_url_dev : String = "" ## Endpoint URL for the Slack webhook (used in dev environment)
-var slack_webhook_url_live : String = "" ## Endpoint URL for the Slack webhook (used in production/release environment)
+## Endpoint URL for the Discord webhook (used in production/release environment)
+## [br][b]NEVER[/b] distribute your webhook in your project's repository, source code, or built game, where it can be accessed by other people.
+## This is meant to be used only in controlled circumstances.
+var discord_webhook_url_live : String = "" 
+
+## Endpoint URL for the Slack webhook (used in dev environment)
+## [br][b]NEVER[/b] distribute your webhook in your project's repository, source code, or built game, where it can be accessed by other people.
+## This is meant to be used only in controlled circumstances.
+var slack_webhook_url_dev : String = "" 
+
+## Endpoint URL for the Slack webhook (used in production/release environment)
+## [br][b]NEVER[/b] distribute your webhook in your project's repository, source code, or built game, where it can be accessed by other people.
+## This is meant to be used only in controlled circumstances.
+var slack_webhook_url_live : String = "" 
 
 ## Defines the flags which LoggieMessages sent to the terminal channel will use during preprocessing.
 var preprocess_flags_terminal_channel = LoggieEnums.PreprocessStep.APPEND_TIMESTAMPS | LoggieEnums.PreprocessStep.APPEND_DOMAIN_NAME | LoggieEnums.PreprocessStep.APPEND_CLASS_NAME
