@@ -103,7 +103,7 @@ func get_preprocessed(flags : int, level : LoggieEnums.LogLevel) -> String:
 	if (flags & LoggieEnums.PreprocessStep.APPEND_TIMESTAMPS != 0):
 		message = _apply_format_timestamp(message)
 
-	if self.appends_stack or (loggie.settings.use_print_stack_with_debug_msg and level == LoggieEnums.LogLevel.DEBUG):
+	if self.appends_stack or (loggie.settings.debug_msgs_print_stack_trace and level == LoggieEnums.LogLevel.DEBUG):
 		message = _apply_format_stack(message)
 
 	return message
