@@ -306,8 +306,8 @@ func _success():
 	succeeded.emit()
 
 	print_rich(LoggieMsg.new("👀 Loggie updated to version {new_ver}!".format({"new_ver": self.new_version})).bold().color(Color.ORANGE).string())
-	print_rich(LoggieMsg.new("\t📚 Release Notes: ").bold().msg(release_notes_url).color(Color.CORNFLOWER_BLUE).string())
-	print_rich(LoggieMsg.new("\t💬 Support, Development & Feature Requests: ").bold().msg("https://discord.gg/XPdxpMqmcs").color(Color.CORNFLOWER_BLUE).string())
+	print_rich(LoggieMsg.new("\t📚 Release Notes: ").bold().msg("[url={url}]{url}[/url]".format({"url": release_notes_url})).color(Color.CORNFLOWER_BLUE).string())
+	print_rich(LoggieMsg.new("\t💬 Support, Development & Feature Requests: ").bold().msg("[url=https://discord.gg/XPdxpMqmcs]https://discord.gg/XPdxpMqmcs[/url]").color(Color.CORNFLOWER_BLUE).string())
 
 	if Engine.is_editor_hint():
 		var editor_plugin = Engine.get_meta("LoggieEditorPlugin")
