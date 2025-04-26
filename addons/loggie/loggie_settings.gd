@@ -287,7 +287,7 @@ const project_settings = {
 # ----------------------------------------------- #
 
 ## The current behavior Loggie uses to check for updates.
-var update_check_mode : LoggieEnums.UpdateCheckType
+var update_check_mode : LoggieEnums.UpdateCheckType = LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_UPDATER_WINDOW
 
 ## The current Message Format Mode of Loggie.
 ## Message Format Mode determines whether BBCode, ANSI or some other type of
@@ -295,42 +295,42 @@ var update_check_mode : LoggieEnums.UpdateCheckType
 ## [br][br]BBCode is compatible with the Godot console.
 ## [br]ANSI is compatible with consoles like Powershell and Windows CMD.
 ## [br]PLAIN is used to strip any effects and use plain text instead, which is good for saving raw logs into log files.
-var msg_format_mode : LoggieEnums.MsgFormatMode
+var msg_format_mode : LoggieEnums.MsgFormatMode = LoggieEnums.MsgFormatMode.BBCODE
 
 ## The current log level of Loggie.
 ## It determines which types of messages are allowed to be logged.
 ## Set this using [method setLogLevel].
-var log_level : LoggieEnums.LogLevel
+var log_level : LoggieEnums.LogLevel = LoggieEnums.LogLevel.INFO
 
 ## Whether or not Loggie should log the loggie specs on ready.
-var show_loggie_specs : LoggieEnums.ShowLoggieSpecsMode
+var show_loggie_specs : LoggieEnums.ShowLoggieSpecsMode = LoggieEnums.ShowLoggieSpecsMode.ESSENTIAL
 
 ## Whether or not Loggie should log the system specs on ready.
-var show_system_specs : bool
+var show_system_specs : bool = true
 
 ## Whether to, in addition to logging errors with [method push_error], 
 ## Loggie should also print the error as a message in the standard output.
-var print_errors_to_console : bool
+var print_errors_to_console : bool = true
 
 ## Whether to, in addition to logging errors with [method push_warning], 
 ## Loggie should also print the error as a message in the standard output.
-var print_warnings_to_console : bool
+var print_warnings_to_console : bool = true
 
 ## Defines which text will be used as a substitute for the 'class_name' of scripts that do not have a 'class_name'.
 ## Relevant only during the [member LoggieEnums.PreprocessStep.APPEND_CLASS_NAME] step of preprocessing.
 var nameless_class_name_proxy : LoggieEnums.NamelessClassExtensionNameProxy
 
 ## Whether the outputted timestamps use UTC or local machine time.
-var timestamps_use_utc : bool
+var timestamps_use_utc : bool = true
 
 ## If true, when outputting Debug level messages, the stack trace will also be appended.
-var debug_msgs_print_stack_trace : bool
+var debug_msgs_print_stack_trace : bool = false
 
 ## Whether Loggie should enforce optimal values for certain settings when in a Release/Production build.
 ## [br]If true, Loggie will enforce:
 ## [br]  * [member msg_format_mode] to [member LoggieEnums.MsgFormatMode.PLAIN]
 ## [br]  * [member box_characters_mode] to [member LoggieEnums.BoxCharactersMode.COMPATIBLE]
-var enforce_optimal_settings_in_release_build : bool
+var enforce_optimal_settings_in_release_build : bool = true
 
 ## Endpoint URL for the Discord webhook (used in dev environment)
 ## [br][b]NEVER[/b] distribute your webhook in your project's repository, source code, or built game, where it can be accessed by other people.
@@ -362,7 +362,7 @@ var preprocess_flags_discord_channel = LoggieEnums.PreprocessStep.APPEND_DOMAIN_
 var preprocess_flags_slack_channel = LoggieEnums.PreprocessStep.APPEND_DOMAIN_NAME | LoggieEnums.PreprocessStep.APPEND_CLASS_NAME
 
 ## The list of channels a message outputted from Loggie should be sent to by default.
-var default_channels : PackedStringArray
+var default_channels : PackedStringArray = ["terminal"]
 
 ## The list of file names, which, when appearing in a stack trace, should be omitted from the output..
 var skipped_filenames_in_stack_trace : PackedStringArray = ["loggie", "loggie_message"]
