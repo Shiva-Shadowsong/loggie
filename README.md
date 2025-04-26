@@ -21,11 +21,11 @@ ANSI-compatible, and friendly both for solo developers and developers in a team 
 
 If you need something simple but effective, Loggie is your guy.
 
-![docs/ALL_FEATURES.md](assets/banners/see_all_features.png)
+<img src="assets/banners/see_all_features.png" href="docs/ALL_FEATURES.md"/>
 
-![docs/USER_GUIDE.md](assets/banners/user_guide.png)
+<img src="assets/banners/user_guide.png" href="docs/USER_GUIDE.md"/>
 
-![https://discord.gg/XPdxpMqmcs](assets/banners/discord.png)
+<img src="assets/banners/discord.png" href="https://discord.gg/XPdxpMqmcs"/>
 
 -------------
 
@@ -154,7 +154,7 @@ To avoid pushing such changes to the Loggie plugin files directly, and to your r
 
 By gitignoring and using that file, each team member can use their own settings.
 
-## ![](https://i.imgur.com/XpelRe4.png) Toggleable Message Domains (Channels)
+## ![](https://i.imgur.com/XpelRe4.png) Toggleable Message Domains
 
 Messages can be configured to belong to a domain, and domains can be easily enabled or disabled. Messages coming from a disabled domain won't be processed or output.
 This makes it simple to create functions that can output verbose and advanced logs related to their behavior only when the domain is enabled by the developer.
@@ -172,16 +172,18 @@ func generate_loot_for(recipient : Creature):
 
 ## ![](https://i.imgur.com/f8Li33A.png) Class Name Extraction
 
-A neat feature I saw in [LogDuck](https://github.com/ZeeWeasel/LogDuck) _(also a cool logging library worth checking out)_, which allows you to see the names of the classes that prompted Loggie to output something.
+Loggie allows you to see the names of the classes that prompted Loggie to output something.
 \* This only works when the engine debugger is connected, therefore it does not work in Release mode, and won't be shown in those logs.\*
 
 ![](assets/screenshots/class_name_extraction.png)
 
-## ![](https://i.imgur.com/U032w7G.png) Dictionary Pretty-print
+## ![](https://i.imgur.com/U032w7G.png) Dictionary Pretty-print and Custom Printing
 
 Loggie makes an extra step to pretty-print dictionaries, outputting them in a json-like format with newlines and tabs, instead of having them smushed into a single line, which makes reading printed dictionaries easier when dealing with larger ones.
 
 ![](assets/screenshots/dictionary_pretty_print.png)
+
+It also allows you to write a custom way used for printing any type of object, including overriding this Dictionary rule.
 
 ## ![img](https://i.imgur.com/Enb9yXw.png) All Basic Settings in Project Settings
 
