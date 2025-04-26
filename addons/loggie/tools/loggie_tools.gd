@@ -163,7 +163,7 @@ static func rich_to_ANSI(text: String) -> String:
 	return text
 
 ## Returns a dictionary of call stack data related to the stack the call to this function is a part of.
-## This function only works in debug builds because it uses [method get_stack].
+## This function only works in debug builds, and on the main thread, because it uses [method get_stack].
 ## Read more about why in that function's documentation.
 static func get_current_stack_frame_data() -> Dictionary:
 	var stack = get_stack()

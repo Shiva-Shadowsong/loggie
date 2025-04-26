@@ -248,7 +248,7 @@ func get_directory_path() -> String:
 	return get_script().resource_path.get_base_dir()
 
 ## Returns a [LoggieMsg] that comes inserted with stylized content describing the stack trace obtained via [method get_stack].
-## This function only works in debug builds because it uses [method get_stack].
+## This function only works in debug builds, and on the main thread, because it uses [method get_stack].
 ## Read more about why in that function's documentation.
 func stack() -> LoggieMsg:
 	if !OS.has_feature("debug"):

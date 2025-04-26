@@ -170,7 +170,9 @@ func output(level : LoggieEnums.LogLevel, msg_type : LoggieEnums.MsgType = Loggi
 			self.last_preprocess_result = self.string()
 
 		channel.send(self, msg_type)
-		loggie.log_attempted.emit(self, message, LoggieEnums.LogAttemptResult.SUCCESS)
+		
+		# Emit signal deferred so if this is called from a thread, it doesn't cry about it.
+		loggie.call_deferred("emit_signal", "log_attempted", self, message, LoggieEnums.LogAttemptResult.SUCCESS)
 
 ## Outputs this message from Loggie as an Error type message.
 ## The [Loggie.settings.log_level] must be equal to or higher to the ERROR level for this to work.
@@ -261,6 +263,8 @@ func header() -> LoggieMsg:
 	return self
 
 ## Sets whether this message should append the stack trace during preprocessing.
+## If used in a different thread, it doesn't work, because it relies on [method get_stack] and
+## that method doesn't work within threads.
 func stack(enabled : bool = true) -> LoggieMsg:
 	self.appends_stack = enabled
 	return self
