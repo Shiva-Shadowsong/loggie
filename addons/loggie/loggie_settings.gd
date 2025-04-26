@@ -454,6 +454,14 @@ var box_symbols_pretty = {
 #endregion
 # ----------------------------------------------- #
 
+## A [Callable] function that takes 1 parameter [param something] (Variant),
+## and returns a [String] which represents the given [param something] in text.
+## By default, Loggie sets this to `LoggieTools.convert_to_string` when initialized.
+## [br][br]
+## You can, however, override that by changing this value to a valid replacement [Callable], 
+## after Loggie has initialized.
+var custom_string_converter : Callable
+
 ## Loads the initial (default) values for all of the LoggieSettings variables.
 ## (By default, loads them from ProjectSettings (if any modifications there exist), 
 ## or looks in [LoggieEditorPlugin..project_settings] for default values).

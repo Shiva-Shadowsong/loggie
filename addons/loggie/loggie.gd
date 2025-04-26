@@ -66,6 +66,9 @@ func _init() -> void:
 		self.settings.msg_format_mode = LoggieEnums.MsgFormatMode.PLAIN
 		self.settings.box_characters_mode = LoggieEnums.BoxCharactersMode.COMPATIBLE
 
+	# Set the default custom string converter.
+	self.settings.custom_string_converter = LoggieTools.convert_to_string
+
 	# Install all the built-in channels.
 	var terminal_channel : TerminalLoggieMsgChannel = load("res://addons/loggie/channels/terminal.gd").new()
 	terminal_channel.preprocess_flags = self.settings.preprocess_flags_terminal_channel

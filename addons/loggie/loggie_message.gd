@@ -53,7 +53,9 @@ var last_preprocess_result : String = ""
 var appends_stack : bool = false
 
 func _init(message = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> void:
-	self.content[current_segment_index] = LoggieTools.concatenate_msg_and_args(message, arg1, arg2, arg3, arg4, arg5)
+	var args = [message, arg1, arg2, arg3, arg4, arg5]
+	self.content[0] = LoggieTools.concatenate_args(args)
+	self.set_meta("initial_args", args)
 
 ## Returns a reference to the logger object that created this message.
 func get_logger() -> Variant:
@@ -64,6 +66,15 @@ func get_logger() -> Variant:
 func use_logger(logger_to_use : Variant) -> LoggieMsg:
 	self._logger = logger_to_use
 	self.used_channels = self._logger.settings.default_channels
+	
+	# Now that a logger is connected, we can re-format the first segment
+	# using that Logger's converter function if it has a custom one defined.
+	if self.has_meta("initial_args"):
+		var initial_args = self.get_meta("initial_args")
+		if initial_args is Array:
+			var converter_fn = self._logger.settings.custom_string_converter if is_instance_valid(self._logger) and is_instance_valid(self._logger.settings) else null
+			self.content[0] = LoggieTools.concatenate_args(initial_args, converter_fn)
+
 	return self
 
 ## Sets the list of channels this message should be sent to when outputted.
@@ -295,7 +306,8 @@ func box(h_padding : int = 4):
 ## Appends additional content to this message at the end of the current content and its stylings.
 ## This does not create a new message segment, just appends to the current one.
 func add(message : Variant = null, arg1 : Variant = null, arg2 : Variant = null, arg3 : Variant = null, arg4 : Variant = null, arg5 : Variant = null) -> LoggieMsg:
-	self.content[current_segment_index] = self.content[current_segment_index] + LoggieTools.concatenate_msg_and_args(message, arg1, arg2, arg3, arg4, arg5)
+	var converter_fn = self._logger.settings.custom_string_converter if is_instance_valid(self._logger) and is_instance_valid(self._logger.settings) else null
+	self.content[current_segment_index] = self.content[current_segment_index] + LoggieTools.concatenate_args([message, arg1, arg2, arg3, arg4, arg5], converter_fn)
 	return self
 
 ## Adds a specified amount of newlines to the end of the current segment of this message.
@@ -355,7 +367,8 @@ func endseg() -> LoggieMsg:
 ## Acts as a shortcut for calling [method endseg] + [method add].
 func msg(message = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
 	self.endseg()
-	self.content[current_segment_index] = LoggieTools.concatenate_msg_and_args(message, arg1, arg2, arg3, arg4, arg5)
+	var converter_fn = self._logger.settings.custom_string_converter if is_instance_valid(self._logger) and is_instance_valid(self._logger.settings) else null
+	self.content[current_segment_index] = LoggieTools.concatenate_args([message, arg1, arg2, arg3, arg4, arg5], converter_fn)
 	return self
 
 ## Sets whether this message should be preprocessed and potentially modified with prefixes and suffixes during [method output].
