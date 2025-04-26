@@ -141,6 +141,7 @@ func load_settings_from_path(path : String) -> bool:
 ## While it is, every [LoggieMsg] will have plain output.
 ## Uses a sensible default check for most projects, but
 ## you can rewrite this function to your needs if necessary.
+## TODO: Port this out of Loggie into LoggieSettings so users can override it easier.
 func is_in_production() -> bool:
 	return OS.has_feature("release")
 
