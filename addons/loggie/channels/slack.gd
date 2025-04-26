@@ -44,7 +44,7 @@ func send(msg : LoggieMsg, msg_type : LoggieEnums.MsgType):
 
 		## Inform the user about a received non-success response code.
 		if response_code < 200 or response_code > 299:
-			Loggie.msg("Slack responded with a non-success code: ").bold().msg(response_code, " - This is an indicator that something about the message you tried to send to Slack does not comply with their request body standards (e.g. content is too long, invalid format, etc.)").channel("terminal").warn()
+			loggie.msg("Slack responded with a non-success code: ").bold().msg(response_code, " - This is an indicator that something about the message you tried to send to Slack does not comply with their request body standards (e.g. content is too long, invalid format, etc.)").channel("terminal").warn()
 	
 		http.queue_free()
 	)

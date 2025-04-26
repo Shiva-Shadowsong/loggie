@@ -33,7 +33,7 @@ func send(msg : LoggieMsg, msg_type : LoggieEnums.MsgType):
 	# which would prevent the message from getting posted.
 	var chunks = LoggieTools.chunk_string(output_text, discord_msg_character_limit)
 	if chunks.size() > 1:
-		Loggie.debug("Chunking a long (", output_text.length(), "length ) message while sending to Discord into:", chunks.size(), "chunks.")
+		loggie.debug("Chunking a long (", output_text.length(), "length ) message while sending to Discord into:", chunks.size(), "chunks.")
 	for chunk : String in chunks:
 		call_deferred("send_post_request", loggie, chunk, webhook_url)
 
@@ -56,7 +56,7 @@ func send_post_request(logger : Variant, output_text : String, webhook_url : Str
 		
 		## Inform the user about a received non-success response code.
 		if response_code < 200 or response_code > 299:
-			Loggie.msg("Discord responded with a non-success code: ").bold().msg(response_code, " - This is an indicator that something about the message you tried to send to Discord does not comply with their request body standards (e.g. content is too long, invalid format, etc.)").channel("terminal").warn()
+			logger.msg("Discord responded with a non-success code: ").bold().msg(response_code, " - This is an indicator that something about the message you tried to send to Discord does not comply with their request body standards (e.g. content is too long, invalid format, etc.)").channel("terminal").warn()
 		
 		http.queue_free()
 	)
