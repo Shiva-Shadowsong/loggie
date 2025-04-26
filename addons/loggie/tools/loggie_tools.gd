@@ -17,15 +17,29 @@ static func remove_BBCode(text: String, specific_tags = null) -> String:
 	var stripped_text = regex.sub(text, "", true)
 	return stripped_text
 
-## Concatenates all given args into one single string, in consecutive order starting with 'msg'.
-static func concatenate_msg_and_args(msg : Variant, arg1 : Variant = null, arg2 : Variant = null, arg3 : Variant = null, arg4 : Variant = null, arg5 : Variant = null, arg6 : Variant = null) -> String:
-	var final_msg = convert_to_string(msg)
-	var arguments = [arg1, arg2, arg3, arg4, arg5, arg6]
-	for arg in arguments:
-		if arg != null:
-			final_msg += (" " + convert_to_string(arg))
-	return final_msg
+## Concatenates all elements of the given [param args] array into one single string, in consecutive order.
+## If [param custom_converter_fn] is provided, and is a [Callable], that function will be used to convert each element of the array into a string
+## instead of using [method convert_to_string]. That function will receive 1 argument, which will be a 'Variant', and it has to return a 'String'.
+static func concatenate_args(args : Array, custom_converter_fn : Variant = null) -> String:
+	if args.size() == 0:
+		return ""
 
+	var converter_fn : Callable = LoggieTools.convert_to_string
+	if custom_converter_fn is Callable and custom_converter_fn.is_valid() and !custom_converter_fn.is_null():
+		converter_fn = custom_converter_fn
+
+	# Start with first element without modifying array
+	var final_msg : String = converter_fn.call(args[0])
+
+	# Start from index 1 since we already handled index 0
+	for i in range(1, args.size()):
+		var arg = args[i]
+		var is_not_followed_by_a_null_arg = true if (i + 1 <= args.size() - 1) and (args[i + 1] != null) else false
+		if (arg != null) or (arg == null and is_not_followed_by_a_null_arg):
+			var converted_arg : String = converter_fn.call(arg)
+			final_msg += (" " + converted_arg)
+
+	return final_msg
 
 ## Converts a text with BBCode in it to markdown.
 ## A limited set of BBCode tags are supported for this conversion, because standard Markdown can't handle everything
@@ -60,15 +74,14 @@ static func convert_BBCode_to_markdown(text: String) -> String:
 
 	return text
 
-## Converts [param something] into a string.
-## If [param something] is a Dictionary, uses a special way to convert it into a string.
-## You can add more exceptions and rules for how different things are converted to strings here.
+## Converts [param something] into a string, with custom handling for
+## certain native and custom classes.
 static func convert_to_string(something : Variant) -> String:
 	var result : String
 	if something is Dictionary:
 		result = JSON.new().stringify(something, "  ", false, true)
 	elif something is LoggieMsg:
-		result = str(something.string())
+		result = something.string()
 	else:
 		result = str(something)
 	return result
