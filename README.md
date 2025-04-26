@@ -21,7 +21,6 @@ ANSI-compatible, and friendly both for solo developers and developers in a team 
 
 If you need something simple but effective, Loggie is your guy.
 
-
 [<img src="assets/banners/see_all_features.png">](docs/ALL_FEATURES.md)
 
 [<img src="assets/banners/user_guide.png">](docs/USER_GUIDE.md)
