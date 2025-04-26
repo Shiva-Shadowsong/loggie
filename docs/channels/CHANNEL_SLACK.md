@@ -8,7 +8,7 @@ When it receives a message, it first prepares it to show up on Slack properly:
 
 Then, it posts the content to the Slack webhook that can be configured in **Project Settings -> Loggie -> General -> Slack -> Live Webhook / Dev Webhook**.
 
-> [!INFO]
+> [!NOTE]
 > You can generate a webhook in your Slack workspace by right clicking on a desired channel and going to **View Channel Details -> Integrations -> Apps (Add an App) -> Incoming Webhooks -> Configuration -> Add To Slack -> Post To Channel (choose channel) -> Add Incoming Webhooks Integration**
 
 ![](../../assets/screenshots/slack_webhook_area.png)

@@ -9,7 +9,7 @@ When it receives a message, it first prepares it to show up on Discord properly.
 
 Then, it posts these chunks to the discord webhook that can be configured in **Project Settings -> Loggie -> General -> Discord -> Live Webhook / Dev Webhook**.
 
-> [!INFO]
+> [!NOTE]
 > You can generate a webhook on your Discord server by going to **Server Settings -> Integrations -> Webhooks**.
 
 ![](../../assets/screenshots/discord_webhook_area.png)

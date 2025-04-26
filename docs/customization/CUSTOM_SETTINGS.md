@@ -42,7 +42,7 @@ func load():
 	print_errors_to_console = true
 ```
 
-> [!INFO]
+> [!NOTE]
 > ### Template is available
 > In that same directory, you will find a `custom_settings.gd.example` template.
 You can rename this to `custom_settings.gd`, change its contents to what you prefer, and it will be good to go.

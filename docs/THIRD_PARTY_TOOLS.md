@@ -11,7 +11,7 @@ Below is a list of known third party Loggie related tools.
 >
 >**Consult the provided documentation, developers of the tool, and the source code itself if need be, to ensure this.**
 
-> [!INFO]
+> [!NOTE]
 > If you want your tool to be mentioned here, please mention that on the Loggie Discord server or open an issue here on GitHub with title "**3rd Party Tool Submission - {toolname}**" linking to  your tool's repository.
 
 ---

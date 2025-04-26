@@ -17,7 +17,7 @@ This feature is a core component of how Loggie manages to automatically clean up
 
 This is the default format in which Loggie expects all messages originally to be in, regardless of what your target output format is.
 
-> [!INFO]
+> [!NOTE]
 > If you don't know what BBCode is, it is a lightweight markup language used for styling text. Godot uses and supports this format, mainly through the [**RichTextLabel**](https://docs.godotengine.org/en/latest/tutorials/ui/bbcode_in_richtextlabel.html#bbcode-in-richtextlabel) node and the [print_rich](https://docs.godotengine.org/en/latest/tutorials/ui/bbcode_in_richtextlabel.html#bbcode-in-richtextlabel) function.
 > 
 > * [What is BBCode](https://en.wikipedia.org/wiki/BBCode)

@@ -41,7 +41,7 @@ log_level = LoggieEnums.LogLevel.INFO
 
 ❌ Messages coming from levels higher than the enabled one will be discarded during preprocessing and won't be logged.
 
->[!INFO]
+>[!NOTE]
 >### How is this useful to me?
 >For example, while you are developing your game, you may want to see all messages including 'Debug' ones - but you don't want your users to see this if they run your released application and go snooping around the log files on their device.
 >

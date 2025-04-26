@@ -2,7 +2,7 @@
 
 This feature allows you to tell Loggie to append the stack trace to the end of any message.
 
-> [!INFO]
+> [!NOTE]
 > A "stack trace" is a list of function calls that shows the path of execution your program took to reach a specific point in the code -  *(the line which requested the stack trace)*.
 
 This is what a printed stack trace looks like:
