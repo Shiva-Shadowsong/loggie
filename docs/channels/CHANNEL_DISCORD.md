@@ -4,7 +4,7 @@ This channel comes installed with Loggie by default.
 
 When it receives a message, it first prepares it to show up on Discord properly.
 
-1. Converts its content to the **MARKDOWN** [Output Format Mode](OUTPUT_FORMAT_MODES.md).
+1. Converts its content to the **MARKDOWN** [Output Format Mode](../features/OUTPUT_FORMAT_MODES.md).
 2. Chops up the content into appropriately sized chunks (2000 characters max) because Discord doesn't allow more in a single message.
 
 Then, it posts these chunks to the discord webhook that can be configured in **Project Settings -> Loggie -> General -> Discord -> Live Webhook / Dev Webhook**.
@@ -12,7 +12,7 @@ Then, it posts these chunks to the discord webhook that can be configured in **P
 > [!INFO]
 > You can generate a webhook on your Discord server by going to **Server Settings -> Integrations -> Webhooks**.
 
-![](assets/screenshots/discord_webhook_area.png)
+![](../../assets/screenshots/discord_webhook_area.png)
 
 > [!CAUTION]
 > ## **NEVER INCLUDE WEBHOOKS IN PUBLIC BUILDS.**
@@ -25,7 +25,7 @@ Then, it posts these chunks to the discord webhook that can be configured in **P
 
 Furthermore, you can customize the features of this channel in **Project Settings -> Loggie -> Preprocessing -> Discord**:
 
-![](assets/screenshots/channel_discord_customize.png)
+![](../../assets/screenshots/channel_discord_customize.png)
 
 In the end, you should receive your message on your Discord server, like in this example:
 
@@ -33,7 +33,7 @@ In the end, you should receive your message on your Discord server, like in this
 
 ---
 #### Related Articles:
-👀 **► [Browse All Features](docs/ALL_FEATURES.md)**
-📚 ► [What are Channels?](docs/features/CHANNELS.md)
-📚 ► [Adding Custom Channels](docs/customization/ADDING_CUSTOM_CHANNELS.md)
-📚 ► [Domains](docs/features/DOMAINS.md)
+👀 **► [Browse All Features](../../docs/ALL_FEATURES.md)**
+📚 ► [What are Channels?](../../docs/features/CHANNELS.md)
+📚 ► [Adding Custom Channels](../../docs/customization/ADDING_CUSTOM_CHANNELS.md)
+📚 ► [Domains](../../docs/features/DOMAINS.md)

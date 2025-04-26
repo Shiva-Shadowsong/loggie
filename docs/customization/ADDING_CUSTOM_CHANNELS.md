@@ -3,7 +3,7 @@
 So, you'd like to create a new type of channel Loggie can output to?
 This guide will help you learn what you need to know.
 
-This article assumes you are familiar with the [Channels](docs/features/CHANNELS.md) article and feature.
+This article assumes you are familiar with the [Channels](../features/CHANNELS.md) article and feature.
 
 Let's learn by example:
 
@@ -47,7 +47,7 @@ func _init() -> void:
 
 The available preprocessing flags can be found in [loggie_enums.gd](../../addons/loggie/tools/loggie_enums.gd) under LoggieEnums.PreprocessStep.
 
-By adding what I did in the example above, messages sent to this channel will have timestamps, domain names and class names appended to them during the [preprocessing](PREPROCESSING.md) step.
+By adding what I did in the example above, messages sent to this channel will have timestamps, domain names and class names appended to them during the [preprocessing](../features/PREPROCESSING.md) step.
 
 ### 4. Define how it handles an incoming message
 
@@ -112,6 +112,6 @@ You only need to do this once during each execution of your project, at any poin
 
 ---
 #### Related Articles:
-👀 **► [Browse All Features](docs/ALL_FEATURES.md)**
-📚 ► [What are Channels?](docs/features/CHANNELS.md)
-📚 ► [Domains](docs/features/DOMAINS.md)
+👀 **► [Browse All Features](../ALL_FEATURES.md)**
+📚 ► [What are Channels?](../features/CHANNELS.md)
+📚 ► [Domains](../features/DOMAINS.md)

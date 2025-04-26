@@ -32,7 +32,7 @@ This page is a hub for browsing all documented features and other articles relat
 * [Timestamps](features/TIMESTAMPS.md)
 * [Utility Tools](features/TOOLS.md)
 
-# ![](assets/icons/features.png)  Customization
+# ![](../assets/icons/features.png)  Customization
 
 * [Creating Custom Channels](customization/ADDING_CUSTOM_CHANNELS.md)
 * [Using a Custom Loggie Settings File](customization/CUSTOM_SETTINGS.gd)
