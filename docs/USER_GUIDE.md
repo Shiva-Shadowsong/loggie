@@ -46,4 +46,4 @@ Loggie has a [bunch of features](ALL_FEATURES.md) but it's always good to have s
 
 ---
 
-![docs/ALL_FEATURES.md](../assets/banners/see_all_features.png)
+[<img src="../assets/banners/see_all_features.png">](ALL_FEATURES.md)
