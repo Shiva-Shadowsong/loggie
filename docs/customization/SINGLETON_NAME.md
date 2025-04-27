@@ -38,5 +38,5 @@ Your custom name is applied when `Loggie` enters the tree, not when the plugin i
 
 ---
 #### Related Articles:
-👀 **► [Browse All Features](docs/ALL_FEATURES.md)**
-📚 ► [Using Custom LoggieSettings](docs/customization/CUSTOM_SETTINGS.md)
+👀 **► [Browse All Features](../ALL_FEATURES.md)**  
+📚 ► [Using Custom LoggieSettings](CUSTOM_SETTINGS.md)

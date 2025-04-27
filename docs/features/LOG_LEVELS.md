@@ -10,7 +10,7 @@ Different levels may be handled and outputted differently. More about that below
 ### Available Levels
 
 In Loggie, there are 5 log levels, in order of (most significant -> least significant).
-They can be found in the [LoggieEnums.LogLevel](addons/loggie/tools/loggie_enums.gd) enum, and they are:
+They can be found in the [LoggieEnums.LogLevel](../../addons/loggie/tools/loggie_enums.gd) enum, and they are:
 
 | Log Level | Enum Value | Outputted With Method                 | Description                                                                                                                                                                                                                                                 |
 | --------- | ---------- | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -28,9 +28,9 @@ Loggie requires you to choose and select the levels which you want to enable in 
 
 You can do that in the **Project Settings** window of Godot here:
 
-![assets/screenshots/log_levels.png](assets/screenshots/log_levels.png)
+![](../../assets/screenshots/log_levels.png)
 
-Alternatively, if you are [using Custom Settings](docs/customization/CUSTOM_SETTINGS.md), you should add this to your `custom_settings.gd` load() method:
+Alternatively, if you are [using Custom Settings](../customization/CUSTOM_SETTINGS.md), you should add this to your `custom_settings.gd` load() method:
 
 ```gdscript
 # Set the log level used by Loggie:
@@ -74,7 +74,7 @@ Some log levels are handled differently than others during output to the Godot t
 
 By default, messages outputted on the existing levels will look like this:
 
-![](assets/screenshots/log_level_stylings.png)
+![](../../assets/screenshots/log_level_stylings.png)
 
 If you wish to change their style, it can be done by altering their format setting:
 **Project Settings -> Loggie -> Formats**
@@ -85,9 +85,9 @@ The available variables for these fields are:
 | -------- | ----------------------------------------------------- |
 | {msg}    | This will get replaced by the content of the message. |
 
-![](assets/screenshots/log_level_formats.png)
+![](../../assets/screenshots/log_level_formats.png)
 
-If you are [using Custom Settings](docs/customization/CUSTOM_SETTINGS.md), you can do it with:
+If you are [using Custom Settings](../customization/CUSTOM_SETTINGS.md), you can do it with:
 
 ```gdscript
 format_error_msg = "[b][color=red][ERROR]:[/color][/b] {msg}"
@@ -107,9 +107,9 @@ format_debug_msg = "[b][color=pink][DEBUG]:[/color][/b] {msg}"
 >In future versions of Godot, they may fix this to support a broader set / all colors - but for backwards compatibility, I'm keeping the defaults as is.
 
 #### Related Articles:
-👀 **► [Browse All Features](docs/ALL_FEATURES.md)**  📚 ► [Next: Domains](docs/features/DOMAINS.md)
+👀 **► [Browse All Features](../ALL_FEATURES.md)**  📚 ► [Next: Domains](DOMAINS.md)  
 
-📚 ► [Channels](docs/features/CHANNELS.md)
-📚 ► [Composing Messages](docs/features/COMPOSE_AND_OUTPUT_MESSAGES.md)
-📚 ► [Using Custom LoggieSettings](docs/customization/CUSTOM_SETTINGS.md)
-📚 ► [How do Log Levels work?](docs/features/LOG_LEVELS.md)
+📚 ► [Channels](CHANNELS.md)  
+📚 ► [Composing Messages](COMPOSE_AND_OUTPUT_MESSAGES.md)  
+📚 ► [Using Custom LoggieSettings](../customization/CUSTOM_SETTINGS.md)  
+📚 ► [How do Log Levels work?](LOG_LEVELS.md)  

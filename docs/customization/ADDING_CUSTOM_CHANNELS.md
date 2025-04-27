@@ -9,7 +9,7 @@ Let's learn by example:
 
 > I want to create a new channel which, when it receives a request from Loggie to send a message, will use the `print` function to output it in the Godot console.
 
-#### 1. Create and store your channel script in an appropriate location
+### 1. Create and store your channel script in an appropriate location
 
 You need to create a script and give it a name that corresponds to the `ID` of your channel.
 
@@ -17,9 +17,9 @@ You need to create a script and give it a name that corresponds to the `ID` of y
 
 Store that script in a *protected location*:
 
-✔️ Inside of `addons/loggie/custom_channels/`
-❌ Anywhere else inside of `addons/loggie/` *(would be overwritten by auto updater)*.
-✔️ Anywhere else in your project.
+✔️ Inside of `addons/loggie/custom_channels/`  
+❌ Anywhere else inside of `addons/loggie/` *(would be overwritten by auto updater)*.  
+✔️ Anywhere else in your project.  
 
 ### 2. Give Class Name and Extend LoggieChannel
 
@@ -112,6 +112,6 @@ You only need to do this once during each execution of your project, at any poin
 
 ---
 #### Related Articles:
-👀 **► [Browse All Features](../ALL_FEATURES.md)**
-📚 ► [What are Channels?](../features/CHANNELS.md)
-📚 ► [Domains](../features/DOMAINS.md)
+👀 **► [Browse All Features](../ALL_FEATURES.md)**  
+📚 ► [What are Channels?](../features/CHANNELS.md)  
+📚 ► [Domains](../features/DOMAINS.md)  

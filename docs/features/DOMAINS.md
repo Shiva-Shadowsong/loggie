@@ -2,11 +2,11 @@
 
 Domains are a feature which allow you to place any message into a named category (called *a domain*).
 
-Then, domains can be easily enabled, disabled, or customized to always output messages that belong to them to specific [channels](docs/features/CHANNELS.md).
+Then, domains can be easily enabled, disabled, or customized to always output messages that belong to them to specific [channels](CHANNELS.md).
 
-#### Using Domains
+### Using Domains
 
-Each domain is represented by its name (*a string*).
+Each domain is uniquely identified by its name (*a string*).
 The default domain to which all messages belong is `""` (*empty string*).
 
 To put a specific message into a domain, call the `domain` method on it and provide it with the name of the domain:
@@ -39,13 +39,13 @@ You can enable domains by calling `Loggie.set_domain_enabled`:
 
 ### Showing Domain Names Next To Messages
 
-![](assets/screenshots/domain_name.png)
+![](../../assets/screenshots/domain_name.png)
 
 If you want to show the domain from which a message is coming, you can toggle the following setting for that channel in **Project Settings -> Loggie -> Preprocessing**:
 
-![](assets/screenshots/append_domain_name.png)
+![](../../assets/screenshots/append_domain_name.png)
 
-If you are [using Custom Settings](docs/customization/CUSTOM_SETTINGS.md), you can set this in the `load()` method instead:
+If you are [using Custom Settings](../customization/CUSTOM_SETTINGS.md), you can set this in the `load()` method instead:
 
 ```
 output_message_domain = true
@@ -53,7 +53,7 @@ output_message_domain = true
 
 ### Changing How Domain Name is Displayed
 
-This is covered in the [Message Formats](docs/customization/MESSAGE_FORMATS.md) article.
+This is covered in the [Message Formats](../customization/MESSAGE_FORMATS.md) article.
 
 ### Making a Domain Always Post to Specific Channels
 
@@ -68,7 +68,8 @@ Loggie.set_domain_enabled("ShadowRealm", true, ["terminal", "discord"])
 ```
 
 By default, all domains post to whatever your *default channels* are configured to be in Loggie Settings.
-### How are domains useful?
+
+## How are domains useful?
 
 Let's say you are developing a complex system within a single (or even multiple) scripts, and you find it very helpful to have debug logs scattered throughout that system which inform you of its operations.
 
@@ -146,9 +147,9 @@ When you disable it - poof, all the logs from these multiple related scripts are
 
 ---
 #### Related Articles:
-👀 **► [Browse All Features](docs/ALL_FEATURES.md)** 📚 ► [Prev: Log Levels](docs/features/LOG_LEVELS.md)
-👀 ► **[Back to User Guides](docs/USER_GUIDE.md)**
+👀 **► [Browse All Features](../ALL_FEATURES.md)** 📚 ► [Prev: Log Levels](LOG_LEVELS.md)  
+👀 ► **[Back to User Guides](../USER_GUIDE.md)**  
 
-📚 ► [Channels](docs/features/CHANNELS.md)
-📚 ► [Message Formats](docs/customization/MESSAGE_FORMATS.md)
-📚 ► [Using Custom LoggieSettings](docs/customization/CUSTOM_SETTINGS.md)
+📚 ► [Channels](CHANNELS.md)  
+📚 ► [Message Formats](../customization/MESSAGE_FORMATS.md)  
+📚 ► [Using Custom LoggieSettings](../customization/CUSTOM_SETTINGS.md)  

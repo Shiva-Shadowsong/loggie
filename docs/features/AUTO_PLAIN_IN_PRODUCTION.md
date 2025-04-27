@@ -6,7 +6,7 @@ Loggie automatically switches to producing clean plaintext logs when it detects 
 
 ### How does it do that?
 
-It uses a simple function with an assumption:
+It uses a simple function:
 
 ```gdscript
 func is_in_production() -> bool:
@@ -14,29 +14,32 @@ func is_in_production() -> bool:
 ```
 
 If this returns `true`, Loggie acts like it is running in production / released mode.
+This will return true when you export your game without debug features enabled.
 
 ### Running in Production
 
 While running in production, Loggie alters some of its behaviors.
 
 If the `LoggieSetting.enforce_optimal_settings_in_release_build` is set to `true` (can also be done in **Project Settings -> Loggie -> General**):
-	* Loggie will automatically set the [Output Format Mode](OUTPUT_FORMAT_MODES.md) to **PLAIN**. *This means that all logs it outputs will be stripped of BBCode styling tags.*
-	* It sets the `BoxCharactersMode` to **Compatible**, which means that if you use the `msg.box()` function, it will create a box using **Compatible** symbols, which we are certain can render and stay spaced out properly even in a plain .txt file.
+
+* Loggie will automatically set the [Output Format Mode](OUTPUT_FORMAT_MODES.md) to **PLAIN**. *This means that all logs it outputs will be stripped of BBCode styling tags.*
+* It sets the `BoxCharactersMode` to **Compatible**, which means that if you use the `msg.box()` function, it will create a box using **Compatible** symbols, which we are certain can render and stay spaced out properly even in a plain .txt file.
 
 The other side-effects are:
+
 1. The used Discord channel webhook will switch from the 'Dev' webhook to 'Live' webhook.
 2. The used Slack channel webhook will switch from the 'Dev' webhook to 'Live' webhook.
 
 You can see whether Loggie thinks its running in production, and more about used Loggie settings, if you set the **Project Settings -> Loggie -> General -> Show Loggie Specs** setting to at least **Essential**:
 
-![](assets/screenshots/loggie_specs_essentials.png)
+![](../../assets/screenshots/loggie_specs_essentials.png)
 
-Or if you are [using Custom Settings](docs/customization/CUSTOM_SETTINGS.md), you can set this in the `load()` method instead:
+Or if you are [using Custom Settings](../customization/CUSTOM_SETTINGS.md), you can set this in the `load()` method instead:
 
 ```
 show_loggie_specs = LoggieEnums.ShowLoggieSpecsMode.ESSENTIAL
 ```
 
 #### Related Articles:
-👀 **► [Browse All Features](docs/ALL_FEATURES.md)**
-📚 ► [Using Custom LoggieSettings](docs/customization/CUSTOM_SETTINGS.md)
+👀 **► [Browse All Features](../ALL_FEATURES.md)**  
+📚 ► [Using Custom LoggieSettings](../customization/CUSTOM_SETTINGS.md)

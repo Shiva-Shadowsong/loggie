@@ -1,7 +1,7 @@
 *This article assumes you're already familiar with [Composing and Outputting Messages](COMPOSE_AND_OUTPUT_MESSAGES.md).*
 ### Styling Messages
 
-![](assets/screenshots/sample_conversation_log.png)
+![](../../assets/screenshots/sample_conversation_log.png)
 
 Log browsability and readability is at the forefront of what Loggie sets out to achieve. 
 And what better way to do that, than with various styles and colors that clearly separate, highlight and outline certain messages?
@@ -25,8 +25,7 @@ Loggie.msg("Cache you later!").prefix("👀").color("orange").italic().info()
 
 Below is a list of all styling functions you can use.
 
-❗ **Warning:**
-
+> [!WARNING]
 > Unless documentation indicates otherwise, all modifications by these methods are done to the **current content segment** of the message, and won't apply to any additional content that is appended to that same message afterwards.
 
 ------------
@@ -68,8 +67,7 @@ Loggie.msg("Hello.").color("#ff0000").info()
 ```
 ![](https://i.imgur.com/CzVnNxs.png)
 
-❗ **Warning:**
-
+> [!WARNING]
 > Loggie uses `print_rich` under the hood to print stylized messages. Unfortunately, as of right now, Godot's BBCode color parser for that function only officially supports a small sub-set of colors in full.
 > 
 > If you are using `TerminalMode.BBCODE` and use an unsupported color - your logs **WILL NOT** end up having the BBCode of that color stripped from them. 
@@ -168,11 +166,11 @@ Loggie.msg("Before").suffix("After").info()
 > This concludes the part 2 of the guide on how to work with Loggie Messages.
 > Other related articles:
 > 
-> * ### 📚 [Part 1 - Compose and Output Messages](docs/features/COMPOSE_AND_OUTPUT_MESSAGES.md)
+> * ### 📚 [Part 1 - Compose and Output Messages](../features/COMPOSE_AND_OUTPUT_MESSAGES.md)
 > * ### 📚 > Part 2 - Styling Messages
-> * ### 📚 [Part 3 - Segmenting Messages](docs/customization/SEGMENTING_MESSAGES.md)
+> * ### 📚 [Part 3 - Segmenting Messages](SEGMENTING_MESSAGES.md)
 >   
->  👀 **► [Browse All Features](docs/ALL_FEATURES.md)**
+>  👀 **► [Browse All Features](../ALL_FEATURES.md)**
 
 
 

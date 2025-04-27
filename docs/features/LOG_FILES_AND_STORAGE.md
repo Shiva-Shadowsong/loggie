@@ -6,10 +6,10 @@ Loggie is not reinventing anything in this regard, therefore, if you read about 
 
 You can modify the properties for logging in the **Project Settings -> Debug -> File Logging** tab.
 
-![GodotLogging](assets/screenshots/log_file_settings.png)
+![GodotLogging](../../assets/screenshots/log_file_settings.png)
 
 Hover over each setting for more information.
 
 ---
 #### Related Articles:
-👀 **► [Browse All Features](docs/ALL_FEATURES.md)**
+👀 **► [Browse All Features](../ALL_FEATURES.md)**

@@ -17,9 +17,9 @@ Hello World.
 ```
 
 Multiple things will happen to it. Let's see how the result evolves over each step:
-##### 1. Apply Log Level Formatting
-> The format and content of the message is modified by having the matching log format applied to it. There is a different format for each of the [log levels](docs/features/LOG_LEVELS.md).
-> [You can adjust how these formats look.](docs/customization/MESSAGE_FORMATS.md)
+#### 1. Apply Log Level Formatting
+> The format and content of the message is modified by having the matching log format applied to it. There is a different format for each of the [log levels](LOG_LEVELS.md).
+> [You can adjust how these formats look.](../customization/MESSAGE_FORMATS.md)
 
 Since our example message was a `debug` type message, the message now transforms into:
 
@@ -27,9 +27,9 @@ Since our example message was a `debug` type message, the message now transforms
 [DEBUG]: Hello World.
 ```
 
-##### 2. Append Domain
-> The name of the domain is added to it, telling us which [domain](docs/features/DOMAIN.md) the message came from.
-> [This feature](docs/features/DOMAINS.md#showing-domain-names-next-to-messages) has to be explicitly enabled in settings.
+#### 2. Append Domain
+> The name of the domain is added to it, telling us which [domain](DOMAIN.md) the message came from.
+> [This feature](DOMAINS.md#showing-domain-names-next-to-messages) has to be explicitly enabled in settings.
 
 If we had this feature enabled, the message transforms into:
 
@@ -37,9 +37,9 @@ If we had this feature enabled, the message transforms into:
 (DomainName) [DEBUG]: Hello World.
 ```
 
-##### 3. Append Class Name
+#### 3. Append Class Name
 > The name of the class from which this message was sent is added to it.
-> [This feature](docs/features/CLASS_NAME_DERIVATION.md#using-this-feature) has to be explicitly enabled in settings.
+> [This feature](CLASS_NAME_DERIVATION.md#using-this-feature) has to be explicitly enabled in settings.
 
 If we had this feature enabled, the message transforms into:
 
@@ -47,9 +47,9 @@ If we had this feature enabled, the message transforms into:
 (Node) (DomainName) [DEBUG]: Hello World.
 ```
 
-##### 4. Append Timestamp
+#### 4. Append Timestamp
 > The format and content of the message is modified by having a timestamp added to it.
-> [This feature](docs/features/TIMESTAMPS.md) has to be explicitly enabled in settings.
+> [This feature](TIMESTAMPS.md) has to be explicitly enabled in settings.
 
 If we had this feature enabled, the message transforms into:
 
@@ -57,9 +57,9 @@ If we had this feature enabled, the message transforms into:
 [25.04.2025 19:41:26] (Node) (DomainName) [DEBUG]: Hello World.
 ```
 
-##### 5. Append Stack Trace
+#### 5. Append Stack Trace
 > The format and content of the message is modified by having the stack trace added to it.
-> [This feature](docs/features/STACK_TRACING.md) has to be explicitly enabled in settings.
+> [This feature](STACK_TRACING.md) has to be explicitly enabled in settings.
 
 If we had this feature enabled, the message transforms into:
 
@@ -87,10 +87,10 @@ For the following piece of code - this is the resulting output:
 	Loggie.msg("I am not.").preprocessed(false).notice()
 ```
 
-![](assets/screenshots/preprocess_difference.png)
+![](../../assets/screenshots/preprocess_difference.png)
 
 ---
 #### Related Articles:
-👀 **► [Browse All Features](docs/ALL_FEATURES.md)**
-📚 ► [Composing Messages](docs/features/COMPOSE_AND_OUTPUT_MESSAGES.md)
-📚 ► [Using Custom LoggieSettings](docs/customization/CUSTOM_SETTINGS.md)
+👀 **► [Browse All Features](../ALL_FEATURES.md)** 
+📚 ► [Composing Messages](COMPOSE_AND_OUTPUT_MESSAGES.md)  
+📚 ► [Using Custom LoggieSettings](../customization/CUSTOM_SETTINGS.md)  

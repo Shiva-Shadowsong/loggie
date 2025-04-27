@@ -1,6 +1,6 @@
-#### What are Channels?
+# What are Channels?
 
-After Loggie finishes verifying and [preprocessing](docs/features/PREPROCESSING.md) a message, it sends it to one *(or multiple)* channels.
+After Loggie finishes verifying and [preprocessing](PREPROCESSING.md) a message, it sends it to one *(or multiple)* channels.
 
 The channel is then responsible for post-processing and doing something with the message.
 
@@ -15,9 +15,9 @@ Every LoggieMsg is sent out to *some* channel to be handled when you use methods
 
 Loggie dictates which channel(s) that's going to be by default, by reading the `default_channels` setting. This setting can be seen and changed in **Project Settings -> Loggie -> General -> Default Channels.**
 
-![](assets/screenshots/default_channels.png)
+![](../../assets/screenshots/default_channels.png)
 
-If you are [using Custom Settings](docs/customization/CUSTOM_SETTINGS.md), you can set this in the `load()` method instead:
+If you are [using Custom Settings](../customization/CUSTOM_SETTINGS.md), you can set this in the `load()` method instead:
 
 ```
 default_channels : PackedStringArray = ["terminal"]
@@ -43,14 +43,14 @@ Loggie.msg("Hello terminal!").channel("discord").info()
 Loggie.msg("Hello terminal!").channel(["discord", "terminal"]).info()
 ```
 
-#### Adding a Custom Channel
+## Adding a Custom Channel
 
-This is covered in a [different article here](docs/customization/ADDING_CUSTOM_CHANNELS.md).
+This is covered in a [different article here](../customization/ADDING_CUSTOM_CHANNELS.md).
 
 ---
 #### Related Articles:
-👀 **► [Browse All Features](docs/ALL_FEATURES.md)**
-📚 ► [Adding Custom Channels](docs/customization/ADDING_CUSTOM_CHANNELS.md)
-📚 ► [Domains](docs/features/DOMAINS.md)
-📚 ► [Using Custom LoggieSettings](docs/customization/CUSTOM_SETTINGS.md)
+👀 **► [Browse All Features](../ALL_FEATURES.md)**  
+📚 ► [Adding Custom Channels](../customization/ADDING_CUSTOM_CHANNELS.md)  
+📚 ► [Domains](DOMAINS.md)  
+📚 ► [Using Custom LoggieSettings](../customization/CUSTOM_SETTINGS.md)  
 

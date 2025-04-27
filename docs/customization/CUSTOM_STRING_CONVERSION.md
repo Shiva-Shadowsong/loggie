@@ -1,18 +1,18 @@
 # Custom String Conversion
 
-Loggie is *just a tiny bit* opinionated when it comes to how certain specific Objects (ehm... Dictionaries) should be represented as strings in the messages it processes.
+Loggie is *just a tiny bit* opinionated when it comes to how certain specific Objects *(ehm... Dictionaries)* should be represented as strings in the messages it processes.
 
 Let's have a look at what that means. Take the following code for example:
 
 ```gdscript
 var animals = {
-	"Cat" : {"Lives": 9, "Speed" : 100},
-	"Snail" : {"Lives": 1, "Speed" : 5}
+  "Cat" : {"Lives": 9, "Speed" : 100},
+  "Snail" : {"Lives": 1, "Speed" : 5}
 }
 
 func _ready():
-	print(animals) # Print animals with Godot print
-	Loggie.info(animals) # Print animals with Loggie
+  print(animals)
+  Loggie.info(animals)
 ```
 
 And you'll see the results are quite different:
@@ -78,5 +78,5 @@ custom_string_converter = my_converter
 > Therefore, without some custom solution, it was impossible to implement something like that pretty-printing of Dictionaries.
 
 #### Related Articles:
-👀 **► [Browse All Features](../ALL_FEATURES.md)**
-📚 ► [Using Custom LoggieSettings](../customization/CUSTOM_SETTINGS.md)
+👀 **► [Browse All Features](../ALL_FEATURES.md)**  
+📚 ► [Using Custom LoggieSettings](../customization/CUSTOM_SETTINGS.md)  

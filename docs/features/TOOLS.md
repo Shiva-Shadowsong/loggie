@@ -28,7 +28,7 @@ chunk_string(string: String, chunk_size: int)
 
 ---
 ### Convert To Format
-Take a string which is written in a Plain or BBCode format, and convert it into any other [supported format](docs/features/OUTPUT_FORMAT_MODES.md) .
+Take a string which is written in a Plain or BBCode format, and convert it into any other [supported format](OUTPUT_FORMAT_MODES.md) .
 
 ```gdscript
 convert_string_to_format_mode(str : String, mode : LoggieEnums.MsgFormatMode)
@@ -51,4 +51,4 @@ This method is also compatible with older versions of Godot which don't have the
 
 ---
 #### Related Articles:
-👀 **► [Browse All Features](docs/ALL_FEATURES.md)**
+👀 **► [Browse All Features](../ALL_FEATURES.md)**

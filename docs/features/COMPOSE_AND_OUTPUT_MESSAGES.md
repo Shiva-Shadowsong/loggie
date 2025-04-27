@@ -58,7 +58,7 @@ Loggie.msg("You").add("spin me").add("right round").add("baby").add("🎶🥁�
 ```
 
 When you are ready to output the message, call one of the output methods on it.
-There is one method for each [log level](LOG_LEVELS):
+There is one method for each [log level](LOG_LEVELS.md):
 
 ```gdscript
 msg.error()   msg.warn()   msg.notice()   msg.info()   msg.debug()
@@ -99,7 +99,7 @@ Loggie.msg("We have a", creature, "with attrs:", attributes, "and body:", body, 
 
 Result:
 
-![](assets/screenshots/datatypes_in_output.png)
+![](../../assets/screenshots/datatypes_in_output.png)
 
 As a keen observer, you'll notice that we can even merge one  `LoggieMsg`  into another.
 
@@ -112,7 +112,7 @@ As a keen observer, you'll notice that we can even merge one  `LoggieMsg`  into 
 > Other related articles:
 > 
 > * ### 📚 > Part 1 - Compose and Output Messages
-> * ### 📚 [Part 2 - Styling Messages](docs/customization/STYLING_MESSAGES.md)
-> * ### 📚 [Part 3 - Segmenting Messages](docs/customization/SEGMENTING_MESSAGES.md)
+> * ### 📚 [Part 2 - Styling Messages](../customization/STYLING_MESSAGES.md)
+> * ### 📚 [Part 3 - Segmenting Messages](../customization/SEGMENTING_MESSAGES.md)
 > 
-> 👀 **► [Browse All Features](docs/ALL_FEATURES.md)**
+> 👀 **► [Browse All Features](../ALL_FEATURES.md)**

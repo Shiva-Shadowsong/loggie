@@ -11,9 +11,9 @@ This feature is a core component of how Loggie manages to automatically clean up
 > 
 > This is because Godot's terminal uses BBCode for `print_rich`, and we're developing primarily in Godot and using `print_rich` under the hood to output the messages.
 
-### Available Format Modes
+## Available Format Modes
 
-#### BBCode
+### BBCode
 
 This is the default format in which Loggie expects all messages originally to be in, regardless of what your target output format is.
 
@@ -31,22 +31,22 @@ While this mode is used, your generated `.log` files may still include unwanted 
 
 This is also the fastest mode to use because no conversion needs to happen between the input and the output.
 
-#### ANSI
+### ANSI
 
 Use this output format if you intend to view the output in a non-Godot console, such as Powershell, Bash, etc. 
 
 If you are using VSCode or some other external editor to develop your project, use this.
 Non-Godot consoles usually rely on ANSI formatting to display colors and other styles.
 
-#### Markdown
+### Markdown
 
 Use this output format if you intend to view the entirety of the output in a medium that understands how to read and render the Markdown format.
 
 > [!IMPORTANT]
 > Most likely, this will never be your default output format.
-> Instead, you may want to manually convert a specific message to this format while developing a custom [channel](docs/features/CHANNELS.md), such as what we did in the `discord` / `slack` channel features.
+> Instead, you may want to manually convert a specific message to this format while developing a custom [channel](CHANNELS.md), such as what we did in the `discord` / `slack` channel features.
 
-#### Plain
+### Plain
 
 Use this output format if you want the output to be raw, plain text with no BBCode stylings visible.
 This is best used for raw output that needs to be stored into a `.log` file.
@@ -63,9 +63,9 @@ You can change the default output format in **Project Settings -> Loggie -> Gene
 
 > I recommend you keep this set to **BBCode** if you are using the Godot Editor for development, or **ANSI** if you are using VSCode / something else.
 
-![](assets/screenshots/msg_format_mode.png)
+![](../../assets/screenshots/msg_format_mode.png)
 
-If you are [using Custom Settings](docs/customization/CUSTOM_SETTINGS.md), you can set this in the `load()` method instead:
+If you are [using Custom Settings](../customization/CUSTOM_SETTINGS.md), you can set this in the `load()` method instead:
 
 ```
 msg_format_mode = LoggieEnums.MsgFormatMode.BBCODE # Choose the mode you want.
@@ -74,6 +74,6 @@ msg_format_mode = LoggieEnums.MsgFormatMode.BBCODE # Choose the mode you want.
 ---
 
 #### Related Articles:
-👀 **► [Browse All Features](docs/ALL_FEATURES.md)**
-📚 ► [Channels](docs/features/CHANNELS.md)
-📚 ► [Using Custom LoggieSettings](docs/customization/CUSTOM_SETTINGS.md)
+👀 **► [Browse All Features](../ALL_FEATURES.md)**  
+📚 ► [Channels](CHANNELS.md)  
+📚 ► [Using Custom LoggieSettings](../customization/CUSTOM_SETTINGS.md)  

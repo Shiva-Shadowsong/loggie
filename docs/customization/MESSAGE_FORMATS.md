@@ -6,7 +6,7 @@ If you'd like to change how some of this stuff appears in a message, you can cha
 
 ![](../../assets/screenshots/formats.png)
 
-Alternatively, if you are [using Custom Settings](CUSTOM_SETTINGS), you can set new values for the format variables.
+Alternatively, if you are [using Custom Settings](CUSTOM_SETTINGS.md), you can set new values for the format variables.
 For example, you can include the following in your `load` method and edit the values:
 
 ```
@@ -38,6 +38,7 @@ Example: `[25.04.2025 13:40:23]`
 | {hour}   |
 | {minute} |
 | {second} |
+
 All of these variables are provided as strings which contain a number.
 Frontal padding with a 0 is applied if the number is single digit.
 *(e.g. '04' instead of '4' for month April).*
@@ -124,5 +125,5 @@ Default format: `"[b]({domain})[/b] {msg}"`
 
 ---
 #### Related Articles:
-👀 **► [Browse All Features](../ALL_FEATURES.md)**
+👀 **► [Browse All Features](../ALL_FEATURES.md)**  
 📚 ► [Using Custom LoggieSettings](CUSTOM_SETTINGS.md)

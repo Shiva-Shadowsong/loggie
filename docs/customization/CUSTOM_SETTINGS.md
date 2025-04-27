@@ -3,7 +3,7 @@
 Using custom settings is a fantastic way to improve your experience with Loggie in several ways.
 Let's review the pros and cons of using custom settings:
 
-#### Pros
+### ✔️ Pros
 * You get an isolated file where Loggie will read settings from, instead of Project Settings which are stored in `project.godot`.
   Since `project.godot` is a file you basically *must* share with your teammates, it means that whichever settings you choose to use for Loggie, are also enforced to all your teammates. 
   Using a git-ignored `custom_settings.gd` file, each teammate can have their own settings and preferences for Loggie.
@@ -12,7 +12,7 @@ Let's review the pros and cons of using custom settings:
   
 * Allows customization and access to some settings which are not present in **Loggie Project Settings** at all.
    
-#### Cons
+### ❌ Cons
 * You have to edit a script to change settings instead of using the **Project Settings** window.
 * If git-ignored (as suggested), you are responsible for handling how you want to handle backups of this script.
   
