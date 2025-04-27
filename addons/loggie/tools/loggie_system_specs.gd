@@ -21,7 +21,8 @@ func embed_specs() -> LoggieSystemSpecsMsg:
 func embed_essential_logger_specs() -> LoggieSystemSpecsMsg:
 	var loggie = get_logger()
 	self.add(loggie.msg("|\t Is in Production:").bold(), loggie.is_in_production()).nl()
-	self.add(loggie.msg("|\t Terminal Mode:").bold(), LoggieEnums.TerminalMode.keys()[loggie.settings.terminal_mode]).nl()
+	self.add(loggie.msg("|\t Default Channel(s):").bold(),loggie.settings.default_channels).nl()
+	self.add(loggie.msg("|\t Msg Format Mode:").bold(), LoggieEnums.MsgFormatMode.keys()[loggie.settings.msg_format_mode]).nl()
 	self.add(loggie.msg("|\t Log Level:").bold(), LoggieEnums.LogLevel.keys()[loggie.settings.log_level]).nl()
 	return self
 
@@ -37,8 +38,8 @@ func embed_advanced_logger_specs() -> LoggieSystemSpecsMsg:
 		var content_to_print = setting_value
 		
 		match setting_var_name:
-			"terminal_mode":
-				content_to_print = LoggieEnums.TerminalMode.keys()[setting_value]
+			"msg_format_mode":
+				content_to_print = LoggieEnums.MsgFormatMode.keys()[setting_value]
 			"log_level":
 				content_to_print = LoggieEnums.LogLevel.keys()[setting_value]
 			"box_characters_mode":

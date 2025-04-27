@@ -2,9 +2,13 @@
 class_name LoggieTools extends Node
 
 ## Removes BBCode from the given text.
-static func remove_BBCode(text: String) -> String:
+## If [param specific_tags] is an array, it removes only the tags found in that array.
+## Otherwise, it removes the tags found in the default_tags array:[br]
+## [param ["b", "i", "u", "s", "indent", "code", "url", "center", "right", "color", "bgcolor", "fgcolor"]]
+static func remove_BBCode(text: String, specific_tags = null) -> String:
 	# The bbcode tags to remove.
-	var tags = ["b", "i", "u", "s", "indent", "code", "url", "center", "right", "color", "bgcolor", "fgcolor"]
+	var default_tags = ["b", "i", "u", "s", "indent", "code", "url", "center", "right", "color", "bgcolor", "fgcolor"]
+	var tags = specific_tags if specific_tags is Array else default_tags
 
 	var regex = RegEx.new()
 	var tags_pattern = "|".join(tags)
@@ -13,46 +17,96 @@ static func remove_BBCode(text: String) -> String:
 	var stripped_text = regex.sub(text, "", true)
 	return stripped_text
 
-## Concatenates all given args into one single string, in consecutive order starting with 'msg'.
-static func concatenate_msg_and_args(msg : Variant, arg1 : Variant = null, arg2 : Variant = null, arg3 : Variant = null, arg4 : Variant = null, arg5 : Variant = null, arg6 : Variant = null) -> String:
-	var final_msg = convert_to_string(msg)
-	var arguments = [arg1, arg2, arg3, arg4, arg5, arg6]
-	for arg in arguments:
-		if arg != null:
-			final_msg += (" " + convert_to_string(arg))
+## Concatenates all elements of the given [param args] array into one single string, in consecutive order.
+## If [param custom_converter_fn] is provided, and is a [Callable], that function will be used to convert each element of the array into a string
+## instead of using [method convert_to_string]. That function will receive 1 argument, which will be a 'Variant', and it has to return a 'String'.
+static func concatenate_args(args : Array, custom_converter_fn : Variant = null) -> String:
+	if args.size() == 0:
+		return ""
+
+	var converter_fn : Callable = LoggieTools.convert_to_string
+	if custom_converter_fn is Callable and custom_converter_fn.is_valid() and !custom_converter_fn.is_null():
+		converter_fn = custom_converter_fn
+
+	# Start with first element without modifying array
+	var final_msg : String = converter_fn.call(args[0])
+
+	# Start from index 1 since we already handled index 0
+	for i in range(1, args.size()):
+		var arg = args[i]
+		var is_not_followed_by_a_null_arg = true if (i + 1 <= args.size() - 1) and (args[i + 1] != null) else false
+		if (arg != null) or (arg == null and is_not_followed_by_a_null_arg):
+			var converted_arg : String = converter_fn.call(arg)
+			final_msg += (" " + converted_arg)
+
 	return final_msg
 
-## Converts [param something] into a string.
-## If [param something] is a Dictionary, uses a special way to convert it into a string.
-## You can add more exceptions and rules for how different things are converted to strings here.
+## Converts a text with BBCode in it to markdown.
+## A limited set of BBCode tags are supported for this conversion, because standard Markdown can't handle everything
+## that BBCode can. For example, colors will be entirely stripped.
+static func convert_BBCode_to_markdown(text: String) -> String:
+	# Purge the unsupported tags.
+	var unsupported_tags = ["indent", "url", "center", "right", "color", "bgcolor", "fgcolor"]
+	text = LoggieTools.remove_BBCode(text, unsupported_tags)
+
+	# Space out all instances where "*" characters from multiple tags are strung together,
+	# since that would break them from rendering with the proper effect in markdown.
+	# This is only an issue with [b] and [i] tags because they both use the same "*" character
+	# in markdown to be represented.
+	text = text.replace("[/b][i]", "** *")
+	text = text.replace("[/b][/i]", "** *")
+	text = text.replace("[/i][b]", "* **")
+	text = text.replace("[/i][/b]", "* **")
+	text = text.replace("[/i][i]", "* *")
+	text = text.replace("[/i][/i]", "* *")
+	text = text.replace("[/b][b]", "** **")
+	text = text.replace("[/b][/b]", "** **")
+
+	# Perform all supported conversion.
+	var supported_conversions = {
+		"[b]" : "**", "[/b]" : "**",
+		"[i]" : "*",  "[/i]" : "*",
+		"[u]" : "__", "[/u]" : "__",
+		"[s]" : "~~", "[/s]" : "~~",
+	}
+	for bbcodetag in supported_conversions.keys():
+		text = text.replace(bbcodetag, supported_conversions[bbcodetag])
+
+	return text
+
+## Converts [param something] into a string, with custom handling for
+## certain native and custom classes.
 static func convert_to_string(something : Variant) -> String:
 	var result : String
 	if something is Dictionary:
 		result = JSON.new().stringify(something, "  ", false, true)
 	elif something is LoggieMsg:
-		result = str(something.string())
+		result = something.string()
 	else:
 		result = str(something)
 	return result
 
 ## Takes the given [param str] and returns a terminal-ready version of it by converting its content
 ## to the appropriate format required to display the string correctly in the provided [param mode]
-## terminal mode.
-static func get_terminal_ready_string(str : String, mode : LoggieEnums.TerminalMode) -> String:
+## msg format mode.
+## [b]The provided [param str] is expected to be either in Plain or BBCode format.[/b]
+static func convert_string_to_format_mode(str : String, mode : LoggieEnums.MsgFormatMode) -> String:
 	match mode:
-		LoggieEnums.TerminalMode.ANSI:
+		LoggieEnums.MsgFormatMode.ANSI:
 			# We put the message through the rich_to_ANSI converter which takes care of converting BBCode
-			# to appropriate ANSI. (Only if the TerminalMode is set to ANSI).
+			# to appropriate ANSI. (Only if the MsgFormatMode is set to ANSI).
 			# Godot claims to be already preparing BBCode output for ANSI, but it only works with a small
 			# predefined set of colors, and I think it totally strips stuff like [b], [i], etc.
 			# It is possible to display those stylings in ANSI, but we have to do our own conversion here
 			# to support these features instead of having them stripped.
 			str = LoggieTools.rich_to_ANSI(str)
-		LoggieEnums.TerminalMode.BBCODE:
+		LoggieEnums.MsgFormatMode.BBCODE:
 			# No need to do anything for BBCODE mode, because we already expect all strings to
 			# start out with this format in mind.
 			pass
-		LoggieEnums.TerminalMode.PLAIN, _:
+		LoggieEnums.MsgFormatMode.MARKDOWN:
+			str = LoggieTools.convert_BBCode_to_markdown(str)
+		LoggieEnums.MsgFormatMode.PLAIN, _:
 			str = LoggieTools.remove_BBCode(str)
 	return str
 
@@ -69,7 +123,7 @@ static func rich_to_ANSI(text: String) -> String:
 	var regex_color = RegEx.new()
 	regex_color.compile("\\[color=(.*?)\\](.*?)\\[/color\\]")
 	
-	# Process color tags first
+	# Process color tags first.
 	while regex_color.search(text):
 		var match = regex_color.search(text)
 		var color_str = match.get_string(1).to_upper()
@@ -92,7 +146,7 @@ static func rich_to_ANSI(text: String) -> String:
 		var replacement = color_code + match.get_string(2) + reset_code
 		text = text.replace(match.get_string(0), replacement)
 	
-	# Process bold and italic tags
+	# Process bold and italic tags.
 	var bold_on = "\u001b[1m"
 	var bold_off = "\u001b[22m"
 	var italic_on = "\u001b[3m"
@@ -101,7 +155,7 @@ static func rich_to_ANSI(text: String) -> String:
 	text = text.replace("[b]", bold_on).replace("[/b]", bold_off)
 	text = text.replace("[i]", italic_on).replace("[/i]", italic_off)
 
-	# Remove any other BBCode tags but retain the text between them
+	# Remove any other BBCode tags but retain the text between them.
 	var regex_bbcode = RegEx.new()
 	regex_bbcode.compile("\\[(b|/b|i|/i|color=[^\\]]+|/color)\\]")
 	text = regex_bbcode.sub(text, "", true)
@@ -109,19 +163,30 @@ static func rich_to_ANSI(text: String) -> String:
 	return text
 
 ## Returns a dictionary of call stack data related to the stack the call to this function is a part of.
+## This function only works in debug builds, and on the main thread, because it uses [method get_stack].
+## Read more about why in that function's documentation.
 static func get_current_stack_frame_data() -> Dictionary:
 	var stack = get_stack()
-	const callerIndex = 3
-	var targetIndex = callerIndex if stack.size() >= callerIndex else stack.size() - 1
-
 	if stack.size() > 0:
-		return stack[targetIndex]
-	else:
-		return {
-			"source" : "UnknownStackFrameSource",
-			"line" : 0,
-			"function" : "UnknownFunction"
-		}
+		stack.reverse()
+		# Prune the frames starting from the first one that comes from loggie_message and onwards.
+		var pruned_stack = []
+		for index in stack.size():
+			var source : String = stack[index].source
+			var prune_breakpoint_files = ["loggie", "loggie_message"]
+			if prune_breakpoint_files.has(source.get_file().get_basename()):
+				break
+			pruned_stack.push_back(stack[index])
+		
+		# The back-most remaining entry in the pruned stack is the first non-Loggie caller.
+		if pruned_stack.size() >= 1:
+			return pruned_stack.back()
+
+	return {
+		"source" : "UnknownStackFrameSource",
+		"line" : 0,
+		"function" : "UnknownFunction"
+	}
 
 ## Returns the `class_name` of a script.
 ## [br][param path_or_script] should be either an absolute path to the script 
@@ -212,8 +277,104 @@ static func extract_class_name_from_gd_script(path_or_script : Variant, proxy : 
 					_class_name = script.get_script_property_list().front()["name"]
 
 	file.close()
-
 	return _class_name
+
+## Takes the given [param string] and returns an array made out of chunks of the given size.
+## The string is chunked from start to end.
+static func chunk_string(string : String, chunk_size : int) -> Array:
+	var message_chunks = []
+	if string.length() >= chunk_size:
+		# Cut chunk_size pieces from the left side of the string and push them to message_chunks.
+		while string.length() >= chunk_size:
+			message_chunks.append(string.left(chunk_size))
+			string = string.substr(chunk_size, -1)
+			
+		# Append the remaining slice as the final chunk.
+		if string.length() > 0:
+			message_chunks.append(string)
+		return message_chunks
+	else:
+		return [string]
+
+## Copies the directory at the given [param path_dir_to_copy] path and places the copy at the given [param path_dir_to_copy_into] path.
+## Returns a dictionary with 2 keys:
+##[codeblock]
+##`errors` : Array[Error] # An array of all errors that occured during the process. ('Error.OK' is an exception and won't be included here)
+##`messages` : Array[LoggieMsg] # An array of messages describing the process, including informational or error related content.
+##[/codeblock]
+static func copy_dir_absolute(path_dir_to_copy: String, path_dir_to_copy_into: String, overwrite_existing_files_with_same_name : bool = false) -> Dictionary:
+	const debug_enabled = false
+	var result = {
+		"errors" : [],
+		"messages" : []
+	}
+	
+	# Ensure source directory is openable.
+	var source_dir = DirAccess.open(path_dir_to_copy)
+	if source_dir == null:
+		var open_error = DirAccess.get_open_error()
+		result.errors.push_back(open_error)
+		result.messages.push_back(LoggieMsg.new("Failed to open source directory: ", path_dir_to_copy, " with error: ", error_string(open_error)))
+		return result
+
+	# Ensure target directory is openable.
+	var target_dir = DirAccess.open(path_dir_to_copy_into)
+	var target_dir_path_abs = ProjectSettings.globalize_path(path_dir_to_copy_into)
+	if target_dir == null:
+		var msg = LoggieMsg.new("📂 Target directory not found - creating it at:").msg(path_dir_to_copy_into).color(Color.CADET_BLUE)
+		result.messages.push_back(msg)
+		DirAccess.make_dir_recursive_absolute(path_dir_to_copy_into)
+		target_dir = DirAccess.open(path_dir_to_copy_into)
+
+	# Copy all files from the current source directory into the target directory.
+	for file_name : String in source_dir.get_files():
+		var file_path_abs = ProjectSettings.globalize_path(path_dir_to_copy.path_join(file_name))
+		var target_file_path_abs = target_dir_path_abs.path_join(file_name)
+		var copying_msg = LoggieMsg.new("📝 Copying file...")
+		copying_msg.msg(file_path_abs).italic().color(Color.CORNFLOWER_BLUE).add(" -> ")
+		copying_msg.msg(target_file_path_abs).bold().color(Color.CORNFLOWER_BLUE)
+		
+		var is_overwrite_required = false
+		if FileAccess.file_exists(target_file_path_abs):
+			is_overwrite_required = true
+			if overwrite_existing_files_with_same_name:
+				copying_msg.nl().msg("\t[!] Target file already exists and will be overwritten.").bold().color(Color.DARK_KHAKI)
+			else:
+				copying_msg.nl().msg("\t🛑 File will not be copied as overwriting existing files is disabled.").bold().color(Color.SALMON)
+
+		result.messages.push_back(copying_msg)
+		
+		if (not is_overwrite_required) or (is_overwrite_required and overwrite_existing_files_with_same_name):
+			var copy_error = DirAccess.copy_absolute(file_path_abs, target_file_path_abs)
+			if copy_error != OK:
+				result.errors.push_back(copy_error)
+				result.messages.push_back(LoggieMsg.new("Attempt to copy file failed with error: '", error_string(copy_error)))
+
+	# Create all of source directory's subdirectories in the target directory and copy their contents.
+	for dir_name : String in source_dir.get_directories():
+		var source_subdir_path = path_dir_to_copy.path_join(dir_name)
+		var source_subdir_path_abs = ProjectSettings.globalize_path(source_subdir_path)
+		var target_subdir_path = path_dir_to_copy_into.path_join(dir_name)
+		var dir_path_abs = ProjectSettings.globalize_path(target_subdir_path)
+
+		result.messages.push_back(LoggieMsg.new("📂 Creating directory: ").msg("{dir}".format({"dir": dir_path_abs})).color(Color.CADET_BLUE))
+		var make_dir_error = DirAccess.make_dir_recursive_absolute(dir_path_abs)
+		if make_dir_error != OK:
+			result.errors.push_back(make_dir_error)
+			var error_msg = LoggieMsg.new("Attempt to create directory at absolute path recursively failed with error: '", error_string(make_dir_error))
+			result.messages.push_back(error_msg)
+			continue
+
+		# Recursively copy the contents of the subdirectory
+		var subdir_copy_result = copy_dir_absolute(source_subdir_path_abs, target_subdir_path, overwrite_existing_files_with_same_name)
+		result.errors = result.errors + subdir_copy_result.errors
+		result.messages = result.messages + subdir_copy_result.messages
+	
+	if debug_enabled:
+		for msg : LoggieMsg in result.messages:
+			print_rich(msg.string())
+			
+	return result
 
 ## A dictionary of named colors matching the constants from [Color] used to help with rich text coloring.
 ## There may be a way to obtain these Color values without this dictionary if one can somehow check for the 

@@ -1,0 +1,818 @@
+[gd_scene load_steps=32 format=3 uid="uid://d2eq0khfi3s15"]
+
+[ext_resource type="Script" path="res://addons/loggie/version_management/update_prompt_window.gd" id="1_xb7je"]
+[ext_resource type="Texture2D" uid="uid://cgh6hd3u8nlpj" path="res://addons/loggie/assets/updater_bg.png" id="2_lbawe"]
+[ext_resource type="FontFile" uid="uid://e3rpni7mpu0p" path="res://addons/loggie/assets/theme/fonts/coffee_soda.ttf" id="3_a36jf"]
+[ext_resource type="FontFile" uid="uid://btuvtbhws7p8s" path="res://addons/loggie/assets/theme/fonts/PatrickHandSC-Regular.ttf" id="4_lnh27"]
+[ext_resource type="StyleBox" uid="uid://ckw36egxdynxc" path="res://addons/loggie/assets/theme/loggie_border_box.tres" id="5_avea8"]
+[ext_resource type="Texture2D" uid="uid://bfnp2a0sbhi2x" path="res://addons/loggie/assets/theme/checkbox/checkbox_checked.png" id="6_yoxpw"]
+[ext_resource type="Texture2D" uid="uid://bib1lwikra5kr" path="res://addons/loggie/assets/theme/checkbox/checkbox_unchecked.png" id="7_xu2hn"]
+[ext_resource type="Texture2D" uid="uid://dqf5cye21gyw8" path="res://addons/loggie/assets/theme/checkbox/checkbox_checked_disabled.png" id="8_4h2cx"]
+[ext_resource type="Texture2D" uid="uid://cloe7vx2ej0nf" path="res://addons/loggie/assets/theme/checkbox/checkbox_unchecked_disabled.png" id="9_51n7f"]
+[ext_resource type="Texture2D" uid="uid://2fr6et0qni2y" path="res://addons/loggie/assets/icon.png" id="10_abt8m"]
+[ext_resource type="Theme" uid="uid://bntkg3oi4b314" path="res://addons/loggie/assets/theme/loggie_theme.tres" id="11_5uxhl"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3bh8r"]
+draw_center = false
+border_width_bottom = 4
+border_color = Color(0.86, 0.6794, 0.344, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_rjg43"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bwgrr"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qbrxo"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3asxb"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_86pfv"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_rw12e"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_j1ttd"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3sc8x"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ndum7"]
+
+[sub_resource type="Gradient" id="Gradient_wnvcb"]
+colors = PackedColorArray(0.0311948, 0.0139167, 0.0080977, 1, 0.125625, 0.1125, 0.15, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_k1b6u"]
+gradient = SubResource("Gradient_wnvcb")
+
+[sub_resource type="Gradient" id="Gradient_rkgx7"]
+interpolation_mode = 2
+offsets = PackedFloat32Array(0, 0.270059, 1)
+colors = PackedColorArray(0.584314, 0.337255, 0.145098, 1, 0.495303, 0.287021, 0.13981, 1, 0.188235, 0.113725, 0.121569, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_p6ad4"]
+gradient = SubResource("Gradient_rkgx7")
+fill_from = Vector2(0.239316, 0)
+fill_to = Vector2(0.303419, 0.876068)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y40yc"]
+bg_color = Color(0.12, 0.0528, 0.09088, 0.556863)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 6
+border_color = Color(0.533576, 0.418125, 0.23421, 1)
+border_blend = true
+corner_radius_top_left = 11
+corner_radius_top_right = 11
+corner_radius_bottom_right = 11
+corner_radius_bottom_left = 11
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h3ybw"]
+bg_color = Color(0.69, 0.49128, 0.2484, 0.486275)
+border_width_right = 4
+border_color = Color(0.94, 0.6768, 0.282, 0.541176)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+
+[sub_resource type="Animation" id="Animation_almc7"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, -673)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("VBoxContainer/OptionButtons/OptionRetryUpdateBtn:disabled")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("VBoxContainer/OptionButtons/OptionExitBtn:disabled")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("VBoxContainer/OptionButtons/OptionRetryUpdateBtn:visible")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("VBoxContainer/OptionButtons/OptionExitBtn:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("%LabelOldVersion:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("%LabelNewVersion:modulate")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("%ProgressBar:modulate")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("VBoxContainer:position")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 532)]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("LoggieIcon:scale")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_dewq5"]
+resource_name = "finish_success"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("%LabelOldVersion:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("%LabelNewVersion:modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("%ProgressBar:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("VBoxContainer:position")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.466667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0, 532), Vector2(1, 432)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("LoggieIcon:scale")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 0.166667, 0.2, 0.3, 0.366667, 0.433333),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1, 1), Vector2(1.33, 1), Vector2(1.075, 1.575), Vector2(0.735, 1.465), Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_jm1cu"]
+resource_name = "show_update_overview"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.266667, 0.333333),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, -673), Vector2(0, 0), Vector2(0, 16), Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("%ProgressBar:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("%LabelOldVersion:modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("%LabelNewVersion:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("LoggieIcon:scale")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("VBoxContainer:position")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 532)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_lwiu5"]
+_data = {
+"RESET": SubResource("Animation_almc7"),
+"finish_success": SubResource("Animation_dewq5"),
+"show_update_overview": SubResource("Animation_jm1cu")
+}
+
+[node name="UpdatePromptWindow" type="Panel" node_paths=PackedStringArray("animator")]
+anchors_preset = -1
+anchor_right = 0.923
+anchor_bottom = 1.037
+offset_right = -0.296021
+offset_bottom = 0.0239868
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_xb7je")
+animator = NodePath("AnimationPlayer")
+
+[node name="Notice" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="TextureRect" parent="Notice"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_lbawe")
+expand_mode = 1
+
+[node name="LabelLatestVersion" type="Label" parent="Notice"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.148
+anchor_top = 0.549
+anchor_right = 0.352
+anchor_bottom = 0.735
+offset_left = 0.414978
+offset_top = 0.115936
+offset_right = -0.122009
+offset_bottom = 0.123932
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.878431, 0.662745, 0.266667, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 18
+theme_override_constants/shadow_outline_size = 3
+theme_override_fonts/font = ExtResource("3_a36jf")
+theme_override_font_sizes/font_size = 133
+text = "X.Y"
+
+[node name="LabelCurrentVersion" type="Label" parent="Notice"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.76
+anchor_top = 0.454
+anchor_right = 0.869
+anchor_bottom = 0.571
+offset_left = 0.0449829
+offset_top = 0.18399
+offset_right = 57.004
+offset_bottom = -0.107056
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.784314, 0.619608, 0.317647, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 18
+theme_override_constants/shadow_outline_size = 3
+theme_override_fonts/font = ExtResource("3_a36jf")
+theme_override_font_sizes/font_size = 73
+text = "X.Y"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Notice"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.229
+anchor_top = 0.789
+anchor_right = 0.771
+anchor_bottom = 0.926
+offset_left = 0.0729828
+offset_top = -0.208008
+offset_right = -0.0730591
+offset_bottom = 9.72797
+grow_horizontal = 2
+theme_override_constants/separation = -15
+
+[node name="Label" type="Label" parent="Notice/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.872047, 0.774098, 0.671572, 1)
+theme_override_constants/outline_size = 7
+theme_override_fonts/font = ExtResource("4_lnh27")
+theme_override_font_sizes/font_size = 32
+text = "a new version of Loggie is available for download."
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Notice/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+alignment = 1
+
+[node name="NoticeButtons" type="HBoxContainer" parent="Notice/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 6
+theme_override_constants/separation = 51
+
+[node name="ReleaseNotesBtn" type="Button" parent="Notice/VBoxContainer/HBoxContainer/NoticeButtons"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_disabled_color = Color(0.53, 0.475145, 0.3869, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.996078, 0.94902, 0.882353, 1)
+theme_override_colors/font_hover_color = Color(0.98, 0.67571, 0.1862, 1)
+theme_override_colors/font_pressed_color = Color(0.994326, 0.950716, 0.88154, 1)
+theme_override_colors/font_focus_color = Color(0.996078, 0.94902, 0.882353, 1)
+theme_override_colors/font_color = Color(0.980932, 0.843799, 0.621104, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_fonts/font = ExtResource("4_lnh27")
+theme_override_font_sizes/font_size = 43
+theme_override_styles/focus = SubResource("StyleBoxFlat_3bh8r")
+theme_override_styles/disabled_mirrored = SubResource("StyleBoxEmpty_rjg43")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_bwgrr")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxEmpty_qbrxo")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_3asxb")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxEmpty_86pfv")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3bh8r")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxEmpty_rw12e")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_j1ttd")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_3sc8x")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_ndum7")
+text = "release notes"
+
+[node name="UpdateNowBtn" type="Button" parent="Notice/VBoxContainer/HBoxContainer/NoticeButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_disabled_color = Color(0.53, 0.475145, 0.3869, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.996078, 0.94902, 0.882353, 1)
+theme_override_colors/font_hover_color = Color(0.98, 0.67571, 0.1862, 1)
+theme_override_colors/font_pressed_color = Color(0.994326, 0.950716, 0.88154, 1)
+theme_override_colors/font_focus_color = Color(0.996078, 0.94902, 0.882353, 1)
+theme_override_colors/font_color = Color(0.980932, 0.843799, 0.621104, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_fonts/font = ExtResource("4_lnh27")
+theme_override_font_sizes/font_size = 43
+theme_override_styles/focus = SubResource("StyleBoxFlat_3bh8r")
+theme_override_styles/disabled_mirrored = SubResource("StyleBoxEmpty_rjg43")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_bwgrr")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxEmpty_qbrxo")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_3asxb")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxEmpty_86pfv")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3bh8r")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxEmpty_rw12e")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_j1ttd")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_3sc8x")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_ndum7")
+text = "update now"
+
+[node name="RemindLaterBtn" type="Button" parent="Notice/VBoxContainer/HBoxContainer/NoticeButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_disabled_color = Color(0.53, 0.475145, 0.3869, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.996078, 0.94902, 0.882353, 1)
+theme_override_colors/font_hover_color = Color(0.98, 0.67571, 0.1862, 1)
+theme_override_colors/font_pressed_color = Color(0.994326, 0.950716, 0.88154, 1)
+theme_override_colors/font_focus_color = Color(0.996078, 0.94902, 0.882353, 1)
+theme_override_colors/font_color = Color(0.98, 0.49, 0.5635, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_fonts/font = ExtResource("4_lnh27")
+theme_override_font_sizes/font_size = 43
+theme_override_styles/focus = SubResource("StyleBoxFlat_3bh8r")
+theme_override_styles/disabled_mirrored = SubResource("StyleBoxEmpty_rjg43")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_bwgrr")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxEmpty_qbrxo")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_3asxb")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxEmpty_86pfv")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3bh8r")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxEmpty_rw12e")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_j1ttd")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_3sc8x")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_ndum7")
+text = "remind later"
+
+[node name="DontShowAgainCheckbox" type="CheckBox" parent="Notice"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -289.0
+offset_top = 9.0
+offset_right = -20.0
+offset_bottom = 62.0
+grow_horizontal = 0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_hover_color = Color(0.490196, 0.701961, 0.501961, 1)
+theme_override_colors/font_focus_color = Color(0.92549, 0.92549, 0.756863, 1)
+theme_override_colors/font_color = Color(0.980932, 0.843799, 0.621104, 1)
+theme_override_constants/outline_size = 7
+theme_override_fonts/font = ExtResource("4_lnh27")
+theme_override_font_sizes/font_size = 27
+theme_override_styles/focus = ExtResource("5_avea8")
+theme_override_icons/checked = ExtResource("6_yoxpw")
+theme_override_icons/unchecked = ExtResource("7_xu2hn")
+theme_override_icons/radio_checked = ExtResource("6_yoxpw")
+theme_override_icons/radio_unchecked = ExtResource("7_xu2hn")
+theme_override_icons/checked_disabled = ExtResource("8_4h2cx")
+theme_override_icons/unchecked_disabled = ExtResource("9_51n7f")
+theme_override_icons/radio_checked_disabled = ExtResource("8_4h2cx")
+theme_override_icons/radio_unchecked_disabled = ExtResource("9_51n7f")
+text = "do not show this again"
+
+[node name="UpdateMonitor" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -673.0
+offset_bottom = -673.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BackgroundUnder" type="TextureRect" parent="UpdateMonitor"]
+modulate = Color(1, 1, 1, 0.811765)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture1D_k1b6u")
+
+[node name="BackgroundOver" type="TextureRect" parent="UpdateMonitor"]
+modulate = Color(1, 1, 1, 0.752941)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_p6ad4")
+
+[node name="ProgressBar" type="ProgressBar" parent="UpdateMonitor"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -448.5
+offset_top = -224.0
+offset_right = 449.5
+offset_bottom = -160.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/outline_size = 19
+theme_override_fonts/font = ExtResource("3_a36jf")
+theme_override_font_sizes/font_size = 31
+theme_override_styles/background = SubResource("StyleBoxFlat_y40yc")
+theme_override_styles/fill = SubResource("StyleBoxFlat_h3ybw")
+
+[node name="LabelMainStatus" type="Label" parent="UpdateMonitor"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -201.0
+offset_top = -13.0
+offset_right = 201.0
+offset_bottom = 63.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.878431, 0.662745, 0.266667, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 14
+theme_override_fonts/font = ExtResource("3_a36jf")
+theme_override_font_sizes/font_size = 81
+text = "status"
+horizontal_alignment = 1
+
+[node name="LabelOldVersion" type="Label" parent="UpdateMonitor"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -426.5
+offset_top = 77.0
+offset_right = -24.5
+offset_bottom = 153.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.878431, 0.662745, 0.266667, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 14
+theme_override_fonts/font = ExtResource("3_a36jf")
+theme_override_font_sizes/font_size = 25
+text = "v_old"
+
+[node name="LabelNewVersion" type="Label" parent="UpdateMonitor"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 33.5
+offset_top = 76.0
+offset_right = 435.5
+offset_bottom = 152.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.878431, 0.662745, 0.266667, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 14
+theme_override_fonts/font = ExtResource("3_a36jf")
+theme_override_font_sizes/font_size = 25
+text = "V_NEW"
+horizontal_alignment = 2
+
+[node name="LoggieIcon" type="TextureRect" parent="UpdateMonitor"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -79.5
+offset_top = -213.0
+offset_right = 80.5
+offset_bottom = -53.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(80, 84)
+texture = ExtResource("10_abt8m")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UpdateMonitor"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -140.0
+offset_bottom = 77.0002
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 5
+
+[node name="OptionButtons" type="HBoxContainer" parent="UpdateMonitor/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="OptionRetryUpdateBtn" type="Button" parent="UpdateMonitor/VBoxContainer/OptionButtons"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme = ExtResource("11_5uxhl")
+disabled = true
+text = "Retry"
+
+[node name="OptionRestartGodotBtn" type="Button" parent="UpdateMonitor/VBoxContainer/OptionButtons"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme = ExtResource("11_5uxhl")
+disabled = true
+text = "Reload Godot"
+
+[node name="OptionExitBtn" type="Button" parent="UpdateMonitor/VBoxContainer/OptionButtons"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme = ExtResource("11_5uxhl")
+theme_override_colors/font_color = Color(0.980919, 0.500031, 0.570874, 1)
+theme_override_colors/font_outline_color = Color(0.224555, 0.120107, 0.0255992, 1)
+theme_override_constants/outline_size = 8
+disabled = true
+text = "Exit"
+
+[node name="LabelUpdateStatus" type="Label" parent="UpdateMonitor/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme = ExtResource("11_5uxhl")
+theme_override_font_sizes/font_size = 20
+text = "UPDATE_STATUS_DETAILED"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+unique_name_in_owner = true
+root_node = NodePath("../UpdateMonitor")
+libraries = {
+"": SubResource("AnimationLibrary_lwiu5")
+}

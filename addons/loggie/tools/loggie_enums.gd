@@ -20,10 +20,27 @@ enum MsgType {
 	DEBUG ## A message that is considered to be a message used for debugging.
 }
 
-enum TerminalMode {
+enum MsgFormatMode {
 	PLAIN, ## Prints will be plain text.
 	ANSI,  ## Prints will be styled using the ANSI standard. Compatible with Powershell, Win CMD, etc.
-	BBCODE ## Prints will be styled using the Godot BBCode rules. Compatible with the Godot console.
+	BBCODE, ## Prints will be styled using the Godot BBCode rules. Compatible with the Godot console.
+	MARKDOWN, ## Prints will be styled using the Markdown standard. Compatible with most Markdown readers.
+}
+
+## Classifies various steps that can happen during preprocessing.
+enum PreprocessStep {
+	## A timestamp will be added to the message.
+	APPEND_TIMESTAMPS = 1 << 0, 
+	
+	## The name of the domain from which the message is coming will be added to the message.
+	APPEND_DOMAIN_NAME = 1 << 1, 
+
+	## Whether Loggie should use the scripts from which it is being called to 
+	## figure out a class name for the class that called a loggie function,
+	## and append it to the outputted message.
+	## This only works in debug builds because it uses [method @GDScript.get_stack]. 
+	## See that method's documentation to see why that can't be used in release builds.
+	APPEND_CLASS_NAME = 1 << 2,
 }
 
 enum BoxCharactersMode {
@@ -50,4 +67,13 @@ enum LogAttemptResult {
 	SUCCESS, ## Message will be logged successfully.
 	LOG_LEVEL_INSUFFICIENT, ## Message won't be logged because it was output at a log level higher than what Loggie is currently set to.
 	DOMAIN_DISABLED, ## Message won't be logged because it was outputted from a disabled domain.
+	INVALID_CHANNEL, ## Message won't be logged because the channel which was supposed to send it doesn't exist.
+}
+
+## Defines a list of possible ways to configure Loggie to check for updates.
+enum UpdateCheckType {
+	DONT_CHECK, ## If the user doesn't want Loggie to check for updates at all.
+	CHECK_AND_SHOW_MSG, ## If the user wants Loggie to check for updates, and display info in a terminal message.
+	CHECK_DOWNLOAD_AND_SHOW_MSG, ## If the user wants Loggie to check for updates, download the update, and display info in a terminal message.
+	CHECK_AND_SHOW_UPDATER_WINDOW, ## If the user wants Loggie to check for updats, and display the updater window.
 }

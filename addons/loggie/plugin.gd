@@ -4,6 +4,9 @@ class_name LoggieEditorPlugin extends EditorPlugin
 func _enter_tree():
 	add_autoload_singleton(LoggieSettings.loggie_singleton_name, "res://addons/loggie/loggie.gd")
 	add_loggie_project_settings()
+	Engine.set_meta("LoggieEditorPlugin", self)
+	if Engine.is_editor_hint():
+		Engine.set_meta("LoggieEditorInterfaceBaseControl", EditorInterface.get_base_control())
 	
 func _enable_plugin() -> void:
 	add_loggie_project_settings()
@@ -32,8 +35,8 @@ func remove_loggie_project_setings():
 		push_error("Loggie - Encountered error %d while saving project settings." % error)
 
 ## Adds a new project setting to Godot.
-## TODO: Figure out how to also add the documentation to the ProjectSetting so that it shows up 
-## in the Godot Editor tooltip when the setting is hovered over.
+## (WARNING): Unfortunately, as of Godot 4.3, it has been confirmed that it is not possible to set the
+## popup tooltip text for a project setting. This should be implemented here as soon as that becomes possible.
 func add_project_setting(setting_name: String, default_value : Variant, value_type: int, type_hint: int = PROPERTY_HINT_NONE, hint_string: String = "", documentation : String = ""):
 	if !ProjectSettings.has_setting(setting_name):
 		ProjectSettings.set_setting(setting_name, default_value)

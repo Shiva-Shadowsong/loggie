@@ -3,36 +3,35 @@ class_name CustomLoggieSettings extends LoggieSettings
 func load():
 	# Omit settings from here to have them use their default value instead. 
 	# Otherwise, directly set the value of the setting to your liking.
-	# Any variable in [LoggieSettings] is a valid target to alter.
+	# Any variable in [LoggieSettings] except `project_settings` is a valid target to alter.
 	# You could also have them loaded here in some custom way, for example, from a .json or .ini file.
 	# See the documentation of the [LoggieSettings] class to see all available options and their descriptions.
+	# This template doesn't contain *all* the available options.
 	
-	self.terminal_mode = LoggieEnums.TerminalMode.BBCODE
+	# Example: Customize Loggie preferences.
+	self.update_check_mode = LoggieEnums.UpdateCheckType.CHECK_AND_SHOW_UPDATER_WINDOW
+	self.msg_format_mode = LoggieEnums.MsgFormatMode.BBCODE
 	self.log_level = LoggieEnums.LogLevel.INFO
 	self.show_loggie_specs = LoggieEnums.ShowLoggieSpecsMode.ESSENTIAL
 	self.show_system_specs = true
 	self.enforce_optimal_settings_in_release_build = true
 
-	self.output_message_domain = true
+	# Example: Customize logging settings.
 	self.print_errors_to_console = true
 	self.print_warnings_to_console = true
-	self.use_print_debug_for_debug_msg = true
-	self.derive_and_show_class_names = true
 	self.nameless_class_name_proxy = LoggieEnums.NamelessClassExtensionNameProxy.BASE_TYPE
-	self.output_timestamps = true
 	self.timestamps_use_utc = true
 
-	self.format_timestamp = "[{day}.{month}.{year} {hour}:{minute}:{second}]"
+	# Example: Customize formats.
 	self.format_info_msg = "{msg}"
 	self.format_notice_msg = "[b][color=cyan][NOTICE]:[/color][/b] {msg}"
 	self.format_warning_msg = "[b][color=orange][WARN]:[/color][/b] {msg}"
 	self.format_error_msg = "[b][color=red][ERROR]:[/color][/b] {msg}"
 	self.format_debug_msg = "[b][color=pink][DEBUG]:[/color][/b] {msg}"
-	self.format_header = "[b][i]{msg}[/i][/b]"
-	self.format_domain_prefix = "[b]({domain})[/b] {msg}"
 
+	# Example: Customize boxes.
 	self.h_separator_symbol = "-"
-	self.box_characters_mode = LoggieEnums.BoxCharactersMode.COMPATIBLE	
+	self.box_characters_mode = LoggieEnums.BoxCharactersMode.COMPATIBLE
 
 	self.box_symbols_compatible = {
 		"top_left" : "-",
