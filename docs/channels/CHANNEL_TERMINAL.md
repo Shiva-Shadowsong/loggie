@@ -12,7 +12,7 @@ The features of this channel can be customized in **Project Settings -> Loggie -
 
 ---
 #### Related Articles:
-👀 **► [Browse All Features](../../docs/ALL_FEATURES.md)**
-📚 ► [What are Channels?](../../docs/features/CHANNELS.md)
-📚 ► [Adding Custom Channels](../../docs/customization/ADDING_CUSTOM_CHANNELS.md)
-📚 ► [Domains](../../docs/features/DOMAINS.md)
+👀 **► [Browse All Features](../../docs/ALL_FEATURES.md)**  
+📚 ► [What are Channels?](../../docs/features/CHANNELS.md)  
+📚 ► [Adding Custom Channels](../../docs/customization/ADDING_CUSTOM_CHANNELS.md)  
+📚 ► [Domains](../../docs/features/DOMAINS.md)  

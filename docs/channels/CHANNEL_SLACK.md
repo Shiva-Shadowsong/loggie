@@ -32,7 +32,7 @@ In the end, you should receive your message in your Slack workspace, like in thi
 
 ---
 #### Related Articles:
-👀 **► [Browse All Features](../../docs/ALL_FEATURES.md)**
-📚 ► [What are Channels?](../../docs/features/CHANNELS.md)
-📚 ► [Adding Custom Channels](../../docs/customization/ADDING_CUSTOM_CHANNELS.md)
-📚 ► [Domains](../../docs/features/DOMAINS.md)
+👀 **► [Browse All Features](../../docs/ALL_FEATURES.md)**  
+📚 ► [What are Channels?](../../docs/features/CHANNELS.md)  
+📚 ► [Adding Custom Channels](../../docs/customization/ADDING_CUSTOM_CHANNELS.md)  
+📚 ► [Domains](../../docs/features/DOMAINS.md)  

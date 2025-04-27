@@ -4,9 +4,9 @@ Loggie comes preconfigured with some default base styles for messages and their 
 
 If you'd like to change how some of this stuff appears in a message, you can change that by going to **Project Settings -> Loggie -> Formats**.
 
-![](assets/screenshots/formats.png)
+![](../../assets/screenshots/formats.png)
 
-Alternatively, if you are [using Custom Settings](docs/customization/CUSTOM_SETTINGS), you can set new values for the format variables.
+Alternatively, if you are [using Custom Settings](CUSTOM_SETTINGS), you can set new values for the format variables.
 For example, you can include the following in your `load` method and edit the values:
 
 ```
@@ -124,5 +124,5 @@ Default format: `"[b]({domain})[/b] {msg}"`
 
 ---
 #### Related Articles:
-👀 **► [Browse All Features](docs/ALL_FEATURES.md)**
-📚 ► [Using Custom LoggieSettings](docs/customization/CUSTOM_SETTINGS.md)
+👀 **► [Browse All Features](../ALL_FEATURES.md)**
+📚 ► [Using Custom LoggieSettings](CUSTOM_SETTINGS.md)

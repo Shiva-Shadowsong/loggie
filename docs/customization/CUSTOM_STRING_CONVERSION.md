@@ -17,7 +17,7 @@ func _ready():
 
 And you'll see the results are quite different:
 
-![](assets/screenshots/print_difference.png)
+![](../../assets/screenshots/print_difference.png)
 
 However, Loggie's opinions should not trump your own, should you decide you want something done differently. This is why it's possible to customize how Loggie converts anything into a string.
 
@@ -63,7 +63,7 @@ To start using your converter instead of the default one, execute this anywhere 
 Loggie.settings.custom_string_converter = my_converter
 ```
 
-If you are [using Custom Settings](docs/customization/CUSTOM_SETTINGS.md), you can set this in the `load()` method directly instead:
+If you are [using Custom Settings](../customization/CUSTOM_SETTINGS.md), you can set this in the `load()` method directly instead:
 
 ```
 custom_string_converter = my_converter
@@ -78,5 +78,5 @@ custom_string_converter = my_converter
 > Therefore, without some custom solution, it was impossible to implement something like that pretty-printing of Dictionaries.
 
 #### Related Articles:
-👀 **► [Browse All Features](docs/ALL_FEATURES.md)**
-📚 ► [Using Custom LoggieSettings](docs/customization/CUSTOM_SETTINGS.md)
+👀 **► [Browse All Features](../ALL_FEATURES.md)**
+📚 ► [Using Custom LoggieSettings](../customization/CUSTOM_SETTINGS.md)
