@@ -1,23 +1,31 @@
 
 ![Loggie Logo](addons/loggie/assets/logo.png)
 
-Loggie is a Godot logger developed for 4.0+, for those who could use a couple of improvements and more control over how console and logfile output is styled and handled.
+Loggie is a Godot string composer and logger developed for 4.0+, for those who could use a couple of improvements and more control over how console and logfile output is styled and handled.
 
 It makes it a breeze to compose and print messages with all the extra data you need to have helpful logs.
 
 ```swift
-Loggie.error("Everything's in flames...") // Simple
-Loggie.msg("Just kidding!").color("orange").bold().info() // Customizable
+// Simple
+Loggie.error("Everything's in flames...")
+
+// Customizable
+Loggie.msg("Just kidding!").color("orange").bold().info() 
+
 // Discover more below...
 ```
 
-Loggie takes care that your logs always look clean in release builds, while allowing you to use extra styling for console targeted output. ANSI-compatible, and friendly both for solo developers and developers in a team (externally loaded settings for each developer).
+Loggie takes care that your logs always look clean in release builds, while allowing you to use extra styling for console targeted output. 
+
+ANSI-compatible, and friendly both for solo developers and developers in a team (externally loaded settings for each developer).
 
 If you need something simple but effective, Loggie is your guy.
 
-[<img src="https://i.imgur.com/z3vxfz4.png">](docs/USER_GUIDE.md)
+[<img src="assets/banners/see_all_features.png">](docs/ALL_FEATURES.md)
 
-[<img src="https://i.imgur.com/QyOsL16.png">](https://discord.gg/XPdxpMqmcs)
+[<img src="assets/banners/user_guide.png">](docs/USER_GUIDE.md)
+
+[<img src="assets/banners/discord.png">](https://discord.gg/XPdxpMqmcs)
 
 -------------
 
@@ -28,7 +36,7 @@ _(Loggie was developed for Godot 4.0+, and was not tested on older versions)_
 This repository contains the entire Loggie development godot project, so there are files which are redundant in case you want to use Loggie only as a plugin for your project.
 Choose which way you want to install:
 
-### 💾 Install as a plugin for my project.
+### 💾 I want to use Loggie in my project
 <details>
   <summary>
 	  <b>Choose method...</b>
@@ -65,7 +73,7 @@ Choose which way you want to install:
   </details>
 </details>
 
-### 💾 Install as a Godot Project I can develop.
+### 💾 I want to develop and contribute to Loggie
 <details>
   <summary>
 	  <b>Show details</b>
@@ -80,12 +88,11 @@ Choose which way you want to install:
 
 -------------
 
-# Features
+# Highlighted Features
 
 ## ![](https://i.imgur.com/UKLliDE.png) Easy Message Composition and Customization
 
 ##### Step 1
-
 Start composing a message with Loggie.msg(...):
 
 ```gdscript
@@ -93,7 +100,6 @@ Loggie.msg("Hello")
 ```
 
 ##### Step 2
-
 Chain any other customizations you want onto it.
 
 ```gdscript
@@ -103,7 +109,6 @@ Loggie.msg("Hello").bold().color(Color.CYAN)
 There is a variety of styling functions you can use, such as `bold()`, `italic()`, `color(color)`, `nl()`, `header()`, `box()`, etc.
 
 ##### Step 3
-
 Call one of the output functions (`info`, `notice`, `warn`, `error`, `debug`) at the end of the chain to output the composed message at that debug level.
 
 ```gdscript
@@ -111,7 +116,6 @@ Loggie.msg("Hello").bold().color(Color.CYAN).info()
 ```
 
 #### Alternatively
-
 Use Loggie shortcuts if you don't need to apply additional LoggieMsg modifiers.
 
 ```gdscript
@@ -121,9 +125,6 @@ Loggie.notice("Hello")
 Loggie.warn("Hello")
 Loggie.debug("Hello")
 ```
-
-
-[<img src="https://i.imgur.com/wPuyQjT.png">](docs/MESSAGE_CUSTOMIZATION.md)
 
 ## ![](https://i.imgur.com/o4YuBsB.png) BBCode/ANSI Terminal Compatibility
 
@@ -143,7 +144,7 @@ Loggie automatically switches to producing clean plaintext logs when it detects 
 
 The logger can be configured to log the specs of the device running your project at launch, giving you a neat overview of all the details you may be interested in for debugging purposes.
 
-![SpecsLog](https://i.imgur.com/ZshsF9J.png "SpecsLog")
+![SpecsLog](assets/screenshots/screenshot_2.png)
 
 ## ![](https://i.imgur.com/oA34v2y.png) Team Environment Support
 
@@ -153,7 +154,7 @@ To avoid pushing such changes to the Loggie plugin files directly, and to your r
 
 By gitignoring and using that file, each team member can use their own settings.
 
-## ![](https://i.imgur.com/XpelRe4.png) Toggleable Message Domains (Channels)
+## ![](https://i.imgur.com/XpelRe4.png) Toggleable Message Domains
 
 Messages can be configured to belong to a domain, and domains can be easily enabled or disabled. Messages coming from a disabled domain won't be processed or output.
 This makes it simple to create functions that can output verbose and advanced logs related to their behavior only when the domain is enabled by the developer.
@@ -171,22 +172,24 @@ func generate_loot_for(recipient : Creature):
 
 ## ![](https://i.imgur.com/f8Li33A.png) Class Name Extraction
 
-A neat feature I saw in [LogDuck](https://github.com/ZeeWeasel/LogDuck) _(also a cool logging library worth checking out)_, which allows you to see the names of the classes that prompted Loggie to output something.
+Loggie allows you to see the names of the classes that prompted Loggie to output something.
 \* This only works when the engine debugger is connected, therefore it does not work in Release mode, and won't be shown in those logs.\*
 
-![ClassNameExtraction](https://i.imgur.com/EWlcKnD.png)
+![](assets/screenshots/class_name_extraction.png)
 
-## ![](https://i.imgur.com/U032w7G.png) Dictionary Pretty-print
+## ![](https://i.imgur.com/U032w7G.png) Dictionary Pretty-print and Custom Printing
 
 Loggie makes an extra step to pretty-print dictionaries, outputting them in a json-like format with newlines and tabs, instead of having them smushed into a single line, which makes reading printed dictionaries easier when dealing with larger ones.
 
-![DictPrettyPrint](https://i.imgur.com/H3VAM1g.png)
+![](assets/screenshots/dictionary_pretty_print.png)
+
+It also allows you to write a custom way used for printing any type of object, including overriding this Dictionary rule.
 
 ## ![img](https://i.imgur.com/Enb9yXw.png) All Basic Settings in Project Settings
 
 Loggie creates new Project Settings in your Godot when it's used, allowing you to modify your Loggie preferences from the comfort of the Project Settings GUI.
 
-![gif](https://i.imgur.com/TkoJ6Kb.gif)
+![](assets/screenshots/project_settings.gif)
 
 ## ![](https://i.imgur.com/nApy0O1.png) Detailed In-Engine Documentation
 
@@ -195,7 +198,7 @@ Head to the 'Search Help' window in Godot and search for Loggie to check it out.
 
 If you need help with anything, feel free to reach out on the [Loggie discord server](https://discord.gg/XPdxpMqmcs).
 
-![assets/screenshots/screenshot_4.gif](assets/screenshots/screenshot_4.gif)
+![](assets/screenshots/in_engine_docs.gif)
 
 # Development and Contributions
 
@@ -217,7 +220,7 @@ To ensure the best experience, please follow the guidelines:
 > Head on over to the [Issues page](https://github.com/Shiva-Shadowsong/loggie/issues) and create a new entry describing the issue you're facing and how to reproduce it.
 
 -------------------------------------------------------------------
-<center><img src="https://i.imgur.com/u7Xy1Jo.png"/></center>
+<center><img src="addons/loggie/assets/icon.png"/></center>
 
 # About the project
 
@@ -229,7 +232,7 @@ I find tremendous reading comprehension value in adequately stylized and subdivi
 2. Preferences for Settings that can easily be configured by each developer on the team locally without modifying the plugin itself.
 3. Regardless of which styling is used during local development, when switched into "Production/Release" mode (ideally by automatically detecting that), the logger should create clean plaintext output in the actual .log files.
 
-For anyone else who finds those things on the forefront of what they want their logger to achieve, Loggie is a great starting point.
+For anyone else who finds those things on the forefront of what they want their logger to achieve, Loggie is a great choice.
 
 I'm looking to improve Loggie over time with more features, flexibility, stylings and so on. If you would like to Contribute, please read the Contributing section above.
 
