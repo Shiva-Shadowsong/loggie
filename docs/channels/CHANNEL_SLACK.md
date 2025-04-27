@@ -13,6 +13,8 @@ Then, it posts the content to the Slack webhook that can be configured in **Proj
 
 ![](../../assets/screenshots/slack_webhook_area.png)
 
+If Loggie is running in production, it will use the "Live Webhook", otherwise it will use the "Dev Webhook".
+
 > [!CAUTION]
 > ## **NEVER INCLUDE WEBHOOKS IN PUBLIC BUILDS.**
 > 

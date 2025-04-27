@@ -1,4 +1,4 @@
-*This article assumes you're already familiar with [Composing and Outputting Messages](COMPOSE_AND_OUTPUT_MESSAGES.md).*
+*This article assumes you're already familiar with [Composing and Outputting Messages](../features/COMPOSE_AND_OUTPUT_MESSAGES.md).*
 ### Styling Messages
 
 ![](../../assets/screenshots/sample_conversation_log.png)

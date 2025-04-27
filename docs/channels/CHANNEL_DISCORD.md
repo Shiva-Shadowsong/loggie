@@ -14,6 +14,8 @@ Then, it posts these chunks to the discord webhook that can be configured in **P
 
 ![](../../assets/screenshots/discord_webhook_area.png)
 
+If Loggie is running in production, it will use the "Live Webhook", otherwise it will use the "Dev Webhook".
+
 > [!CAUTION]
 > ## **NEVER INCLUDE WEBHOOKS IN PUBLIC BUILDS.**
 > 

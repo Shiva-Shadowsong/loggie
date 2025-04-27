@@ -35,7 +35,7 @@ If Loggie finds this successfully, it will use it to load the settings instead.
 
 It is enough to create a `custom_settings.gd` script in the same directory where `loggie.gd` is located.
 
-```
+```gdscript
 class_name CustomLoggieSettings extends LoggieSettings
 
 func load():

@@ -3,7 +3,7 @@
 *This article is part 1 of a three-part guide to starting out with Loggie. More at the bottom.*
 ## Quick Output
 
-If you have no desire to stylize your message and simply want to output at a [log level](LOG_LEVELS) quickly, you can use the shortcut functions:
+If you have no desire to stylize your message and simply want to output at a [log level](LOG_LEVELS.md) quickly, you can use the shortcut functions:
 
 ```swift
 Loggie.error("Message")
@@ -29,7 +29,7 @@ However, Loggie can do much more to help you compose and log complex multi-part 
 ## ![](https://i.imgur.com/UKLliDE.png) Composing Messages
 
 ### Creating and Logging a "LoggieMsg"
-All messages Loggie works with are instances of [LoggieMsg](addons/loggie/loggie_message.gd), a string composer class that comes with a ton of utilities for customizing a message. 
+All messages Loggie works with are instances of [LoggieMsg](../../addons/loggie/loggie_message.gd), a string composer class that comes with a ton of utilities for customizing a message. 
 
 To create a `LoggieMsg` and fill it with some starting content, we can use the `Loggie.msg(...)` shortcut method:
 

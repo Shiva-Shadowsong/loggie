@@ -21,7 +21,7 @@ Store that script in a *protected location*:
 ❌ Anywhere else inside of `addons/loggie/` *(would be overwritten by auto updater)*.  
 ✔️ Anywhere else in your project.  
 
-### 2. Give Class Name and Extend LoggieChannel
+### 2. Give Class Name and Extend LoggieMsgChannel
 
 Your script should have its own `class_name` and it should extend the `LoggieChannel` class.
 
@@ -45,7 +45,7 @@ func _init() -> void:
 	preprocess_flags = LoggieEnums.PreprocessStep.APPEND_TIMESTAMPS | LoggieEnums.PreprocessStep.APPEND_DOMAIN_NAME | LoggieEnums.PreprocessStep.APPEND_CLASS_NAME
 ```
 
-The available preprocessing flags can be found in [loggie_enums.gd](../../addons/loggie/tools/loggie_enums.gd) under LoggieEnums.PreprocessStep.
+The available preprocessing flags can be found in [loggie_enums.gd](../../addons/loggie/tools/loggie_enums.gd#L31) under LoggieEnums.PreprocessStep.
 
 By adding what I did in the example above, messages sent to this channel will have timestamps, domain names and class names appended to them during the [preprocessing](../features/PREPROCESSING.md) step.
 
@@ -108,7 +108,7 @@ You only need to do this once during each execution of your project, at any poin
 > 
 > If you think it's something that the Godot community could find useful, consider sharing your channel in a public repository or our Discord where we can make sure the information about its existence reaches Loggie users.
 > 
-> [<img src="assets/banners/discord.png">](https://discord.gg/XPdxpMqmcs)
+> [<img src="../../assets/banners/discord.png">](https://discord.gg/XPdxpMqmcs)
 
 ---
 #### Related Articles:

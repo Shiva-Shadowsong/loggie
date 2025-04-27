@@ -16,7 +16,7 @@ output_timestamps = true
 timestamps_use_utc = true
 ```
 
-### Changing How Timestamps are Displayed
+### Changing The Way Timestamps Look
 
 This is covered in the [Message Formats](../customization/MESSAGE_FORMATS.md) article.
 

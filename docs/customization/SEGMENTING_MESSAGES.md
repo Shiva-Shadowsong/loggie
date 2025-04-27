@@ -1,4 +1,4 @@
-*This article assumes you're already familiar with [Composing and Outputting Messages](COMPOSE_AND_OUTPUT_MESSAGES.md).*
+*This article assumes you're already familiar with [Composing and Outputting Messages](../features/COMPOSE_AND_OUTPUT_MESSAGES.md).*
 # Segmenting Messages
 
 Sometimes, you may want to stylize individual parts of a complex message differently.
@@ -66,7 +66,7 @@ This keeps it shorter and more in line with what you're used to writing (`msg`).
 > * 📚 [Toggleable Message Domains](../features/DOMAINS.md)
 > * 📚 [Adjusting Default Formats for Messages](MESSAGE_FORMATS.md)
 > * 📚 [Using personal Loggie settings in a team](CUSTOM_SETTINGS.md)
-> * 📚 [How does preprocessing work?](PREPROCESSING.md)
+> * 📚 [How does preprocessing work?](../features/PREPROCESSING.md)
 > * ...
 > * 👀 **[Browse All Features](../ALL_FEATURES.md)**
 > * 👀 [Back to User Guides](../USER_GUIDE.md)

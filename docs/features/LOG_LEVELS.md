@@ -58,18 +58,18 @@ Loggie.msg("Something is wrong!").bold().italic().error()
 ```
 
 > [!TIP]
-> [Learn more about composing messages here.](COMPOSE_AND_OUTPUT_MESSAGES)
+> [Learn more about composing messages here.](COMPOSE_AND_OUTPUT_MESSAGES.md)
 ## Functionality Differences
 
 Some log levels are handled differently than others during output to the Godot terminal channel.
 
 | Level  | Note                                                                                                                                                                                                                                                                                                                                                                                   |     |
 | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- |
-| ERROR  | **Has Toggle**<br>If the setting `Output Errors To Console` is set to `true`, error messages on the `terminal` channel will additionally get output with the `push_error` function, which will also generate an actual error in the Godot debugger tab *(recommended)*.<br><br>![assets/screenshots/show_error_toggle.png](assets/screenshots/show_error_toggle.png)<br>               |     |
-| WARN   | **Has Toggle**<br>If the setting `Output Warnings To Console` is set to `true`, warning messages on the `terminal` channel will additionally get output with the `push_warning` function, which will also generate an actual error in the Godot debugger tab *(recommended)*.<br><br>![assets/screenshots/show_warning_toggle.png](assets/screenshots/show_warning_toggle.png)<br><br> |     |
+| ERROR  | **Has Toggle**<br>If the setting `Output Errors To Console` is set to `true`, error messages on the `terminal` channel will additionally get output with the `push_error` function, which will also generate an actual error in the Godot debugger tab *(recommended)*.<br><br>![../../assets/screenshots/show_error_toggle.png](../../assets/screenshots/show_error_toggle.png)<br>               |     |
+| WARN   | **Has Toggle**<br>If the setting `Output Warnings To Console` is set to `true`, warning messages on the `terminal` channel will additionally get output with the `push_warning` function, which will also generate an actual error in the Godot debugger tab *(recommended)*.<br><br>![../../assets/screenshots/show_warning_toggle.png](../../assets/screenshots/show_warning_toggle.png)<br><br> |     |
 | NOTICE | No special functionality.                                                                                                                                                                                                                                                                                                                                                              |     |
 | INFO   | No special functionality.                                                                                                                                                                                                                                                                                                                                                              |     |
-| DEBUG  | **Has Stack Tracing Feature**<br>If the setting `Debug Msgs Print Stack Trace` is set to `true`, debug messages on the `terminal` channel will additionally have a stack trace appended to them.<br><br>![assets/screenshots/show_stack_tracer.png](assets/screenshots/show_stack_tracer.png)<br>                                                                                      |     |
+| DEBUG  | **Has Stack Tracing Feature**<br>If the setting `Debug Msgs Print Stack Trace` is set to `true`, debug messages on the `terminal` channel will additionally have a stack trace appended to them.<br><br>![../../assets/screenshots/show_stack_tracer.png](../../assets/screenshots/show_stack_tracer.png)<br>                                                                                      |     |
 ## Formatting Styles
 
 By default, messages outputted on the existing levels will look like this:

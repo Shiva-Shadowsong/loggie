@@ -30,17 +30,11 @@ Default format: `"[{day}.{month}.{year} {hour}:{minute}:{second}]"`
 For a message printed on 25th April 2025, at 1:40 PM, you'll see:
 Example: `[25.04.2025 13:40:23]`
 
-| variable |
-| -------- |
-| {day}    |
-| {month}  |
-| {year}   |
-| {hour}   |
-| {minute} |
-| {second} |
+| {day} | {month} | {year} | {hour} | {minute} | {second} |
+| ----- | ------- | ------ | ------ | -------- | -------- |
 
-All of these variables are provided as strings which contain a number.
-Frontal padding with a 0 is applied if the number is single digit.
+All of these variables are provided as strings which contain a number.  
+Frontal padding with a 0 is applied if the number is single digit.  
 *(e.g. '04' instead of '4' for month April).*
 
 ---

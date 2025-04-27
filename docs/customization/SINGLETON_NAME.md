@@ -1,3 +1,5 @@
+# Singleton Name
+
 Perhaps you don't like having the autoload singleton of Loggie being called `Loggie`, and you'd prefer something you're more used to, like `log`, `logger`, etc.
 
 You can change the name of the autoload by editing the value of the `loggie_singleton_name` variable in `loggie_settings.gd`.

@@ -107,7 +107,7 @@ If, after installing the newest version manually, you are still experiencing iss
 
 Please open an issue, or even better, write about it on the Loggie Discord so we can discuss in details what's going on. I'd love to know about such issues as soon as possible and fix them.
 
-[<img src="../../assets/banners/discord.png">](https://discord.gg/XPdxpMqmcs)
+[<img src="../../assets/banners/discord.png">](https://discord.gg/XPdxpMqmcs)  
 The only remaining option, at that point is:
 ### 4. Revert to Older Version
 

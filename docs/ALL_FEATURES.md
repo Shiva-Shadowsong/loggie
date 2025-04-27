@@ -17,7 +17,7 @@ This page is a hub for browsing all documented features and other articles relat
 	* [Style Your Messages](customization/STYLING_MESSAGES.md)
 		* Color, Bold, Italic, Header, Box, Separator, ...
 	* [Segment Your Messages](customization/SEGMENTING_MESSAGES.md)
-* [Domains](docs/features/DOMAINS.md)
+* [Domains](features/DOMAINS.md)
 * [Log File Management and Storage](features/LOG_FILES_AND_STORAGE.md)
 * [Log Levels](features/LOG_LEVELS.md)
 * [Output Format Mode](features/OUTPUT_FORMAT_MODES.md)
@@ -35,7 +35,7 @@ This page is a hub for browsing all documented features and other articles relat
 # ![](../assets/icons/features.png)  Customization
 
 * [Creating Custom Channels](customization/ADDING_CUSTOM_CHANNELS.md)
-* [Using a Custom Loggie Settings File](customization/CUSTOM_SETTINGS.gd)
+* [Using a Custom Loggie Settings File](customization/CUSTOM_SETTINGS.md)
 * [Using a Custom String Convertor](customization/CUSTOM_STRING_CONVERSION.md)
 * [Change How Messages Are Formatted](customization/MESSAGE_FORMATS.md)
 * [Changing the "Loggie" Singleton Name](customization/SINGLETON_NAME.md)

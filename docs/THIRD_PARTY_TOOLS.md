@@ -29,5 +29,5 @@ Below is a list of known third party Loggie related tools.
 
 ---
 #### Related Articles:
-👀 **► [Browse All Features](ALL_FEATURES.md)  
+👀 ► [Browse All Features](ALL_FEATURES.md)  
 📚 ►  [Utility Tools](features/TOOLS.md)
