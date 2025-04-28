@@ -59,7 +59,7 @@ This is covered in the [Message Formats](../customization/MESSAGE_FORMATS.md) ar
 
 If you want all messages from some domain to go to a specific channel (or channels), you can use the third parameter of the `Loggie.set_domain_enabled` function to pass the desired channels when enabling the domain:
 
-```
+```gdscript
 # Single channel
 Loggie.set_domain_enabled("ShadowRealm", true, "discord")
 
@@ -77,12 +77,12 @@ However, you only want to see these logs while you are developing the system, an
 
 Well, you can place all of your logs within this script into a domain, and then toggle that domain enabled only when you need those logs.
 
-💡 **Here is a practical example of how you could structure domains.**
+### 💡 **Here is a practical example of how you could structure domains.**
 
 Set up an autoload where you can neatly store a list of all domains in your game.
 This autoload can enable all domains you want to use on `_ready`:
 
-```
+```gdscript
 # This is an autoload.
 class_name LoggieDomainsManager extends Node
 
@@ -98,7 +98,7 @@ func _ready():
 
 Then, let's say you are developing the `LootSystem`, which has footprints in multiple classes:
 
-```
+```gdscript
 class LootManager extends RefCounted
 
 var possibilities = {}
@@ -126,7 +126,7 @@ func generate() -> Array[String]:
 class Creature extends Node
 
 var owned_items : Array[String] = []
-var loot : LootManager = LootGenerator.new()
+var loot : LootManager = LootManager.new()
 
 func _ready():
 	loot 
