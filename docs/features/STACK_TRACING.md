@@ -40,14 +40,14 @@ The stack you are seeing is not the *entire stack* - because Loggie cuts off par
 
 Here is what the full stack would otherwise usually look like:
 
-![](../assets/screenshots/stack_trace_pruning.png)
+![](../../assets/screenshots/stack_trace_pruning.png)
 
 Loggie allows you to specify the names of files whose stack entries will be pruned.
 By default, it prunes the stack entries from `loggie.gd` and `loggie_message.gd`
 
 You can modify this in **Project Settings -> Loggie -> General -> Skipped Filenames in Stack Trace**:
 
-![](../assets/screenshots/stack_trace_pruning_options.png)
+![](../../assets/screenshots/stack_trace_pruning_options.png)
 
 Or if you are [using Custom Settings](../customization/CUSTOM_SETTINGS.md), you can set this in the `load()` method instead:
 
