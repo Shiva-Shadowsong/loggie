@@ -415,10 +415,28 @@ func _apply_format_timestamp(message : String) -> String:
 	var format_dict : Dictionary = Time.get_datetime_dict_from_system(loggie.settings.timestamps_use_utc)
 	for field in ["month", "day", "hour", "minute", "second"]:
 		format_dict[field] = "%02d" % format_dict[field]
+
+	# Add the millisecond
+	var unix_time: float = Time.get_unix_time_from_system()
+	var millisecond: int = int((unix_time - int(unix_time)) * 1000.0)
+	format_dict["millisecond"] = "%03d" % millisecond
+	
+	# Add the startup time to the format dictionary.
+	var elapsed_millisecond: int = Time.get_ticks_msec()
+	var startup_hour: int = elapsed_millisecond / 3_600_000
+	var startup_minute: int = (elapsed_millisecond % 3_600_000) / 60_000
+	var startup_second: int = (elapsed_millisecond % 60_000) / 1000
+	var startup_millisecond: int = elapsed_millisecond % 1000
+	format_dict["startup_hour"] = "%02d" % startup_hour
+	format_dict["startup_minute"] = "%02d" % startup_minute
+	format_dict["startup_second"] = "%02d" % startup_second
+	format_dict["startup_millisecond"] = "%03d" % startup_millisecond
+
 	message = "{formatted_time} {msg}".format({
 		"formatted_time" : loggie.settings.format_timestamp.format(format_dict),
 		"msg" : message
 	})
+	
 	return message
 
 ## Adds the stack trace to the given [param message] and returns the modified version of it.
