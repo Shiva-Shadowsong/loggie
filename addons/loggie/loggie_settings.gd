@@ -193,7 +193,7 @@ const project_settings = {
 	},
 	"format_timestamp" = {
 		"path": "loggie/formats/timestamp",
-		"default_value" : "[{day}.{month}.{year} {hour}:{minute}:{second}]",
+		"default_value" : "[{day}.{month}.{year} {hour}:{minute}:{second}:{millisecond}] [{startup_hour}:{startup_minute}:{startup_second}:{startup_millisecond}]",
 		"type" : TYPE_STRING,
 		"hint" : PROPERTY_HINT_NONE,
 		"hint_string" : "",
@@ -411,9 +411,10 @@ var format_info_msg = "{msg}"
 var format_debug_msg = "[b][color=pink][DEBUG]:[/color][/b] {msg}"
 
 ## The format used for timestamps when they are prepended to the output.[br]
-## The variables [param {day}], [param {month}], [param {year}], [param {hour}], [param {minute}], [param {second}], [param {weekday}], and [param {dst}] are supported.
+## The variables [param {day}], [param {month}], [param {year}], [param {hour}], [param {minute}], [param {second}], [param {millisecond}], [param {weekday}], [param {dst}],  are supported.
+## The variables [param {startup_hour}], [param {startup_minute}], [param {startup_second}], [param {startup_millisecond}] are also supported, and will be replaced with the time since the game started.
 ## You can customize this in your ProjectSettings, or custom_settings.gd (if using it).[br]
-var format_timestamp = "[{day}.{month}.{year} {hour}:{minute}:{second}]"
+var format_timestamp = "[{day}.{month}.{year} {hour}:{minute}:{second}:{millisecond}][{startup_hour}:{startup_minute}:{startup_second}:{startup_millisecond}]"
 
 ## The format used for each entry in a stack trace that is obtained through [method Loggie.stack].
 ## The variables [param {fn_name}], [param {index}], [param {source_path}], [param {line}] are supported.
