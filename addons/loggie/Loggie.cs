@@ -1,94 +1,100 @@
 using Godot;
 
+// ReSharper disable MemberHidesStaticFromOuterClass
+
+// ReSharper disable once RedundantNullableDirective
 #nullable disable
 
 // ReSharper disable once CheckNamespace
 public class Loggie
 {
+    private static readonly Loggie Instance = new();
+
     // TODO: support other singleton names
-    private static readonly NodePath NodePath = new("/root/Loggie");
-    private readonly Node _loggie;
+    private const string NodeName = "Loggie";
+    private readonly Node _node;
 
-    public LoggieVersion Version
+    public static LoggieVersion Version
     {
-        get => new LoggieVersion(_loggie.Get(ClassVariable.Version).AsGodotObject());
-        set => _loggie.Set(ClassVariable.Version, value.GodotObject);
+        get => new LoggieVersion(Instance._node.Get(ClassVariable.Version).AsGodotObject());
+        set => Instance._node.Set(ClassVariable.Version, value.GodotObject);
     }
 
-    public LoggieSettings Settings
+    public static LoggieSettings Settings
     {
-        get => new LoggieSettings(_loggie.Get(ClassVariable.Settings).AsGodotObject());
-        set => _loggie.Set(ClassVariable.Version, value.GodotObject);
+        get => new LoggieSettings(Instance._node.Get(ClassVariable.Settings).AsGodotObject());
+        set => Instance._node.Set(ClassVariable.Version, value.GodotObject);
     }
 
-    public Godot.Collections.Dictionary Domains
+    public static Godot.Collections.Dictionary Domains
     {
-        get => _loggie.Get(ClassVariable.Domains).AsGodotDictionary();
-        set => _loggie.Set(ClassVariable.Domains, value);
+        get => Instance._node.Get(ClassVariable.Domains).AsGodotDictionary();
+        set => Instance._node.Set(ClassVariable.Domains, value);
     }
 
-    public Godot.Collections.Dictionary ClassNames
+    public static Godot.Collections.Dictionary ClassNames
     {
-        get => _loggie.Get(ClassVariable.ClassNames).AsGodotDictionary();
-        set => _loggie.Set(ClassVariable.ClassNames, value);
+        get => Instance._node.Get(ClassVariable.ClassNames).AsGodotDictionary();
+        set => Instance._node.Set(ClassVariable.ClassNames, value);
     }
 
-    public Godot.Collections.Dictionary AvailableChannels
+    public static Godot.Collections.Dictionary AvailableChannels
     {
-        get => _loggie.Get(ClassVariable.AvailableChannels).AsGodotDictionary();
-        set => _loggie.Set(ClassVariable.AvailableChannels, value);
+        get => Instance._node.Get(ClassVariable.AvailableChannels).AsGodotDictionary();
+        set => Instance._node.Set(ClassVariable.AvailableChannels, value);
     }
 
-    public Loggie()
+    private Loggie()
     {
         var sceneTree = (SceneTree)Engine.GetMainLoop();
-        _loggie = sceneTree.Root.GetNode(NodePath);
+        _node = sceneTree.Root.GetNode(NodeName);
 
-        if (_loggie == null)
+        if (_node == null)
         {
-            GD.PrintErr($"Could not find loggie plugin at: {NodePath}");
+            GD.PrintErr($"Could not find loggie plugin at: /root/{NodeName}");
         }
     }
 
-    public bool LoadSettingsFromPath(string path)
+    public static bool LoadSettingsFromPath(string path)
     {
-        return _loggie.Call(MethodName.LoadSettingsFromPath, path).AsBool();
+        return Instance._node.Call(MethodName.LoadSettingsFromPath, path).AsBool();
     }
 
-    public bool IsInProduction()
+    public static bool IsInProduction()
     {
-        return _loggie.Call(MethodName.IsInProduction).AsBool();
+        return Instance._node.Call(MethodName.IsInProduction).AsBool();
     }
 
-    public Godot.Collections.Array GetDomainCustomTargetChannels(string domainName)
+    public static Godot.Collections.Array GetDomainCustomTargetChannels(string domainName)
     {
-        return _loggie.Call(MethodName.GetDomainCustomTargetChannels, domainName).AsGodotArray();
+        return Instance._node.Call(MethodName.GetDomainCustomTargetChannels, domainName).AsGodotArray();
     }
 
-    public void SetDomainEnabled(string domainName, bool enabled, Variant customTargetChannels = new())
+    public static void SetDomainEnabled(string domainName, bool enabled, Variant customTargetChannels = new())
     {
-        _loggie.Call(MethodName.SetDomainEnabled, domainName, enabled, customTargetChannels);
+        Instance._node.Call(MethodName.SetDomainEnabled, domainName, enabled, customTargetChannels);
     }
 
-    public bool IsDomainEnabled(string domainName)
+    public static bool IsDomainEnabled(string domainName)
     {
-        return _loggie.Call(MethodName.IsDomainEnabled, domainName).AsBool();
+        return Instance._node.Call(MethodName.IsDomainEnabled, domainName).AsBool();
     }
 
-    public bool GetChannel(string channelId)
+    public static bool GetChannel(string channelId)
     {
-        return _loggie.Call(MethodName.GetChannel, channelId).AsBool();
+        return Instance._node.Call(MethodName.GetChannel, channelId).AsBool();
     }
 
-    public void AddChannel(LoggieMsgChannel loggieMsgChannel)
+    public static void AddChannel(LoggieMsgChannel loggieMsgChannel)
     {
-        _loggie.Call(MethodName.AddChannel, loggieMsgChannel.GodotObject);
+        Instance._node.Call(MethodName.AddChannel, loggieMsgChannel.GodotObject);
     }
 
-    public LoggieMsg Msg(Variant? message = null, Variant? arg1 = null, Variant? arg2 = null, Variant? arg3 = null,
+    public static LoggieMsg Msg(Variant? message = null, Variant? arg1 = null, Variant? arg2 = null,
+        Variant? arg3 = null,
         Variant? arg4 = null, Variant? arg5 = null)
     {
-        return new LoggieMsg(_loggie.Call(MethodName.Msg,
+        return new LoggieMsg(Instance._node.Call(MethodName.Msg,
             message ?? new Variant(),
             arg1 ?? new Variant(),
             arg2 ?? new Variant(),
@@ -97,10 +103,11 @@ public class Loggie
             arg5 ?? new Variant()).AsGodotObject());
     }
 
-    public LoggieMsg Info(Variant? message = null, Variant? arg1 = null, Variant? arg2 = null, Variant? arg3 = null,
+    public static LoggieMsg Info(Variant? message = null, Variant? arg1 = null, Variant? arg2 = null,
+        Variant? arg3 = null,
         Variant? arg4 = null, Variant? arg5 = null)
     {
-        return new LoggieMsg(_loggie.Call(MethodName.Info,
+        return new LoggieMsg(Instance._node.Call(MethodName.Info,
             message ?? new Variant(),
             arg1 ?? new Variant(),
             arg2 ?? new Variant(),
@@ -109,10 +116,11 @@ public class Loggie
             arg5 ?? new Variant()).AsGodotObject());
     }
 
-    public LoggieMsg Warn(Variant? message = null, Variant? arg1 = null, Variant? arg2 = null, Variant? arg3 = null,
+    public static LoggieMsg Warn(Variant? message = null, Variant? arg1 = null, Variant? arg2 = null,
+        Variant? arg3 = null,
         Variant? arg4 = null, Variant? arg5 = null)
     {
-        return new LoggieMsg(_loggie.Call(MethodName.Warn,
+        return new LoggieMsg(Instance._node.Call(MethodName.Warn,
             message ?? new Variant(),
             arg1 ?? new Variant(),
             arg2 ?? new Variant(),
@@ -121,10 +129,11 @@ public class Loggie
             arg5 ?? new Variant()).AsGodotObject());
     }
 
-    public LoggieMsg Error(Variant? message = null, Variant? arg1 = null, Variant? arg2 = null, Variant? arg3 = null,
+    public static LoggieMsg Error(Variant? message = null, Variant? arg1 = null, Variant? arg2 = null,
+        Variant? arg3 = null,
         Variant? arg4 = null, Variant? arg5 = null)
     {
-        return new LoggieMsg(_loggie.Call(MethodName.Error,
+        return new LoggieMsg(Instance._node.Call(MethodName.Error,
             message ?? new Variant(),
             arg1 ?? new Variant(),
             arg2 ?? new Variant(),
@@ -133,10 +142,11 @@ public class Loggie
             arg5 ?? new Variant()).AsGodotObject());
     }
 
-    public LoggieMsg Debug(Variant? message = null, Variant? arg1 = null, Variant? arg2 = null, Variant? arg3 = null,
+    public static LoggieMsg Debug(Variant? message = null, Variant? arg1 = null, Variant? arg2 = null,
+        Variant? arg3 = null,
         Variant? arg4 = null, Variant? arg5 = null)
     {
-        return new LoggieMsg(_loggie.Call(MethodName.Debug,
+        return new LoggieMsg(Instance._node.Call(MethodName.Debug,
             message ?? new Variant(),
             arg1 ?? new Variant(),
             arg2 ?? new Variant(),
@@ -145,10 +155,11 @@ public class Loggie
             arg5 ?? new Variant()).AsGodotObject());
     }
 
-    public LoggieMsg Notice(Variant? message = null, Variant? arg1 = null, Variant? arg2 = null, Variant? arg3 = null,
+    public static LoggieMsg Notice(Variant? message = null, Variant? arg1 = null, Variant? arg2 = null,
+        Variant? arg3 = null,
         Variant? arg4 = null, Variant? arg5 = null)
     {
-        return new LoggieMsg(_loggie.Call(MethodName.Notice,
+        return new LoggieMsg(Instance._node.Call(MethodName.Notice,
             message ?? new Variant(),
             arg1 ?? new Variant(),
             arg2 ?? new Variant(),
@@ -157,14 +168,14 @@ public class Loggie
             arg5 ?? new Variant()).AsGodotObject());
     }
 
-    public string GetDirectoryPath()
+    public static string GetDirectoryPath()
     {
-        return _loggie.Call(MethodName.GetDirectoryPath).AsString();
+        return Instance._node.Call(MethodName.GetDirectoryPath).AsString();
     }
 
-    public LoggieMsg Stack()
+    public static LoggieMsg Stack()
     {
-        return new LoggieMsg(_loggie.Call(MethodName.Stack).AsGodotObject());
+        return new LoggieMsg(Instance._node.Call(MethodName.Stack).AsGodotObject());
     }
 
     private static class ClassVariable
