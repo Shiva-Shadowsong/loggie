@@ -26,6 +26,7 @@ public partial class TestCs : Control
         TestSegments();
         TestBbCodeToMarkdown();
         TestDiscordChannel();
+        TestSlackChannel();
     }
 
     private void SetupGui()
