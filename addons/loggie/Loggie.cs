@@ -1,4 +1,5 @@
 using Godot;
+using Godot.Collections;
 
 // ReSharper disable MemberHidesStaticFromOuterClass
 
@@ -22,23 +23,23 @@ public class Loggie
 
     public static LoggieSettings Settings
     {
-        get => new LoggieSettings(Instance._node.Get(ClassVariable.Settings).AsGodotObject());
-        set => Instance._node.Set(ClassVariable.Version, value.GodotObject);
+        get => new LoggieSettings(Instance._node.Get(ClassVariable.Settings).As<Resource>());
+        set => Instance._node.Set(ClassVariable.Version, value.GodotResource);
     }
 
-    public static Godot.Collections.Dictionary Domains
+    public static Dictionary Domains
     {
         get => Instance._node.Get(ClassVariable.Domains).AsGodotDictionary();
         set => Instance._node.Set(ClassVariable.Domains, value);
     }
 
-    public static Godot.Collections.Dictionary ClassNames
+    public static Dictionary ClassNames
     {
         get => Instance._node.Get(ClassVariable.ClassNames).AsGodotDictionary();
         set => Instance._node.Set(ClassVariable.ClassNames, value);
     }
 
-    public static Godot.Collections.Dictionary AvailableChannels
+    public static Dictionary AvailableChannels
     {
         get => Instance._node.Get(ClassVariable.AvailableChannels).AsGodotDictionary();
         set => Instance._node.Set(ClassVariable.AvailableChannels, value);
@@ -65,14 +66,14 @@ public class Loggie
         return Instance._node.Call(MethodName.IsInProduction).AsBool();
     }
 
-    public static Godot.Collections.Array GetDomainCustomTargetChannels(string domainName)
+    public static Array GetDomainCustomTargetChannels(string domainName)
     {
         return Instance._node.Call(MethodName.GetDomainCustomTargetChannels, domainName).AsGodotArray();
     }
 
     public static void SetDomainEnabled(string domainName, bool enabled, Variant customTargetChannels = new())
     {
-        Instance._node.Call(MethodName.SetDomainEnabled, domainName, enabled, customTargetChannels);
+        Instance._node.Call(MethodName.SetDomainEnabled, domainName, enabled, customTargetChannels.VariantType == Variant.Type.Nil ? new Array() : customTargetChannels);
     }
 
     public static bool IsDomainEnabled(string domainName)
@@ -262,228 +263,228 @@ public class LoggieVersion(GodotObject godotObject)
     }
 }
 
-public class LoggieSettings(GodotObject godotObject)
+public class LoggieSettings(Resource godotResource)
 {
-    public readonly GodotObject GodotObject = godotObject;
+    public readonly Resource GodotResource = godotResource;
 
-    public Godot.Collections.Dictionary ProjectSettings
+    public Dictionary ProjectSettings
     {
-        get => GodotObject.Get(ClassVariable.ProjectSettings).AsGodotDictionary();
-        set => GodotObject.Set(ClassVariable.ProjectSettings, value);
+        get => GodotResource.Get(ClassVariable.ProjectSettings).AsGodotDictionary();
+        set => GodotResource.Set(ClassVariable.ProjectSettings, value);
     }
 
     public LoggieEnums.UpdateCheckType UpdateCheckMode
     {
-        get => GodotObject.Get(ClassVariable.UpdateCheckMode).As<LoggieEnums.UpdateCheckType>();
-        set => GodotObject.Set(ClassVariable.ProjectSettings, (int)value);
+        get => GodotResource.Get(ClassVariable.UpdateCheckMode).As<LoggieEnums.UpdateCheckType>();
+        set => GodotResource.Set(ClassVariable.ProjectSettings, (int)value);
     }
 
     public LoggieEnums.MsgFormatMode MsgFormatMode
     {
-        get => GodotObject.Get(ClassVariable.MsgFormatMode).As<LoggieEnums.MsgFormatMode>();
-        set => GodotObject.Set(ClassVariable.MsgFormatMode, (int)value);
+        get => GodotResource.Get(ClassVariable.MsgFormatMode).As<LoggieEnums.MsgFormatMode>();
+        set => GodotResource.Set(ClassVariable.MsgFormatMode, (int)value);
     }
 
     public LoggieEnums.LogLevel LogLevel
     {
-        get => GodotObject.Get(ClassVariable.LogLevel).As<LoggieEnums.LogLevel>();
-        set => GodotObject.Set(ClassVariable.LogLevel, (int)value);
+        get => GodotResource.Get(ClassVariable.LogLevel).As<LoggieEnums.LogLevel>();
+        set => GodotResource.Set(ClassVariable.LogLevel, (int)value);
     }
 
     public LoggieEnums.ShowLoggieSpecsMode ShowLoggieSpecs
     {
-        get => GodotObject.Get(ClassVariable.ShowLoggieSpecs).As<LoggieEnums.ShowLoggieSpecsMode>();
-        set => GodotObject.Set(ClassVariable.ShowLoggieSpecs, (int)value);
+        get => GodotResource.Get(ClassVariable.ShowLoggieSpecs).As<LoggieEnums.ShowLoggieSpecsMode>();
+        set => GodotResource.Set(ClassVariable.ShowLoggieSpecs, (int)value);
     }
 
     public bool ShowSystemSpecs
     {
-        get => GodotObject.Get(ClassVariable.ShowSystemSpecs).AsBool();
-        set => GodotObject.Set(ClassVariable.ShowLoggieSpecs, value);
+        get => GodotResource.Get(ClassVariable.ShowSystemSpecs).AsBool();
+        set => GodotResource.Set(ClassVariable.ShowLoggieSpecs, value);
     }
 
     public bool PrintErrorsToConsole
     {
-        get => GodotObject.Get(ClassVariable.PrintErrorsToConsole).AsBool();
-        set => GodotObject.Set(ClassVariable.PrintErrorsToConsole, value);
+        get => GodotResource.Get(ClassVariable.PrintErrorsToConsole).AsBool();
+        set => GodotResource.Set(ClassVariable.PrintErrorsToConsole, value);
     }
 
     public bool PrintWarningsToConsole
     {
-        get => GodotObject.Get(ClassVariable.PrintWarningsToConsole).AsBool();
-        set => GodotObject.Set(ClassVariable.PrintWarningsToConsole, value);
+        get => GodotResource.Get(ClassVariable.PrintWarningsToConsole).AsBool();
+        set => GodotResource.Set(ClassVariable.PrintWarningsToConsole, value);
     }
 
     public LoggieEnums.NamelessClassExtensionNameProxy NamelessClassNameProxy
     {
-        get => GodotObject.Get(ClassVariable.NamelessClassNameProxy).As<LoggieEnums.NamelessClassExtensionNameProxy>();
-        set => GodotObject.Set(ClassVariable.NamelessClassNameProxy, (int)value);
+        get => GodotResource.Get(ClassVariable.NamelessClassNameProxy).As<LoggieEnums.NamelessClassExtensionNameProxy>();
+        set => GodotResource.Set(ClassVariable.NamelessClassNameProxy, (int)value);
     }
 
     public bool TimestampsUseUtc
     {
-        get => GodotObject.Get(ClassVariable.TimestampsUseUtc).AsBool();
-        set => GodotObject.Set(ClassVariable.TimestampsUseUtc, value);
+        get => GodotResource.Get(ClassVariable.TimestampsUseUtc).AsBool();
+        set => GodotResource.Set(ClassVariable.TimestampsUseUtc, value);
     }
 
     public bool DebugMsgsPrintStackTrace
     {
-        get => GodotObject.Get(ClassVariable.DebugMsgsPrintStackTrace).AsBool();
-        set => GodotObject.Set(ClassVariable.DebugMsgsPrintStackTrace, value);
+        get => GodotResource.Get(ClassVariable.DebugMsgsPrintStackTrace).AsBool();
+        set => GodotResource.Set(ClassVariable.DebugMsgsPrintStackTrace, value);
     }
 
     public bool EnforceOptimalSettingsInReleaseBuild
     {
-        get => GodotObject.Get(ClassVariable.EnforceOptimalSettingsInReleaseBuild).AsBool();
-        set => GodotObject.Set(ClassVariable.EnforceOptimalSettingsInReleaseBuild, value);
+        get => GodotResource.Get(ClassVariable.EnforceOptimalSettingsInReleaseBuild).AsBool();
+        set => GodotResource.Set(ClassVariable.EnforceOptimalSettingsInReleaseBuild, value);
     }
 
     public string DiscordWebhookUrlDev
     {
-        get => GodotObject.Get(ClassVariable.DiscordWebhookUrlDev).AsString();
-        set => GodotObject.Set(ClassVariable.DiscordWebhookUrlDev, value);
+        get => GodotResource.Get(ClassVariable.DiscordWebhookUrlDev).AsString();
+        set => GodotResource.Set(ClassVariable.DiscordWebhookUrlDev, value);
     }
 
     public string DiscordWebhookUrlLive
     {
-        get => GodotObject.Get(ClassVariable.DiscordWebhookUrlLive).AsString();
-        set => GodotObject.Set(ClassVariable.DiscordWebhookUrlLive, value);
+        get => GodotResource.Get(ClassVariable.DiscordWebhookUrlLive).AsString();
+        set => GodotResource.Set(ClassVariable.DiscordWebhookUrlLive, value);
     }
 
     public string SlackWebhookUrlDev
     {
-        get => GodotObject.Get(ClassVariable.SlackWebhookUrlDev).AsString();
-        set => GodotObject.Set(ClassVariable.SlackWebhookUrlDev, value);
+        get => GodotResource.Get(ClassVariable.SlackWebhookUrlDev).AsString();
+        set => GodotResource.Set(ClassVariable.SlackWebhookUrlDev, value);
     }
 
     public string SlackWebhookUrlLive
     {
-        get => GodotObject.Get(ClassVariable.SlackWebhookUrlLive).AsString();
-        set => GodotObject.Set(ClassVariable.SlackWebhookUrlLive, value);
+        get => GodotResource.Get(ClassVariable.SlackWebhookUrlLive).AsString();
+        set => GodotResource.Set(ClassVariable.SlackWebhookUrlLive, value);
     }
 
     public int PreprocessFlagsTerminalChannel
     {
-        get => GodotObject.Get(ClassVariable.PreprocessFlagsTerminalChannel).AsInt32();
-        set => GodotObject.Set(ClassVariable.PreprocessFlagsTerminalChannel, value);
+        get => GodotResource.Get(ClassVariable.PreprocessFlagsTerminalChannel).AsInt32();
+        set => GodotResource.Set(ClassVariable.PreprocessFlagsTerminalChannel, value);
     }
 
     public int PreprocessFlagsDiscordChannel
     {
-        get => GodotObject.Get(ClassVariable.PreprocessFlagsDiscordChannel).AsInt32();
-        set => GodotObject.Set(ClassVariable.PreprocessFlagsDiscordChannel, value);
+        get => GodotResource.Get(ClassVariable.PreprocessFlagsDiscordChannel).AsInt32();
+        set => GodotResource.Set(ClassVariable.PreprocessFlagsDiscordChannel, value);
     }
 
     public int PreprocessFlagsSlackChannel
     {
-        get => GodotObject.Get(ClassVariable.PreprocessFlagsSlackChannel).AsInt32();
-        set => GodotObject.Set(ClassVariable.PreprocessFlagsSlackChannel, value);
+        get => GodotResource.Get(ClassVariable.PreprocessFlagsSlackChannel).AsInt32();
+        set => GodotResource.Set(ClassVariable.PreprocessFlagsSlackChannel, value);
     }
 
-    public Godot.Collections.Array DefaultChannels
+    public Array DefaultChannels
     {
-        get => GodotObject.Get(ClassVariable.DefaultChannels).AsGodotArray();
-        set => GodotObject.Set(ClassVariable.DefaultChannels, value);
+        get => GodotResource.Get(ClassVariable.DefaultChannels).AsGodotArray();
+        set => GodotResource.Set(ClassVariable.DefaultChannels, value);
     }
 
-    public Godot.Collections.Array SkippedFilenamesInStackTrace
+    public Array SkippedFilenamesInStackTrace
     {
-        get => GodotObject.Get(ClassVariable.SkippedFilenamesInStackTrace).AsGodotArray();
-        set => GodotObject.Set(ClassVariable.SkippedFilenamesInStackTrace, value);
+        get => GodotResource.Get(ClassVariable.SkippedFilenamesInStackTrace).AsGodotArray();
+        set => GodotResource.Set(ClassVariable.SkippedFilenamesInStackTrace, value);
     }
 
     public string FormatHeader
     {
-        get => GodotObject.Get(ClassVariable.FormatHeader).AsString();
-        set => GodotObject.Set(ClassVariable.FormatHeader, value);
+        get => GodotResource.Get(ClassVariable.FormatHeader).AsString();
+        set => GodotResource.Set(ClassVariable.FormatHeader, value);
     }
 
     public string FormatDomainPrefix
     {
-        get => GodotObject.Get(ClassVariable.FormatDomainPrefix).AsString();
-        set => GodotObject.Set(ClassVariable.FormatDomainPrefix, value);
+        get => GodotResource.Get(ClassVariable.FormatDomainPrefix).AsString();
+        set => GodotResource.Set(ClassVariable.FormatDomainPrefix, value);
     }
 
     public string FormatErrorMsg
     {
-        get => GodotObject.Get(ClassVariable.FormatErrorMsg).AsString();
-        set => GodotObject.Set(ClassVariable.FormatErrorMsg, value);
+        get => GodotResource.Get(ClassVariable.FormatErrorMsg).AsString();
+        set => GodotResource.Set(ClassVariable.FormatErrorMsg, value);
     }
 
     public string FormatWarningMsg
     {
-        get => GodotObject.Get(ClassVariable.FormatWarningMsg).AsString();
-        set => GodotObject.Set(ClassVariable.FormatWarningMsg, value);
+        get => GodotResource.Get(ClassVariable.FormatWarningMsg).AsString();
+        set => GodotResource.Set(ClassVariable.FormatWarningMsg, value);
     }
 
     public string FormatNoticeMsg
     {
-        get => GodotObject.Get(ClassVariable.FormatNoticeMsg).AsString();
-        set => GodotObject.Set(ClassVariable.FormatNoticeMsg, value);
+        get => GodotResource.Get(ClassVariable.FormatNoticeMsg).AsString();
+        set => GodotResource.Set(ClassVariable.FormatNoticeMsg, value);
     }
 
     public string FormatInfoMsg
     {
-        get => GodotObject.Get(ClassVariable.FormatInfoMsg).AsString();
-        set => GodotObject.Set(ClassVariable.FormatInfoMsg, value);
+        get => GodotResource.Get(ClassVariable.FormatInfoMsg).AsString();
+        set => GodotResource.Set(ClassVariable.FormatInfoMsg, value);
     }
 
     public string FormatDebugMsg
     {
-        get => GodotObject.Get(ClassVariable.FormatDebugMsg).AsString();
-        set => GodotObject.Set(ClassVariable.FormatDebugMsg, value);
+        get => GodotResource.Get(ClassVariable.FormatDebugMsg).AsString();
+        set => GodotResource.Set(ClassVariable.FormatDebugMsg, value);
     }
 
     public string FormatTimestamp
     {
-        get => GodotObject.Get(ClassVariable.FormatTimestamp).AsString();
-        set => GodotObject.Set(ClassVariable.FormatTimestamp, value);
+        get => GodotResource.Get(ClassVariable.FormatTimestamp).AsString();
+        set => GodotResource.Set(ClassVariable.FormatTimestamp, value);
     }
 
     public string FormatStacktraceEntry
     {
-        get => GodotObject.Get(ClassVariable.FormatStacktraceEntry).AsString();
-        set => GodotObject.Set(ClassVariable.FormatStacktraceEntry, value);
+        get => GodotResource.Get(ClassVariable.FormatStacktraceEntry).AsString();
+        set => GodotResource.Set(ClassVariable.FormatStacktraceEntry, value);
     }
 
     public string HSeparatorSymbol
     {
-        get => GodotObject.Get(ClassVariable.HSeparatorSymbol).AsString();
-        set => GodotObject.Set(ClassVariable.HSeparatorSymbol, value);
+        get => GodotResource.Get(ClassVariable.HSeparatorSymbol).AsString();
+        set => GodotResource.Set(ClassVariable.HSeparatorSymbol, value);
     }
 
     public LoggieEnums.BoxCharactersMode BoxCharactersMode
     {
-        get => GodotObject.Get(ClassVariable.BoxCharactersMode).As<LoggieEnums.BoxCharactersMode>();
-        set => GodotObject.Set(ClassVariable.BoxCharactersMode, (int)value);
+        get => GodotResource.Get(ClassVariable.BoxCharactersMode).As<LoggieEnums.BoxCharactersMode>();
+        set => GodotResource.Set(ClassVariable.BoxCharactersMode, (int)value);
     }
 
-    public Godot.Collections.Dictionary BoxSymbolsCompatible
+    public Dictionary BoxSymbolsCompatible
     {
-        get => GodotObject.Get(ClassVariable.BoxSymbolsCompatible).AsGodotDictionary();
-        set => GodotObject.Set(ClassVariable.BoxSymbolsCompatible, value);
+        get => GodotResource.Get(ClassVariable.BoxSymbolsCompatible).AsGodotDictionary();
+        set => GodotResource.Set(ClassVariable.BoxSymbolsCompatible, value);
     }
 
-    public Godot.Collections.Dictionary BoxSymbolsPretty
+    public Dictionary BoxSymbolsPretty
     {
-        get => GodotObject.Get(ClassVariable.BoxSymbolsPretty).AsGodotDictionary();
-        set => GodotObject.Set(ClassVariable.BoxSymbolsPretty, value);
+        get => GodotResource.Get(ClassVariable.BoxSymbolsPretty).AsGodotDictionary();
+        set => GodotResource.Set(ClassVariable.BoxSymbolsPretty, value);
     }
 
     public Callable CustomStringConverter
     {
-        get => GodotObject.Get(ClassVariable.CustomStringConverter).AsCallable();
-        set => GodotObject.Set(ClassVariable.CustomStringConverter, value);
+        get => GodotResource.Get(ClassVariable.CustomStringConverter).AsCallable();
+        set => GodotResource.Set(ClassVariable.CustomStringConverter, value);
     }
 
     public void Load()
     {
-        GodotObject.Call(MethodName.Load);
+        GodotResource.Call(MethodName.Load);
     }
 
-    public Godot.Collections.Dictionary ToDict()
+    public Dictionary ToDict()
     {
-        return GodotObject.Call(MethodName.ToDict).AsGodotDictionary();
+        return GodotResource.Call(MethodName.ToDict).AsGodotDictionary();
     }
 
     private static class ClassVariable
@@ -541,7 +542,7 @@ public class LoggieMsg(GodotObject godotObject)
 {
     public readonly GodotObject GodotObject = godotObject;
 
-    public Godot.Collections.Array Content
+    public Array Content
     {
         get => GodotObject.Get(ClassVariable.Content).AsGodotArray();
         set => GodotObject.Set(ClassVariable.Content, value);
@@ -559,7 +560,7 @@ public class LoggieMsg(GodotObject godotObject)
         set => GodotObject.Set(ClassVariable.DomainName, value);
     }
 
-    public Godot.Collections.Array UsedChannels
+    public Array UsedChannels
     {
         get => GodotObject.Get(ClassVariable.UsedChannels).AsGodotArray();
         set => GodotObject.Set(ClassVariable.UsedChannels, value);
@@ -600,9 +601,10 @@ public class LoggieMsg(GodotObject godotObject)
         return this;
     }
 
-    public void Channel(Variant channels)
+    public LoggieMsg Channel(Variant channels)
     {
         GodotObject.Call(MethodName.Channel, channels);
+        return this;
     }
 
     public string GetPreprocessed(int flags, LoggieEnums.LogLevel level)
