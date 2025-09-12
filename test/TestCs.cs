@@ -179,9 +179,10 @@ public partial class TestCs : Control
     private static void PrintSettingValuesFromProjectSettings()
     {
         Loggie.Msg("Loggie Settings (as read from Project Settings):").Header().Info();
-        foreach (var (key, value) in Loggie.Settings.ProjectSettings)
+        foreach (var key in Loggie.Settings.ProjectSettings.Keys)
         {
-            Loggie.Msg($"|\t{key} = {value}").Info();
+            var value = ProjectSettings.GetSetting(key.AsString());
+            Loggie.Msg($"|\t{key} = {(value.VariantType == Variant.Type.Nil ? "<null>" : value)}").Info();
         }
 
         GD.Print();
