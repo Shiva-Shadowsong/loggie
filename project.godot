@@ -21,7 +21,7 @@ Loggie takes care that your logs always look clean in release builds, while allo
 If you need something simple but effective, Loggie is your guy."
 config/version="2.0"
 run/main_scene="res://test/test.tscn"
-config/features=PackedStringArray("4.3", "Forward Plus")
+config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://addons/loggie/assets/icon.png"
 
 [autoload]
