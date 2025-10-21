@@ -124,7 +124,7 @@ func get_preprocessed(flags : int, level : LoggieEnums.LogLevel) -> String:
 ## The classification of the message can be provided via [param msg_type], as certain types need extra handling and treatment.
 ## It also does a number of changes to the given [param msg] based on various Loggie settings.
 ## Designed to be called internally. You should consider using [method info], [method error], [method warn], [method notice], [method debug] instead.
-func output(level : LoggieEnums.LogLevel, msg_type : LoggieEnums.MsgType = LoggieEnums.MsgType.STANDARD) -> void:
+func output(level : LoggieEnums.LogLevel, msg_type : LoggieEnums.MsgType = LoggieEnums.MsgType.INFO) -> void:
 	var loggie = get_logger()
 	var message = self.string()
 	var target_domain = self.domain_name
@@ -183,19 +183,19 @@ func error() -> LoggieMsg:
 ## Outputs this message from Loggie as an Warning type message.
 ## The [Loggie.settings.log_level] must be equal to or higher to the WARN level for this to work.
 func warn() -> LoggieMsg:
-	output(LoggieEnums.LogLevel.WARN, LoggieEnums.MsgType.WARNING)
+	output(LoggieEnums.LogLevel.WARN, LoggieEnums.MsgType.WARN)
 	return self
 
 ## Outputs this message from Loggie as an Notice type message.
 ## The [Loggie.settings.log_level] must be equal to or higher to the NOTICE level for this to work.
 func notice() -> LoggieMsg:
-	output(LoggieEnums.LogLevel.NOTICE)
+	output(LoggieEnums.LogLevel.NOTICE, LoggieEnums.MsgType.NOTICE)
 	return self
 
 ## Outputs this message from Loggie as an Info type message.
 ## The [Loggie.settings.log_level] must be equal to or higher to the INFO level for this to work.
 func info() -> LoggieMsg:
-	output(LoggieEnums.LogLevel.INFO)
+	output(LoggieEnums.LogLevel.INFO, LoggieEnums.MsgType.INFO)
 	return self
 
 ## Outputs this message from Loggie as a Debug type message.
