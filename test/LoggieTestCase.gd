@@ -20,6 +20,9 @@ enum Result {
 func _init() -> void:
 	_original_settings = Loggie.settings
 
+func _to_string() -> String:
+	return get_script().get_global_name()
+
 ## Override this function in your test case to define how it runs.
 func run():
 	pass
@@ -54,7 +57,11 @@ func _finish():
 		Result.DidntRun:
 			msg = "[color=GOLD]☢️ Didn't run[/color]"
 	
-	msg = "[b]{name}[/b]: {msg}".format({"name": get_script().get_global_name(), "msg": msg})
+	msg = "\n[i][b][color=CORNFLOWER_BLUE]Case finished:[/color] [color=DARK_TURQUOISE]{caseName}[/color] ({msg})[/b][/i]".format({
+		"caseName" : self._to_string(),
+		"msg" : msg
+	})
+
 	print_rich(msg)
 	Loggie.settings = _original_settings
 	finished.emit()
