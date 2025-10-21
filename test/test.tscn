@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://2lnj7kmdncy0"]
+[gd_scene load_steps=5 format=3 uid="uid://2lnj7kmdncy0"]
 
 [ext_resource type="Script" uid="uid://dcmt6ghlwq62h" path="res://test/test.gd" id="1_jlagr"]
 [ext_resource type="Texture2D" uid="uid://2fr6et0qni2y" path="res://addons/loggie/assets/icon.png" id="2_ukv03"]
 [ext_resource type="Script" uid="uid://4a1yqn2y8wr5" path="res://test/test_cases/TestLogLevels.gd" id="3_65205"]
+[ext_resource type="Script" uid="uid://36347nxaj3fs" path="res://test/test_cases/TestColor.gd" id="3_hrq6i"]
 
 [node name="Test" type="Control"]
 layout_mode = 3
@@ -81,6 +82,9 @@ script = ExtResource("3_65205")
 [node name="DisabledTestCases" type="Node" parent="."]
 unique_name_in_owner = true
 
+[node name="TestColor" type="Node" parent="DisabledTestCases"]
+script = ExtResource("3_hrq6i")
+
 [node name="TodoCases" type="Node" parent="."]
 
 [node name="TestDomains" type="Node" parent="TodoCases"]
@@ -107,8 +111,14 @@ unique_name_in_owner = true
 
 [node name="TestClassNameDerivation" type="Node" parent="TodoCases"]
 
-[node name="TestColor" type="Node" parent="TodoCases"]
-
 [node name="TestDictPrettyPrint" type="Node" parent="TodoCases"]
 
 [node name="TestStackPrinting" type="Node" parent="TodoCases"]
+
+[node name="TestLoggieMsgWrappersEqualRawOutputCalls" type="Node" parent="TodoCases"]
+
+[node name="TestLoggieShortcutsEqualRawOutputCalls" type="Node" parent="TodoCases"]
+
+[node name="TestPreprocess" type="Node" parent="TodoCases"]
+
+[node name="TestComplexCombinationsOfFormatting" type="Node" parent="TodoCases"]

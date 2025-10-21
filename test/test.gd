@@ -44,13 +44,13 @@ func setup_gui():
 
 func run_tests():
 	print("---------------------------------------")
-	print("\t\t\tTests Started")
+	print("\t\t\tTesting Started")
 	print("---------------------------------------")
-	
+
 	# Prepare results storage.
-	var results = {}
-	for resultType in LoggieTestCase.Result.values():
-		results[resultType] = []
+	var results : Dictionary = {}
+	for result_type in LoggieTestCase.Result.values():
+		results[result_type] = [] as Array[LoggieTestCase]
 
 	# Run each case and store results.
 	for case : LoggieTestCase in %TestCases.get_children():
@@ -62,19 +62,70 @@ func run_tests():
 		case.call_deferred("run")
 		await case.finished
 		results[case.result].push_back(case)
-		
+
 	# Account for tests that didn't run.
-	results[LoggieTestCase.Result.DidntRun] = %DisabledTestCases.get_children()
-	
+	var disabled_cases : Array[LoggieTestCase]
+	for node in %DisabledTestCases.get_children():
+		if node is LoggieTestCase:
+			disabled_cases.push_back(node)
+	results[LoggieTestCase.Result.DidntRun] = disabled_cases
+
 	# Report Results.
+	print_final_report(results)
+
+func print_final_report(results : Dictionary) -> void:
 	print("---------------------------------------")
-	print("\t\t\tTests Finished")
+	print("\t\t\tTesting Finished")
 	print("---------------------------------------")
-	for resultType in results.keys():
-		print_rich("[b]{type}[/b]: {amount}".format({
-			"type": LoggieTestCase.Result.keys()[resultType],
-			"amount": results[resultType].size()
-		}))
+
+	var conclusion = ""
+	var conclusion_color = "pale_green"
+	var conclusion_icon = "✔️"
+	var context = ""
+
+	var failed_tests : Array[LoggieTestCase] = results[LoggieTestCase.Result.Fail]
+	var disabled_tests : Array[LoggieTestCase]  = results[LoggieTestCase.Result.DidntRun]
+	var timed_out_tests : Array[LoggieTestCase]  = results[LoggieTestCase.Result.TimedOut]
+	var successful_tests : Array[LoggieTestCase]  = results[LoggieTestCase.Result.Success]
+
+	var total_tests = %TestCases.get_child_count()
+	var total_failed_tests : int = failed_tests.size() + timed_out_tests.size()
+
+
+	if disabled_tests.size() > 0:
+		conclusion_color = "gold"
+		conclusion_icon = "☢️"
+		context += "\n\t* [color=GOLD]☢️ {amount} tests were disabled. Please move all tests from 'DisabledTestCases' to 'TestCases' to try a full run.[/color]".format({
+			"amount": disabled_tests.size()
+		})
+
+	if total_failed_tests > 0:
+		conclusion_color = "salmon"
+		conclusion_icon = "❌"
+		conclusion = "{amount} tests failed."
+		if failed_tests.size() > 0:
+			context += "\n\t* [color=SALMON]{amount} tests failed. Please debug and fix the issues that caused these tests to fail: {list}[/color]".format({
+				"amount": failed_tests.size(),
+				"list": failed_tests
+			})
+		if timed_out_tests.size() > 0:
+			context += "\n\t* [color=SALMON]{amount} tests timed out. They failed to call 'success()' or 'fail()' within the allotted amount of time. Please debug and fix the issues that caused these tests to time out: {list}[/color]".format({
+				"amount": timed_out_tests.size(),
+				"list": timed_out_tests
+			})
+	else:
+		if disabled_tests.size() == 0:
+			context += "\t* Looks like things should be good to go!"
+
+	conclusion = "[b][i][color={color_str}]{icon} ({amount} / {total}) tests successful.[/color][/i][/b]".format({
+		"color_str": conclusion_color,
+		"icon": conclusion_icon,
+		"amount": successful_tests.size(),
+		"total": total_tests
+	})
+
+	print_rich(conclusion)
+	print_rich(context)
 
 # -----------------------------------------
 #region Tests
@@ -148,7 +199,7 @@ func test_domains():
 	Loggie.set_domain_enabled("Domain1", false)
 	Loggie.msg("Another similar message should appear below this notice if something is broken.").italic().color(Color.DIM_GRAY).notice()
 	Loggie.msg("> This message is coming from a disabled domain (You shouldn't be seeing this).").domain("Domain1").error()
-	
+
 	# Test outputting a message from a domain that is configured to use custom channels.
 	Loggie.set_domain_enabled("Domain3", true, "discord")
 	Loggie.msg("> This message should be visible on discord. (You should be seeing this)").domain("Domain3").info()
@@ -242,7 +293,7 @@ func test_slack_channel():
 
 func test_update_widget():
 	Loggie.version_manager = LoggieVersionManager.new()
-	Loggie.version_manager.connect_logger(Loggie) 
+	Loggie.version_manager.connect_logger(Loggie)
 	Loggie.version_manager.update_ready.connect(func():
 		var popup : Window = Loggie.version_manager.create_and_show_updater_widget(Loggie.version_manager._update)
 		var widget = popup.get_children().front()
