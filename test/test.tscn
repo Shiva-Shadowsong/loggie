@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://2lnj7kmdncy0"]
+[gd_scene load_steps=4 format=3 uid="uid://2lnj7kmdncy0"]
 
-[ext_resource type="Script" path="res://test/test.gd" id="1_jlagr"]
+[ext_resource type="Script" uid="uid://dcmt6ghlwq62h" path="res://test/test.gd" id="1_jlagr"]
 [ext_resource type="Texture2D" uid="uid://2fr6et0qni2y" path="res://addons/loggie/assets/icon.png" id="2_ukv03"]
+[ext_resource type="Script" uid="uid://4a1yqn2y8wr5" path="res://test/test_cases/TestLogLevels.gd" id="3_65205"]
 
 [node name="Test" type="Control"]
 layout_mode = 3
@@ -70,3 +71,44 @@ grow_vertical = 0
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 text = "Check your console"
 horizontal_alignment = 1
+
+[node name="TestCases" type="Node" parent="."]
+unique_name_in_owner = true
+
+[node name="TestLogLevels" type="Node" parent="TestCases"]
+script = ExtResource("3_65205")
+
+[node name="DisabledTestCases" type="Node" parent="."]
+unique_name_in_owner = true
+
+[node name="TodoCases" type="Node" parent="."]
+
+[node name="TestDomains" type="Node" parent="TodoCases"]
+
+[node name="TestFormatting_Boxes" type="Node" parent="TodoCases"]
+
+[node name="TestFormatting_LogLevels" type="Node" parent="TodoCases"]
+
+[node name="TestFormatting_Timestamps" type="Node" parent="TodoCases"]
+
+[node name="TestFormatting_Domains" type="Node" parent="TodoCases"]
+
+[node name="TestFormatting_BBCode" type="Node" parent="TodoCases"]
+
+[node name="TestFormatting_Markdown" type="Node" parent="TodoCases"]
+
+[node name="TestFormatting_ANSI" type="Node" parent="TodoCases"]
+
+[node name="TestSegments" type="Node" parent="TodoCases"]
+
+[node name="TestDiscordChannel" type="Node" parent="TodoCases"]
+
+[node name="TestSlackChannel" type="Node" parent="TodoCases"]
+
+[node name="TestClassNameDerivation" type="Node" parent="TodoCases"]
+
+[node name="TestColor" type="Node" parent="TodoCases"]
+
+[node name="TestDictPrettyPrint" type="Node" parent="TodoCases"]
+
+[node name="TestStackPrinting" type="Node" parent="TodoCases"]

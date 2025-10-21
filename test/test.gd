@@ -19,6 +19,7 @@ func _init() -> void:
 func _ready() -> void:
 	original_settings = Loggie.settings.duplicate()
 	setup_gui()
+	run_tests()
 
 	#print_setting_values_from_project_settings()
 	#print_actual_current_settings()
@@ -27,7 +28,7 @@ func _ready() -> void:
 	#test_all_log_level_outputs()
 	#test_decors()
 	#test_output_from_classes_of_various_inheritances_and_origins()
-	test_domains()
+	#test_domains()
 	#test_segments()
 	#test_bbcode_to_markdown()
 	#test_discord_channel()
@@ -35,8 +36,45 @@ func _ready() -> void:
 	#test_update_widget()
 
 func setup_gui():
+	var test_channel = load("res://test/testing_props/TestChannel.gd").new()
+	Loggie.add_channel(test_channel)
+
 	$Label.text = "Loggie {version}".format({"version": Loggie.get("version_manager").version if Loggie.get("version_manager") != null else "<?>"})
 	Loggie.msg("Edit the test.tscn _ready function and uncomment the calls to features you want to test out.").italic().color(Color.GRAY).preprocessed(false).info()
+
+func run_tests():
+	print("---------------------------------------")
+	print("\t\t\tTests Started")
+	print("---------------------------------------")
+	
+	# Prepare results storage.
+	var results = {}
+	for resultType in LoggieTestCase.Result.values():
+		results[resultType] = []
+
+	# Run each case and store results.
+	for case : LoggieTestCase in %TestCases.get_children():
+		Loggie.settings = case.settings
+		print_rich("[i][b][color=CORNFLOWER_BLUE]Running case:[/color] [color=DARK_TURQUOISE]{caseName}[/color][/b][/i]".format({
+			"caseName" : case.get_script().get_global_name(),
+		}))
+		case._run_timeout_counter()
+		case.call_deferred("run")
+		await case.finished
+		results[case.result].push_back(case)
+		
+	# Account for tests that didn't run.
+	results[LoggieTestCase.Result.DidntRun] = %DisabledTestCases.get_children()
+	
+	# Report Results.
+	print("---------------------------------------")
+	print("\t\t\tTests Finished")
+	print("---------------------------------------")
+	for resultType in results.keys():
+		print_rich("[b]{type}[/b]: {amount}".format({
+			"type": LoggieTestCase.Result.keys()[resultType],
+			"amount": results[resultType].size()
+		}))
 
 # -----------------------------------------
 #region Tests
