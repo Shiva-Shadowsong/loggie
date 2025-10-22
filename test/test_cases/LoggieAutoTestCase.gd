@@ -1,4 +1,4 @@
-class_name LoggieTestCase extends Node
+class_name LoggieAutoTestCase extends Node
 
 signal finished()
 

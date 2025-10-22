@@ -49,11 +49,11 @@ func run_tests():
 
 	# Prepare results storage.
 	var results : Dictionary = {}
-	for result_type in LoggieTestCase.Result.values():
-		results[result_type] = [] as Array[LoggieTestCase]
+	for result_type in LoggieAutoTestCase.Result.values():
+		results[result_type] = [] as Array[LoggieAutoTestCase]
 
 	# Run each case and store results.
-	for case : LoggieTestCase in %TestCases.get_children():
+	for case : LoggieAutoTestCase in %AutoTestCases.get_children():
 		Loggie.settings = case.settings
 		print_rich("[i][b][color=CORNFLOWER_BLUE]Running case:[/color] [color=DARK_TURQUOISE]{caseName}[/color][/b][/i]".format({
 			"caseName" : case.get_script().get_global_name(),
@@ -64,11 +64,11 @@ func run_tests():
 		results[case.result].push_back(case)
 
 	# Account for tests that didn't run.
-	var disabled_cases : Array[LoggieTestCase]
-	for node in %DisabledTestCases.get_children():
-		if node is LoggieTestCase:
+	var disabled_cases : Array[LoggieAutoTestCase]
+	for node in %DisabledAutoTestCases.get_children():
+		if node is LoggieAutoTestCase:
 			disabled_cases.push_back(node)
-	results[LoggieTestCase.Result.DidntRun] = disabled_cases
+	results[LoggieAutoTestCase.Result.DidntRun] = disabled_cases
 
 	# Report Results.
 	print_final_report(results)
@@ -83,19 +83,19 @@ func print_final_report(results : Dictionary) -> void:
 	var conclusion_icon = "✔️"
 	var context = ""
 
-	var failed_tests : Array[LoggieTestCase] = results[LoggieTestCase.Result.Fail]
-	var disabled_tests : Array[LoggieTestCase]  = results[LoggieTestCase.Result.DidntRun]
-	var timed_out_tests : Array[LoggieTestCase]  = results[LoggieTestCase.Result.TimedOut]
-	var successful_tests : Array[LoggieTestCase]  = results[LoggieTestCase.Result.Success]
+	var failed_tests : Array[LoggieAutoTestCase] = results[LoggieAutoTestCase.Result.Fail]
+	var disabled_tests : Array[LoggieAutoTestCase]  = results[LoggieAutoTestCase.Result.DidntRun]
+	var timed_out_tests : Array[LoggieAutoTestCase]  = results[LoggieAutoTestCase.Result.TimedOut]
+	var successful_tests : Array[LoggieAutoTestCase]  = results[LoggieAutoTestCase.Result.Success]
 
-	var total_tests = %TestCases.get_child_count()
+	var total_tests = %AutoTestCases.get_child_count()
 	var total_failed_tests : int = failed_tests.size() + timed_out_tests.size()
 
 
 	if disabled_tests.size() > 0:
 		conclusion_color = "gold"
 		conclusion_icon = "☢️"
-		context += "\n\t* [color=GOLD]☢️ {amount} tests were disabled. Please move all tests from 'DisabledTestCases' to 'TestCases' to try a full run.[/color]".format({
+		context += "\n\t* [color=GOLD]☢️ {amount} tests were disabled. Please move all tests from 'DisabledAutoTestCases' to 'AutoTestCases' to try a full run.[/color]".format({
 			"amount": disabled_tests.size()
 		})
 
