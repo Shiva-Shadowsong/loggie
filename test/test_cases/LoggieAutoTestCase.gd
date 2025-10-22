@@ -10,6 +10,10 @@ var _original_settings : LoggieSettings
 
 var _timeout_counter : Timer = Timer.new()
 
+var _console : LoggieTestConsole
+
+var c_print_verbose_details : bool = true
+
 enum Result {
 	Fail,
 	Success,
@@ -62,6 +66,21 @@ func _finish():
 		"msg" : msg
 	})
 
-	print_rich(msg)
+	c_print(msg, true, false)
 	Loggie.settings = _original_settings
 	finished.emit()
+
+func c_print(text : String, rich : bool = false, as_verbose: bool = false) -> void:
+	if as_verbose and !c_print_verbose_details:
+		return
+		
+	var rtlabel : RichTextLabel
+	if !as_verbose:
+		rtlabel = _console.add_text(text)
+
+	if rich:
+		print_rich(text)
+	else:
+		if rtlabel:
+			rtlabel.bbcode_enabled = false
+		print(text)
