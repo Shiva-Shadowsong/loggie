@@ -1,13 +1,21 @@
-[gd_scene load_steps=12 format=3 uid="uid://2lnj7kmdncy0"]
+[gd_scene load_steps=22 format=3 uid="uid://2lnj7kmdncy0"]
 
 [ext_resource type="Script" uid="uid://dcmt6ghlwq62h" path="res://test/test.gd" id="1_jlagr"]
 [ext_resource type="Texture2D" uid="uid://2fr6et0qni2y" path="res://addons/loggie/assets/icon.png" id="2_ukv03"]
 [ext_resource type="Script" uid="uid://4a1yqn2y8wr5" path="res://test/test_cases/automatic/TestLogLevels.gd" id="3_65205"]
 [ext_resource type="Script" uid="uid://36347nxaj3fs" path="res://test/test_cases/automatic/TestColor.gd" id="3_hrq6i"]
 [ext_resource type="Script" uid="uid://due7vi6xbbvua" path="res://test/test_cases/automatic/TestFormatting_Timestamps.gd" id="3_s3n3v"]
+[ext_resource type="Script" uid="uid://bfludw8xcq72x" path="res://test/test_cases/visual/VTestDictPrettyPrint.gd" id="5_5jhup"]
 [ext_resource type="Script" uid="uid://vao00eca8jyy" path="res://test/test_cases/visual/VTestLogLevels.gd" id="5_f6u32"]
 [ext_resource type="Script" uid="uid://clxbe5mw1ecld" path="res://test/test_cases/automatic/TestFormatting_LogLevels.gd" id="5_tbfq4"]
+[ext_resource type="Script" uid="uid://d1xywdxslmyur" path="res://test/test_cases/visual/VTestStackPrinting.gd" id="6_v2t6q"]
+[ext_resource type="Script" uid="uid://cx0inowgmkd5r" path="res://test/test_cases/automatic/TestProductionOutput.gd" id="7_hictm"]
+[ext_resource type="Script" uid="uid://d30lcvq5kuia5" path="res://test/test_cases/automatic/TestClassNameDerivation.gd" id="7_ibfm0"]
+[ext_resource type="Script" uid="uid://ks7rt20kte1o" path="res://test/test_cases/automatic/TestLoggieMsgWrappersEqualRawOutputCalls.gd" id="7_joax2"]
 [ext_resource type="Script" uid="uid://c21lyo27tk66j" path="res://test/testing_props/test_console/LoggieTestConsole.gd" id="7_kgdm3"]
+[ext_resource type="Script" uid="uid://u1ahteyvyg5s" path="res://test/test_cases/visual/VTestFormatConversions.gd" id="7_kr6cc"]
+[ext_resource type="Script" uid="uid://coa4tajjca01v" path="res://test/test_cases/automatic/TestDomains.gd" id="9_f6u32"]
+[ext_resource type="Script" uid="uid://c24tdp1xui6lw" path="res://test/test_cases/automatic/TestSegments.gd" id="12_vvaop"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v2t6q"]
 bg_color = Color(0.105882354, 0.09803922, 0.14117648, 1)
@@ -17,6 +25,17 @@ bg_color = Color(0.105882354, 0.09803922, 0.14117648, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_aeque"]
 bg_color = Color(0.012999999, 0.015916666, 0.02, 0.32941177)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vvaop"]
+bg_color = Color(0.09726877, 0.08263189, 0.1664024, 0.5411765)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.29803923, 0.29803923, 0.29803923, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ibfm0"]
+bg_color = Color(0.6309892, 0.47368062, 0.30109403, 1)
 
 [node name="Test" type="Control"]
 layout_mode = 3
@@ -29,7 +48,6 @@ script = ExtResource("1_jlagr")
 
 [node name="TitleScreen" type="Control" parent="."]
 unique_name_in_owner = true
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -54,9 +72,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -80.0
-offset_top = -144.0
+offset_top = -292.0
 offset_right = 80.0
-offset_bottom = 16.0
+offset_bottom = -132.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_ukv03")
@@ -65,7 +83,7 @@ texture = ExtResource("2_ukv03")
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_top = 601.0
+offset_top = 492.0
 offset_bottom = 1078.0
 grow_horizontal = 2
 theme_override_constants/separation = 24
@@ -83,13 +101,15 @@ layout_mode = 2
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/normal_font_size = 18
 bbcode_enabled = true
-text = "This module will help you test whether Loggie features are working as expected after you've made changes.
+text = "This module will help you test whether key Loggie features are working as expected after you've made changes.
 
-There are two series of tests that will run.
-Automated tests will run automatically, you should only observe and verify that their results are satisfactory.
-Then, visual tests will run. Ideally, you should run and verify the results of each visual test manually.
+[color=goldenrod]There are two series of tests that will run.
+1. Automated Tests: These will run automatically. You only observe and verify that all of the tests have passed.
+2. Visual Tests: These require your manual verification and will run one by one, as you accept or reject their results.[/color]
 
-If you want to learn how to add new tests, please check the related documentation on the [url=https://github.com/Shiva-Shadowsong/loggie]Loggie GitHub page[/url]."
+[b]If all tests have passed, it's a good indicator that the plugin is in a healthy state - but this does not guarantee that there are no bugs with new changes, as feature test coverage is not 100%.[/b]
+
+[color=dark_gray]If you want to learn how to add new tests, please check the related documentation on the [url=https://github.com/Shiva-Shadowsong/loggie]Loggie GitHub page[/url].[/color]"
 fit_content = true
 horizontal_alignment = 1
 
@@ -98,10 +118,13 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(390, 70)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.64935, 0.74, 0.3774, 1)
+theme_override_font_sizes/font_size = 26
 text = "Begin Testing"
 
 [node name="TestingScreen" type="Control" parent="."]
 unique_name_in_owner = true
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -155,7 +178,9 @@ autowrap_trim_flags = 128
 [node name="Label2" type="Label" parent="TestingScreen/TestingScreenLayout/LeftPanel/ScrollContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.68, 0.68, 0.68, 1)
-text = "Navigate to tests using this menu, or let it navigate automatically by accepting or rejecting test results with the buttons on the bottom."
+text = "Navigate to tests using this menu, or let it navigate automatically by accepting or rejecting test results with the buttons on the bottom.
+
+The goal is to check all of them and mark them either as rejected or accepted."
 horizontal_alignment = 1
 autowrap_mode = 3
 autowrap_trim_flags = 128
@@ -242,6 +267,9 @@ layout_mode = 2
 [node name="ProgressBar" type="ProgressBar" parent="TestingScreen/TestingScreenLayout/LoggieTestConsole/VBoxContainer/ConsoleBottomBar"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_constants/outline_size = 9
+theme_override_styles/background = SubResource("StyleBoxFlat_vvaop")
+theme_override_styles/fill = SubResource("StyleBoxFlat_ibfm0")
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="TestingScreen/TestingScreenLayout/LoggieTestConsole/VBoxContainer/ConsoleBottomBar"]
 custom_minimum_size = Vector2(0, 52)
@@ -252,11 +280,13 @@ alignment = 1
 [node name="RejectBtn" type="Button" parent="TestingScreen/TestingScreenLayout/LoggieTestConsole/VBoxContainer/ConsoleBottomBar/HBoxContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Reject"
+theme_override_colors/font_color = Color(0.87, 0.45124003, 0.2088, 1)
+text = "Reject and Proceed"
 
 [node name="AcceptBtn" type="Button" parent="TestingScreen/TestingScreenLayout/LoggieTestConsole/VBoxContainer/ConsoleBottomBar/HBoxContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_colors/font_color = Color(0.63848394, 0.9715877, 0.6435505, 1)
 text = "Accept and Proceed"
 
 [node name="ProceedToVisualTestsBtn" type="Button" parent="TestingScreen/TestingScreenLayout/LoggieTestConsole/VBoxContainer/ConsoleBottomBar/HBoxContainer2"]
@@ -265,31 +295,43 @@ visible = false
 layout_mode = 2
 text = "Proceed to Visual Tests"
 
-[node name="VisualTests" type="Node" parent="TestingScreen/TestingScreenLayout/LoggieTestConsole"]
-
-[node name="VisualTests_Completed" type="Node" parent="TestingScreen/TestingScreenLayout/LoggieTestConsole"]
-
 [node name="Tests" type="Node" parent="."]
 
 [node name="Visual" type="Node" parent="Tests"]
 
-[node name="VisualTestCases" type="Node" parent="Tests/Visual"]
+[node name="VisualTestCases" type="Control" parent="Tests/Visual"]
 unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 0
 
 [node name="VTestLogLevels" type="Node" parent="Tests/Visual/VisualTestCases"]
 script = ExtResource("5_f6u32")
 
-[node name="DisabledVisualTestCases" type="Node" parent="Tests/Visual"]
+[node name="VTestDictPrettyPrint" type="Node" parent="Tests/Visual/VisualTestCases"]
+script = ExtResource("5_5jhup")
+
+[node name="TestStackPrinting" type="Node" parent="Tests/Visual/VisualTestCases"]
+script = ExtResource("6_v2t6q")
+
+[node name="TestFormatConversions" type="Node" parent="Tests/Visual/VisualTestCases"]
+script = ExtResource("7_kr6cc")
+
+[node name="DisabledVisualTestCases" type="Node3D" parent="Tests/Visual"]
 
 [node name="TodoVisualTestCases" type="Node" parent="Tests/Visual"]
 
 [node name="Automated" type="Node" parent="Tests"]
 
-[node name="AutoTestCases" type="Node" parent="Tests/Automated"]
+[node name="AutoTestCases" type="Control" parent="Tests/Automated"]
 unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 0
 
 [node name="TestLogLevels" type="Node" parent="Tests/Automated/AutoTestCases"]
 script = ExtResource("3_65205")
+
+[node name="TestLoggieMsgWrappersEqualRawOutputCalls" type="Node" parent="Tests/Automated/AutoTestCases"]
+script = ExtResource("7_joax2")
 
 [node name="TestFormatting_LogLevels" type="Node" parent="Tests/Automated/AutoTestCases"]
 script = ExtResource("5_tbfq4")
@@ -300,41 +342,19 @@ script = ExtResource("3_hrq6i")
 [node name="TestFormatting_Timestamps" type="Node" parent="Tests/Automated/AutoTestCases"]
 script = ExtResource("3_s3n3v")
 
-[node name="DisabledAutoTestCases" type="Node" parent="Tests/Automated"]
+[node name="TestDomains" type="Node" parent="Tests/Automated/AutoTestCases"]
+script = ExtResource("9_f6u32")
+
+[node name="TestSegments" type="Node" parent="Tests/Automated/AutoTestCases"]
+script = ExtResource("12_vvaop")
+
+[node name="TestClassNameDerivation" type="Node" parent="Tests/Automated/AutoTestCases"]
+script = ExtResource("7_ibfm0")
+
+[node name="TestProductionOutput" type="Node" parent="Tests/Automated/AutoTestCases"]
+script = ExtResource("7_hictm")
+
+[node name="DisabledAutoTestCases" type="Node3D" parent="Tests/Automated"]
 unique_name_in_owner = true
 
 [node name="TodoAutoTestCases" type="Node" parent="Tests/Automated"]
-
-[node name="TestDomains" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
-
-[node name="TestFormatting_Domains" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
-
-[node name="TestFormatting_BBCode" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
-
-[node name="TestFormatting_Markdown" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
-
-[node name="TestFormatting_ANSI" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
-
-[node name="TestSegments" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
-
-[node name="TestDiscordChannel" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
-
-[node name="TestSlackChannel" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
-
-[node name="TestClassNameDerivation" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
-
-[node name="TestDictPrettyPrint" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
-
-[node name="TestStackPrinting" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
-
-[node name="TestLoggieMsgWrappersEqualRawOutputCalls" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
-
-[node name="TestLoggieShortcutsEqualRawOutputCalls" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
-
-[node name="TestPreprocess" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
-
-[node name="TestComplexCombinationsOfFormatting" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
-
-[node name="TestEnforceOptimalInProduction" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
-
-[node name="TestProductionOutput" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
