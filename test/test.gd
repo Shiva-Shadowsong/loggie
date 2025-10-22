@@ -13,13 +13,9 @@ const SCRIPT_LOGGIE_TALKER_GRANDCHILD = preload("res://test/testing_props/talker
 const SCRIPT_LOGGIE_TALKER_NAMED_GRANDCHILD = preload("res://test/testing_props/talkers/LoggieTalkerNamedGrandchild.gd")
 const SCRIPT_LOGGIE_TALKER_NAMED_CHILD = preload("res://test/testing_props/talkers/LoggieTalkerNamedChild.gd")
 
-func _init() -> void:
-	Loggie.msg("Test message from test.gd _init.").warn()
-
 func _ready() -> void:
 	original_settings = Loggie.settings.duplicate()
 	setup_gui()
-	run_tests()
 
 	#print_setting_values_from_project_settings()
 	#print_actual_current_settings()
@@ -35,14 +31,143 @@ func _ready() -> void:
 	#test_slack_channel()
 	#test_update_widget()
 
+
+# -----------------------------------------
+#region General GUI
+# -----------------------------------------
+
 func setup_gui():
 	var test_channel = load("res://test/testing_props/TestChannel.gd").new()
 	Loggie.add_channel(test_channel)
 
-	$Label.text = "Loggie {version}".format({"version": Loggie.get("version_manager").version if Loggie.get("version_manager") != null else "<?>"})
-	Loggie.msg("Edit the test.tscn _ready function and uncomment the calls to features you want to test out.").italic().color(Color.GRAY).preprocessed(false).info()
+	var console_channel : LoggieTestConsoleChannel = load("res://test/testing_props/test_console/LoggieTestConsoleChannel.gd").new()
+	console_channel.console = %LoggieTestConsole
+	Loggie.add_channel(console_channel)
 
-func run_tests():
+	%TitleScreen.show()
+	%TestingScreen.hide()
+	%BigLabel.text = "Loggie {version}".format({"version": Loggie.get("version_manager").version if Loggie.get("version_manager") != null else "<?>"})
+	%BeginTestingBtn.pressed.connect(func():
+		_enter_testing_phase(1)
+	)
+	
+	%AcceptBtn.pressed.connect(on_accept_visual_test_case_pressed)
+	%RejectBtn.pressed.connect(on_reject_visual_test_case_pressed)
+
+func purge_console_content() -> void:
+	for content in %Content.get_children():
+		content.free()
+
+func _enter_testing_phase(phase : int) -> void:
+	%BeginTestingBtn.disabled = true
+	%TitleScreen.hide()
+	%TestingScreen.show()
+	%LoggieTestConsole.show()
+
+	if phase == 1:
+		%LeftPanel.hide()
+		%ConsoleBottomBar.hide()
+		%ProgressBar.hide()
+		%RejectBtn.hide()
+		%AcceptBtn.hide()
+		%ProceedToVisualTestsBtn.show()
+		run_automated_tests()
+
+	if phase == 2:
+		purge_console_content()
+		%LeftPanel.show()
+		%ConsoleBottomBar.show()
+		%ProgressBar.show()
+		%RejectBtn.show()
+		%AcceptBtn.show()
+		%ProceedToVisualTestsBtn.hide()
+		
+	if phase == 3:
+		purge_console_content()
+		%LeftPanel.show()
+		%AcceptBtn.hide()
+		%RejectBtn.hide()
+		%ProceedToVisualTestsBtn.hide()
+		%ConsoleBottomBar.show()
+		
+#endregion
+# -----------------------------------------
+#region Visual Tests
+# -----------------------------------------
+
+func run_visual_testing() -> void:
+	create_visual_tests_list()
+	_enter_testing_phase(2)
+	on_visual_test_case_finished()
+
+func create_visual_tests_list() -> void:
+	for child in %VisualTestsMenu.get_children():
+		child.queue_free()
+	
+	for child in %VisualTestCases.get_children():
+		if child is LoggieVisualTestCase:
+			var case : LoggieVisualTestCase = child
+			case.finished.connect(on_visual_test_case_finished)
+			case._console = %LoggieTestConsole
+			var entry : VisualTestsMenuEntry = load("res://test/testing_props/test_console/visual_tests_menu_btn.tscn").instantiate()
+			entry.connect_to_test_case(case)
+			entry.get_button().pressed.connect(func():
+				_run_visual_test_case(case)
+			)
+			%VisualTestsMenu.add_child(entry)
+
+func update_progress_bar() -> void:
+	%ProgressBar.max_value = %VisualTestCases.get_child_count()
+	var progress_value = 0
+	for child in %VisualTestCases.get_children():
+		if child is LoggieVisualTestCase:
+			var case : LoggieVisualTestCase = child
+			if case.state == LoggieVisualTestCase.State.Accepted:
+				progress_value += 1
+	%ProgressBar.value = progress_value
+
+func get_next_available_visual_test_case_entry() -> VisualTestsMenuEntry:
+	for child in %VisualTestsMenu.get_children():
+		if child is VisualTestsMenuEntry:
+			var entry : VisualTestsMenuEntry = child
+			if entry._case.state == LoggieVisualTestCase.State.Undecided:
+				return entry
+	return null
+
+func on_visual_test_case_finished() -> void:
+	# Search for next available test case.
+	var next_available_entry : VisualTestsMenuEntry = get_next_available_visual_test_case_entry()
+	if next_available_entry == null:
+		# If none found, we are done testing, let's see results.
+		_enter_testing_phase(3)
+		%LoggieTestConsole.add_text("All tests have been covered. Final results: ?")
+	else:
+		# If found, run that case:
+		_run_visual_test_case(next_available_entry._case)
+	update_progress_bar()
+
+func on_accept_visual_test_case_pressed() -> void:
+	if !%Content.has_meta("currently_running_test_case"):
+		return
+	var case : LoggieVisualTestCase = %Content.get_meta("currently_running_test_case")
+	case.accept()
+
+func on_reject_visual_test_case_pressed() -> void:
+	if !%Content.has_meta("currently_running_test_case"):
+		return
+	var case : LoggieVisualTestCase = %Content.get_meta("currently_running_test_case")
+	case.reject()
+	
+func _run_visual_test_case(case : LoggieVisualTestCase) -> void:
+	purge_console_content()
+	case.run()
+	%Content.set_meta("currently_running_test_case", case)
+
+#endregion
+# -----------------------------------------
+#region Automated Tests
+# -----------------------------------------
+func run_automated_tests():
 	print("---------------------------------------")
 	print("\t\t\tTesting Started")
 	print("---------------------------------------")
@@ -55,9 +180,10 @@ func run_tests():
 	# Run each case and store results.
 	for case : LoggieAutoTestCase in %AutoTestCases.get_children():
 		Loggie.settings = case.settings
-		print_rich("[i][b][color=CORNFLOWER_BLUE]Running case:[/color] [color=DARK_TURQUOISE]{caseName}[/color][/b][/i]".format({
+		case._console = %LoggieTestConsole
+		case.c_print("[i][b][color=CORNFLOWER_BLUE]Running case:[/color] [color=DARK_TURQUOISE]{caseName}[/color][/b][/i]".format({
 			"caseName" : case.get_script().get_global_name(),
-		}))
+		}), true, false)
 		case._run_timeout_counter()
 		case.call_deferred("run")
 		await case.finished
@@ -71,9 +197,24 @@ func run_tests():
 	results[LoggieAutoTestCase.Result.DidntRun] = disabled_cases
 
 	# Report Results.
-	print_final_report(results)
+	var report : Dictionary = print_automated_tests_results_report(results)
+	%LoggieTestConsole.add_text(report.conclusion)
+	%LoggieTestConsole.add_text(report.context)
 
-func print_final_report(results : Dictionary) -> void:
+	if report.total_failed_tests == 0:
+		%LoggieTestConsole.add_text("[color=slate_gray]---------\nAutomated tests have finished.
+		If interested in inspecting them, verbose details are outputted to your main/Godot console.
+		When ready, please proceed to visual tests by clicking the button below.[/color]")
+		%ConsoleBottomBar.show()
+		%ProceedToVisualTestsBtn.pressed.connect(func():
+			run_visual_testing()
+		, CONNECT_ONE_SHOT)
+	else:
+		%LoggieTestConsole.add_text("[color=salmon]---------\nAutomated tests have finished. Some tests failed to pass. 
+		More details in your main/Godot console.
+		Please fix, restart the test scene and retry.[/color]")
+
+func print_automated_tests_results_report(results : Dictionary) -> Dictionary:
 	print("---------------------------------------")
 	print("\t\t\tTesting Finished")
 	print("---------------------------------------")
@@ -127,6 +268,13 @@ func print_final_report(results : Dictionary) -> void:
 	print_rich(conclusion)
 	print_rich(context)
 
+	return {
+		"conclusion" : conclusion,
+		"context": context,
+		"total_failed_tests": total_failed_tests,
+	}
+
+#endregion
 # -----------------------------------------
 #region Tests
 # -----------------------------------------

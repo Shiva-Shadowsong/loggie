@@ -1,9 +1,22 @@
-[gd_scene load_steps=5 format=3 uid="uid://2lnj7kmdncy0"]
+[gd_scene load_steps=12 format=3 uid="uid://2lnj7kmdncy0"]
 
 [ext_resource type="Script" uid="uid://dcmt6ghlwq62h" path="res://test/test.gd" id="1_jlagr"]
 [ext_resource type="Texture2D" uid="uid://2fr6et0qni2y" path="res://addons/loggie/assets/icon.png" id="2_ukv03"]
-[ext_resource type="Script" uid="uid://4a1yqn2y8wr5" path="res://test/test_cases/TestLogLevels.gd" id="3_65205"]
-[ext_resource type="Script" uid="uid://36347nxaj3fs" path="res://test/test_cases/TestColor.gd" id="3_hrq6i"]
+[ext_resource type="Script" uid="uid://4a1yqn2y8wr5" path="res://test/test_cases/automatic/TestLogLevels.gd" id="3_65205"]
+[ext_resource type="Script" uid="uid://36347nxaj3fs" path="res://test/test_cases/automatic/TestColor.gd" id="3_hrq6i"]
+[ext_resource type="Script" uid="uid://due7vi6xbbvua" path="res://test/test_cases/automatic/TestFormatting_Timestamps.gd" id="3_s3n3v"]
+[ext_resource type="Script" uid="uid://vao00eca8jyy" path="res://test/test_cases/visual/VTestLogLevels.gd" id="5_f6u32"]
+[ext_resource type="Script" uid="uid://clxbe5mw1ecld" path="res://test/test_cases/automatic/TestFormatting_LogLevels.gd" id="5_tbfq4"]
+[ext_resource type="Script" uid="uid://c21lyo27tk66j" path="res://test/testing_props/test_console/LoggieTestConsole.gd" id="7_kgdm3"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v2t6q"]
+bg_color = Color(0.105882354, 0.09803922, 0.14117648, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kgdm3"]
+bg_color = Color(0.105882354, 0.09803922, 0.14117648, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_aeque"]
+bg_color = Color(0.012999999, 0.015916666, 0.02, 0.32941177)
 
 [node name="Test" type="Control"]
 layout_mode = 3
@@ -14,7 +27,17 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_jlagr")
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="TitleScreen" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Bg" type="ColorRect" parent="TitleScreen"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -23,7 +46,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.105, 0.098, 0.14, 1)
 
-[node name="TextureRect" type="TextureRect" parent="ColorRect"]
+[node name="TextureRect" type="TextureRect" parent="TitleScreen/Bg"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -31,94 +54,287 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -80.0
-offset_top = -96.0
+offset_top = -144.0
 offset_right = 80.0
-offset_bottom = 64.0
+offset_bottom = 16.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_ukv03")
 
-[node name="Label" type="Label" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="TitleScreen"]
 layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -61.5
-offset_top = -143.0
-offset_right = 61.5
-offset_bottom = -120.0
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 601.0
+offset_bottom = 1078.0
 grow_horizontal = 2
-grow_vertical = 0
+theme_override_constants/separation = 24
+
+[node name="BigLabel" type="Label" parent="TitleScreen/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
 theme_override_colors/font_color = Color(0.878431, 0.662745, 0.266667, 1)
 theme_override_font_sizes/font_size = 47
 text = "Loggie"
 horizontal_alignment = 1
 
-[node name="Label2" type="Label" parent="."]
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -61.5
-offset_top = -111.0
-offset_right = 61.5
-offset_bottom = -88.0
-grow_horizontal = 2
-grow_vertical = 0
+[node name="SmallLabel" type="RichTextLabel" parent="TitleScreen/VBoxContainer"]
+layout_mode = 2
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-text = "Check your console"
+theme_override_font_sizes/normal_font_size = 18
+bbcode_enabled = true
+text = "This module will help you test whether Loggie features are working as expected after you've made changes.
+
+There are two series of tests that will run.
+Automated tests will run automatically, you should only observe and verify that their results are satisfactory.
+Then, visual tests will run. Ideally, you should run and verify the results of each visual test manually.
+
+If you want to learn how to add new tests, please check the related documentation on the [url=https://github.com/Shiva-Shadowsong/loggie]Loggie GitHub page[/url]."
+fit_content = true
 horizontal_alignment = 1
 
-[node name="TestCases" type="Node" parent="."]
+[node name="BeginTestingBtn" type="Button" parent="TitleScreen/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(390, 70)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Begin Testing"
+
+[node name="TestingScreen" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TestingScreenLayout" type="HBoxContainer" parent="TestingScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LeftPanel" type="Panel" parent="TestingScreen/TestingScreenLayout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_v2t6q")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="TestingScreen/TestingScreenLayout/LeftPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="TestingScreen/TestingScreenLayout/LeftPanel/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TestingScreen/TestingScreenLayout/LeftPanel/ScrollContainer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="TestingScreen/TestingScreenLayout/LeftPanel/ScrollContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 23
+text = "Visual Tests Menu"
+horizontal_alignment = 1
+autowrap_mode = 3
+autowrap_trim_flags = 128
+
+[node name="Label2" type="Label" parent="TestingScreen/TestingScreenLayout/LeftPanel/ScrollContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.68, 0.68, 0.68, 1)
+text = "Navigate to tests using this menu, or let it navigate automatically by accepting or rejecting test results with the buttons on the bottom."
+horizontal_alignment = 1
+autowrap_mode = 3
+autowrap_trim_flags = 128
+
+[node name="HSeparator" type="HSeparator" parent="TestingScreen/TestingScreenLayout/LeftPanel/ScrollContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="VisualTestsMenu" type="VBoxContainer" parent="TestingScreen/TestingScreenLayout/LeftPanel/ScrollContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="LoggieTestConsole" type="Panel" parent="TestingScreen/TestingScreenLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_kgdm3")
+script = ExtResource("7_kgdm3")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TestingScreen/TestingScreenLayout/LoggieTestConsole"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TestingScreen/TestingScreenLayout/LoggieTestConsole/VBoxContainer"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="TestingScreen/TestingScreenLayout/LoggieTestConsole/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("2_ukv03")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="TestingScreen/TestingScreenLayout/LoggieTestConsole/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.98, 0.79592335, 0.4998, 1)
+theme_override_font_sizes/font_size = 26
+text = "Loggie Test Console"
+
+[node name="HSeparator" type="HSeparator" parent="TestingScreen/TestingScreenLayout/LoggieTestConsole/VBoxContainer"]
+custom_minimum_size = Vector2(0, 7)
+layout_mode = 2
+
+[node name="Panel" type="Panel" parent="TestingScreen/TestingScreenLayout/LoggieTestConsole/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_aeque")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="TestingScreen/TestingScreenLayout/LoggieTestConsole/VBoxContainer/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="TestingScreen/TestingScreenLayout/LoggieTestConsole/VBoxContainer/Panel/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="Content" type="VBoxContainer" parent="TestingScreen/TestingScreenLayout/LoggieTestConsole/VBoxContainer/Panel/ScrollContainer/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ConsoleBottomBar" type="VBoxContainer" parent="TestingScreen/TestingScreenLayout/LoggieTestConsole/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HSeparator2" type="HSeparator" parent="TestingScreen/TestingScreenLayout/LoggieTestConsole/VBoxContainer/ConsoleBottomBar"]
+custom_minimum_size = Vector2(0, 7)
+layout_mode = 2
+
+[node name="ProgressBar" type="ProgressBar" parent="TestingScreen/TestingScreenLayout/LoggieTestConsole/VBoxContainer/ConsoleBottomBar"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="TestingScreen/TestingScreenLayout/LoggieTestConsole/VBoxContainer/ConsoleBottomBar"]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+theme_override_constants/separation = 54
+alignment = 1
+
+[node name="RejectBtn" type="Button" parent="TestingScreen/TestingScreenLayout/LoggieTestConsole/VBoxContainer/ConsoleBottomBar/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Reject"
+
+[node name="AcceptBtn" type="Button" parent="TestingScreen/TestingScreenLayout/LoggieTestConsole/VBoxContainer/ConsoleBottomBar/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Accept and Proceed"
+
+[node name="ProceedToVisualTestsBtn" type="Button" parent="TestingScreen/TestingScreenLayout/LoggieTestConsole/VBoxContainer/ConsoleBottomBar/HBoxContainer2"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "Proceed to Visual Tests"
+
+[node name="VisualTests" type="Node" parent="TestingScreen/TestingScreenLayout/LoggieTestConsole"]
+
+[node name="VisualTests_Completed" type="Node" parent="TestingScreen/TestingScreenLayout/LoggieTestConsole"]
+
+[node name="Tests" type="Node" parent="."]
+
+[node name="Visual" type="Node" parent="Tests"]
+
+[node name="VisualTestCases" type="Node" parent="Tests/Visual"]
 unique_name_in_owner = true
 
-[node name="TestLogLevels" type="Node" parent="TestCases"]
+[node name="VTestLogLevels" type="Node" parent="Tests/Visual/VisualTestCases"]
+script = ExtResource("5_f6u32")
+
+[node name="DisabledVisualTestCases" type="Node" parent="Tests/Visual"]
+
+[node name="TodoVisualTestCases" type="Node" parent="Tests/Visual"]
+
+[node name="Automated" type="Node" parent="Tests"]
+
+[node name="AutoTestCases" type="Node" parent="Tests/Automated"]
+unique_name_in_owner = true
+
+[node name="TestLogLevels" type="Node" parent="Tests/Automated/AutoTestCases"]
 script = ExtResource("3_65205")
 
-[node name="DisabledTestCases" type="Node" parent="."]
-unique_name_in_owner = true
+[node name="TestFormatting_LogLevels" type="Node" parent="Tests/Automated/AutoTestCases"]
+script = ExtResource("5_tbfq4")
 
-[node name="TestColor" type="Node" parent="DisabledTestCases"]
+[node name="TestColor" type="Node" parent="Tests/Automated/AutoTestCases"]
 script = ExtResource("3_hrq6i")
 
-[node name="TodoCases" type="Node" parent="."]
+[node name="TestFormatting_Timestamps" type="Node" parent="Tests/Automated/AutoTestCases"]
+script = ExtResource("3_s3n3v")
 
-[node name="TestDomains" type="Node" parent="TodoCases"]
+[node name="DisabledAutoTestCases" type="Node" parent="Tests/Automated"]
+unique_name_in_owner = true
 
-[node name="TestFormatting_Boxes" type="Node" parent="TodoCases"]
+[node name="TodoAutoTestCases" type="Node" parent="Tests/Automated"]
 
-[node name="TestFormatting_LogLevels" type="Node" parent="TodoCases"]
+[node name="TestDomains" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
 
-[node name="TestFormatting_Timestamps" type="Node" parent="TodoCases"]
+[node name="TestFormatting_Domains" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
 
-[node name="TestFormatting_Domains" type="Node" parent="TodoCases"]
+[node name="TestFormatting_BBCode" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
 
-[node name="TestFormatting_BBCode" type="Node" parent="TodoCases"]
+[node name="TestFormatting_Markdown" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
 
-[node name="TestFormatting_Markdown" type="Node" parent="TodoCases"]
+[node name="TestFormatting_ANSI" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
 
-[node name="TestFormatting_ANSI" type="Node" parent="TodoCases"]
+[node name="TestSegments" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
 
-[node name="TestSegments" type="Node" parent="TodoCases"]
+[node name="TestDiscordChannel" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
 
-[node name="TestDiscordChannel" type="Node" parent="TodoCases"]
+[node name="TestSlackChannel" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
 
-[node name="TestSlackChannel" type="Node" parent="TodoCases"]
+[node name="TestClassNameDerivation" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
 
-[node name="TestClassNameDerivation" type="Node" parent="TodoCases"]
+[node name="TestDictPrettyPrint" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
 
-[node name="TestDictPrettyPrint" type="Node" parent="TodoCases"]
+[node name="TestStackPrinting" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
 
-[node name="TestStackPrinting" type="Node" parent="TodoCases"]
+[node name="TestLoggieMsgWrappersEqualRawOutputCalls" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
 
-[node name="TestLoggieMsgWrappersEqualRawOutputCalls" type="Node" parent="TodoCases"]
+[node name="TestLoggieShortcutsEqualRawOutputCalls" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
 
-[node name="TestLoggieShortcutsEqualRawOutputCalls" type="Node" parent="TodoCases"]
+[node name="TestPreprocess" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
 
-[node name="TestPreprocess" type="Node" parent="TodoCases"]
+[node name="TestComplexCombinationsOfFormatting" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
 
-[node name="TestComplexCombinationsOfFormatting" type="Node" parent="TodoCases"]
+[node name="TestEnforceOptimalInProduction" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
+
+[node name="TestProductionOutput" type="Node" parent="Tests/Automated/TodoAutoTestCases"]
