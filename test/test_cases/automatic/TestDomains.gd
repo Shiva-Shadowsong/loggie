@@ -47,6 +47,7 @@ func run() -> void:
 	# Await 2 frames for Loggie's internal deferred calls to go through.
 	await get_tree().process_frame
 	await get_tree().process_frame
+	test_channel.message_received.disconnect(on_msg_received2)
 	
 	if received_msgs.size() != 1:
 		fail()
