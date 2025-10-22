@@ -13,17 +13,12 @@ var title = ""
 
 var _console : LoggieTestConsole
 
-var _original_settings : LoggieSettings
-
 var state : State = State.Undecided :
 	set(value):
 		var prevValue = self.state
 		state = value
 		if prevValue != value:
 			state_changed.emit(value)
-
-func _init() -> void:
-	_original_settings = Loggie.settings
 
 func run() -> void:
 	pass
@@ -37,5 +32,4 @@ func reject() -> void:
 	_finish()
 
 func _finish() -> void:
-	Loggie.settings = _original_settings
 	finished.emit()

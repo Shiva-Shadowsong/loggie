@@ -122,7 +122,7 @@ func update_progress_bar() -> void:
 	for child in %VisualTestCases.get_children():
 		if child is LoggieVisualTestCase:
 			var case : LoggieVisualTestCase = child
-			if case.state == LoggieVisualTestCase.State.Accepted:
+			if case.state != LoggieVisualTestCase.State.Undecided:
 				progress_value += 1
 	%ProgressBar.value = progress_value
 
@@ -159,6 +159,7 @@ func on_reject_visual_test_case_pressed() -> void:
 	case.reject()
 	
 func _run_visual_test_case(case : LoggieVisualTestCase) -> void:
+	reset_settings()
 	purge_console_content()
 	case.run()
 	%Content.set_meta("currently_running_test_case", case)
@@ -188,6 +189,7 @@ func run_automated_tests():
 		case.call_deferred("run")
 		await case.finished
 		results[case.result].push_back(case)
+		reset_settings()
 
 	# Account for tests that didn't run.
 	var disabled_cases : Array[LoggieAutoTestCase]
@@ -489,6 +491,10 @@ func print_actual_current_settings():
 
 func reset_settings():
 	Loggie.settings = original_settings.duplicate()
+	var test_channel : LoggieTestConsoleChannel = Loggie.get_channel("test_console")
+	if test_channel:
+		test_channel.reset()
+		
 
 #endregion
 # -----------------------------------------

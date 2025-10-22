@@ -6,8 +6,6 @@ var result : Result = Result.DidntRun
 
 var settings : LoggieSettings = LoggieSettings.new()
 
-var _original_settings : LoggieSettings
-
 var _timeout_counter : Timer = Timer.new()
 
 var _console : LoggieTestConsole
@@ -20,9 +18,6 @@ enum Result {
 	DidntRun,
 	TimedOut
 }
-
-func _init() -> void:
-	_original_settings = Loggie.settings
 
 func _to_string() -> String:
 	return get_script().get_global_name()
@@ -67,7 +62,6 @@ func _finish():
 	})
 
 	c_print(msg, true, false)
-	Loggie.settings = _original_settings
 	finished.emit()
 
 func c_print(text : String, rich : bool = false, as_verbose: bool = false) -> void:
