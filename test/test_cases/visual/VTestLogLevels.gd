@@ -4,6 +4,7 @@ func _init() -> void:
 	title = "Log Levels"
 
 func run() -> void:
+	Loggie.settings.log_level = LoggieEnums.LogLevel.DEBUG
 	_console.add_text("Please verify that below, there are exactly {levels_count} messages, one for each Log Level, and that their styles and content are looking correct:".format({
 		"levels_count": LoggieEnums.LogLevel.keys().size()
 	}))
