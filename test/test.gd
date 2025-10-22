@@ -96,6 +96,10 @@ func _enter_testing_phase(phase : int) -> void:
 # -----------------------------------------
 
 func run_visual_testing() -> void:
+	print("---------------------------------------")
+	print("\t\t\tVisual Testing Started")
+	print("---------------------------------------")
+	print("Please follow the instructions in the app window and make sure to cover all tests.")
 	create_visual_tests_list()
 	_enter_testing_phase(2)
 	on_visual_test_case_finished()
@@ -170,7 +174,7 @@ func _run_visual_test_case(case : LoggieVisualTestCase) -> void:
 # -----------------------------------------
 func run_automated_tests():
 	print("---------------------------------------")
-	print("\t\t\tTesting Started")
+	print("\t\t\tAutomated Testing Started")
 	print("---------------------------------------")
 
 	# Prepare results storage.
@@ -218,7 +222,7 @@ func run_automated_tests():
 
 func print_automated_tests_results_report(results : Dictionary) -> Dictionary:
 	print("---------------------------------------")
-	print("\t\t\tTesting Finished")
+	print("\t\t\tAutomated Testing Finished")
 	print("---------------------------------------")
 
 	var conclusion = ""
