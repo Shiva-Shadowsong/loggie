@@ -11,6 +11,7 @@ enum State {
 
 var title = ""
 
+@warning_ignore("unused_private_class_variable")
 var _console : LoggieTestConsole
 
 var state : State = State.Undecided :
