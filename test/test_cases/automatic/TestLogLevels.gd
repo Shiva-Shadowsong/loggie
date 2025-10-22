@@ -1,7 +1,7 @@
 ## Tests whether all supported log levels:
 ## [br]* Whether sending a message to each of the possible log levels results in a configured channel successfully receiving a message.
 ## [br]* Messages configured for some log level correctly fail to output when that log level is not enabled.
-class_name TestLogLevelOutputs extends LoggieTestCase
+class_name TestLogLevelOutputs extends LoggieAutoTestCase
 	
 func run() -> void:
 	settings.log_level = LoggieEnums.LogLevel.DEBUG
