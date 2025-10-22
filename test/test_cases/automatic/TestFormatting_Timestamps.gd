@@ -22,14 +22,14 @@ func run() -> void:
 	test_channel.message_received.connect(on_msg_received_substep.bind(msg_text))
 
 	# ----------- Substep 1: Test when timestamps are disabled. ------------ #
-	print_rich("\t Testing that there will be no timestamp if timestamp preprocess step is disabled.")
+	c_print("\t Testing that there will be no timestamp if timestamp preprocess step is disabled.", true, true)
 	test_channel.preprocess_flags = 0
 	test_msg.info()
 	await get_tree().process_frame; await get_tree().process_frame
 	test_channel.message_received.disconnect(on_msg_received_substep)
 	
 	# ----------- Substep 2: Test when timestamps are enabled (no UTC). ------------ #
-	print_rich("\t Testing that there will be a UTC timestamp when timestamps preprocess step is enabled and timestamps_use_utc = true.")
+	c_print("\t Testing that there will be a UTC timestamp when timestamps preprocess step is enabled and timestamps_use_utc = true.", true, true)
 	settings.timestamps_use_utc = true
 	test_channel.preprocess_flags = LoggieEnums.PreprocessStep.APPEND_TIMESTAMPS
 	test_channel.message_received.connect(on_msg_received_substep.bind(Loggie.msg()._apply_format_timestamp(msg_text)))
@@ -39,7 +39,7 @@ func run() -> void:
 	
 	# ----------- Substep 3: Test when timestamps are enabled (UTC). ------------ #
 	# Reuse substep2 callback since the same code will work, just needed to set settings.timestamps_use_utc to false in this case.
-	print_rich("\t Testing that there will be a non-UTC timestamp when timestamps preprocess step is enabled and timestamps_use_utc = false.")
+	c_print("\t Testing that there will be a non-UTC timestamp when timestamps preprocess step is enabled and timestamps_use_utc = false.", true, true)
 	settings.timestamps_use_utc = false
 	test_channel.message_received.connect(on_msg_received_substep.bind(Loggie.msg()._apply_format_timestamp(msg_text)))
 	test_msg.info()
@@ -63,4 +63,4 @@ func print_objective(compared_value : String, expected_value : String) -> void:
 		outputtxt += " ✔️"
 	else:
 		outputtxt += " ❌"
-	print(outputtxt)
+	c_print(outputtxt, false, true)

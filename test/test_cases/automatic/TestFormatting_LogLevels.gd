@@ -14,9 +14,9 @@ func run() -> void:
 	var msgs_passed_validation = []
 	var expected_msgs_amount = LoggieEnums.LogLevel.keys().size()
 
-	print_rich("\t Expecting to evaluate {expected_msgs_amount} messages on channel {target_channel}.".format({
+	c_print("\t Expecting to evaluate {expected_msgs_amount} messages on channel {target_channel}.".format({
 		"expected_msgs_amount": expected_msgs_amount, "target_channel": Loggie.settings.default_channels
-	}))
+	}), true, true)
 	
 	var onMessageReceived : Callable = func(msg : LoggieMsg, type : LoggieEnums.MsgType):
 		var log_level : LoggieEnums.LogLevel = type as LoggieEnums.LogLevel
@@ -45,7 +45,7 @@ func run() -> void:
 		else:
 			outputtxt = outputtxt + " ❌"
 
-		print(outputtxt)
+		c_print(outputtxt, false, true)
 	
 	test_channel.message_received.connect(onMessageReceived)
 	sendTestMessages()
@@ -57,7 +57,7 @@ func run() -> void:
 	# Everything was fine if all 5 messages were captured.
 	test_channel.message_received.disconnect(onMessageReceived)
 	if msgs_passed_validation.size() < expected_msgs_amount:
-		print("❌ Not all messages passed validation.")
+		c_print("❌ Not all messages passed validation.")
 		fail()
 		return
 
