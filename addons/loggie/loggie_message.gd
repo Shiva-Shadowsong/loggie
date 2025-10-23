@@ -96,22 +96,22 @@ func channel(channels : Variant):
 	return self
 
 ## Returns a processed version of the content of this message, which has modifications applied to
-## it based on the requested [param level] and other settings defined by the provided preprocess [param flags].
+## it based on the requested [param type] and other settings defined by the provided preprocess [param flags].
 ## Available preprocess flags are found in [enum LoggieEnums.PreprocessStep].
-func get_preprocessed(flags : int, level : LoggieEnums.LogLevel) -> String:
+func get_preprocessed(flags : int, _level : LoggieEnums.LogLevel, type : LoggieEnums.MsgType) -> String:
 	var loggie = get_logger()
 	var message = self.string()
 
-	match level:
-		LoggieEnums.LogLevel.ERROR:
+	match type:
+		LoggieEnums.MsgType.ERROR:
 			message = loggie.settings.format_error_msg.format({"msg": message})
-		LoggieEnums.LogLevel.WARN:
+		LoggieEnums.MsgType.WARN:
 			message = loggie.settings.format_warning_msg.format({"msg": message})
-		LoggieEnums.LogLevel.NOTICE:
+		LoggieEnums.MsgType.NOTICE:
 			message = loggie.settings.format_notice_msg.format({"msg": message})
-		LoggieEnums.LogLevel.INFO:
+		LoggieEnums.MsgType.INFO:
 			message = loggie.settings.format_info_msg.format({"msg": message})
-		LoggieEnums.LogLevel.DEBUG:
+		LoggieEnums.MsgType.DEBUG:
 			message = loggie.settings.format_debug_msg.format({"msg": message})
 
 	if (flags & LoggieEnums.PreprocessStep.APPEND_DOMAIN_NAME != 0) and !self.domain_name.is_empty():
@@ -123,7 +123,7 @@ func get_preprocessed(flags : int, level : LoggieEnums.LogLevel) -> String:
 	if (flags & LoggieEnums.PreprocessStep.APPEND_TIMESTAMPS != 0):
 		message = _apply_format_timestamp(message)
 
-	if self.appends_stack or (loggie.settings.debug_msgs_print_stack_trace and level == LoggieEnums.LogLevel.DEBUG):
+	if self.appends_stack or (loggie.settings.debug_msgs_print_stack_trace and type == LoggieEnums.MsgType.DEBUG):
 		message = _apply_format_stack(message)
 
 	return message
@@ -179,7 +179,7 @@ func output(level : LoggieEnums.LogLevel, msg_type : LoggieEnums.MsgType = Loggi
 		#   Otherwise, simply concatenate together all the [member content].
 		if self.preprocess:
 			var flags = self.custom_preprocess_flags if self.custom_preprocess_flags != -1 else channel.preprocess_flags
-			self.last_preprocess_result = get_preprocessed(flags, level)
+			self.last_preprocess_result = get_preprocessed(flags, level, msg_type)
 		else:
 			self.last_preprocess_result = self.string()
 
