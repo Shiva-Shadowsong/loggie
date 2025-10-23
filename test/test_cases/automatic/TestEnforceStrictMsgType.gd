@@ -38,6 +38,7 @@ func run() -> void:
 			
 			if not(received_msg == expected_msg and received_as_type == expected_type):
 				c_print("❌ At index {i} - The received message should be '{expected_msg}' with type {expected_type}. Instead got: '{received_msg}' with type {received_type}".format({
+					"i": i,
 					"expected_msg": expected_msg,
 					"expected_type": LoggieEnums.MsgType.keys()[expected_type],
 					"received_msg": received_msg,
@@ -46,7 +47,8 @@ func run() -> void:
 				failed_checks = true
 	else:
 		c_print("❌ Unexpected amount of messages received. Expected exactly 2. One of the test messages that shouldn't have been going through to the test_channel somehow arrived there.")
-	
+		failed_checks = true
+
 	test_channel.message_received.disconnect(on_msg_received)
 	
 	if failed_checks:
