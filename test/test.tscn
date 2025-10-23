@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://2lnj7kmdncy0"]
+[gd_scene load_steps=25 format=3 uid="uid://2lnj7kmdncy0"]
 
 [ext_resource type="Script" uid="uid://dcmt6ghlwq62h" path="res://test/test.gd" id="1_jlagr"]
 [ext_resource type="Texture2D" uid="uid://2fr6et0qni2y" path="res://addons/loggie/assets/icon.png" id="2_ukv03"]
@@ -16,6 +16,9 @@
 [ext_resource type="Script" uid="uid://u1ahteyvyg5s" path="res://test/test_cases/visual/VTestFormatConversions.gd" id="7_kr6cc"]
 [ext_resource type="Script" uid="uid://coa4tajjca01v" path="res://test/test_cases/automatic/TestDomains.gd" id="9_f6u32"]
 [ext_resource type="Script" uid="uid://c24tdp1xui6lw" path="res://test/test_cases/automatic/TestSegments.gd" id="12_vvaop"]
+[ext_resource type="Script" uid="uid://odkbgy6djd2q" path="res://test/test_cases/automatic/TestEnforceStrictMsgType.gd" id="17_258bh"]
+[ext_resource type="Script" uid="uid://dh8tccwebbdfv" path="res://test/test_cases/automatic/TestNoSignal.gd" id="18_yj84r"]
+[ext_resource type="Script" uid="uid://rukx4yg7oal2" path="res://test/test_cases/automatic/TestLinks.gd" id="19_76tuw"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v2t6q"]
 bg_color = Color(0.105882354, 0.09803922, 0.14117648, 1)
@@ -97,6 +100,7 @@ text = "Loggie"
 horizontal_alignment = 1
 
 [node name="SmallLabel" type="RichTextLabel" parent="TitleScreen/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/normal_font_size = 18
@@ -109,7 +113,7 @@ text = "This module will help you test whether key Loggie features are working a
 
 [b]If all tests have passed, it's a good indicator that the plugin is in a healthy state - but this does not guarantee that there are no bugs with new changes, as feature test coverage is not 100%.[/b]
 
-[color=dark_gray]If you want to learn how to add new tests, please check the related documentation on the [url=https://github.com/Shiva-Shadowsong/loggie]Loggie GitHub page[/url].[/color]"
+[color=dark_gray]If you want to learn how to add new tests, please check the related documentation on the [url=https://github.com/Shiva-Shadowsong/loggie]Loggie GitHub page[/url].[/color] Try this different [url=https://google.com]Google[/url]."
 fit_content = true
 horizontal_alignment = 1
 
@@ -353,6 +357,15 @@ script = ExtResource("7_ibfm0")
 
 [node name="TestProductionOutput" type="Node" parent="Tests/Automated/AutoTestCases"]
 script = ExtResource("7_hictm")
+
+[node name="TestEnforceStrictMsgType" type="Node" parent="Tests/Automated/AutoTestCases"]
+script = ExtResource("17_258bh")
+
+[node name="TestNoSignal" type="Node" parent="Tests/Automated/AutoTestCases"]
+script = ExtResource("18_yj84r")
+
+[node name="TestLinks" type="Node" parent="Tests/Automated/AutoTestCases"]
+script = ExtResource("19_76tuw")
 
 [node name="DisabledAutoTestCases" type="Node3D" parent="Tests/Automated"]
 unique_name_in_owner = true
