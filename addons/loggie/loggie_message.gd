@@ -52,6 +52,15 @@ var last_preprocess_result : String = ""
 ## Whether this message should append the stack trace during preprocessing.
 var appends_stack : bool = false
 
+## Controls whether the [enum LoggieEnums.MsgType] of this message, during [method output], 
+## will be decided dynamically, based on the [enum LoggieEnums.LogLevel] the message is being output at.
+## If disabled, the [member strict_type] will be used instead.
+var dynamic_type : bool = true
+
+## The [LoggieEnums.MsgType] this message will be considered typed as, if [member dynamic_type] is set
+## to [param false].
+var strict_type : LoggieEnums.MsgType = LoggieEnums.MsgType.INFO
+
 func _init(message = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> void:
 	var args = [message, arg1, arg2, arg3, arg4, arg5]
 	self.content[0] = LoggieTools.concatenate_args(args)
@@ -121,7 +130,8 @@ func get_preprocessed(flags : int, level : LoggieEnums.LogLevel) -> String:
 
 ## Outputs the given string [param message] at the given output [param level] to the standard output using either [method print_rich] or [method print].
 ## The domain from which the message is considered to be coming can be provided via [param target_domain].
-## The classification of the message can be provided via [param msg_type], as certain types need extra handling and treatment.
+## The message type can be provided via [param msg_type], but it will be ignored if [member dynamic_type] is false,
+## in which case, the [member strict_type] will be used.
 ## It also does a number of changes to the given [param msg] based on various Loggie settings.
 ## Designed to be called internally. You should consider using [method info], [method error], [method warn], [method notice], [method debug] instead.
 func output(level : LoggieEnums.LogLevel, msg_type : LoggieEnums.MsgType = LoggieEnums.MsgType.INFO) -> void:
@@ -147,6 +157,10 @@ func output(level : LoggieEnums.LogLevel, msg_type : LoggieEnums.MsgType = Loggi
 	if not loggie.is_domain_enabled(target_domain):
 		loggie.log_attempted.emit(self, message, LoggieEnums.LogAttemptResult.DOMAIN_DISABLED)
 		return
+
+	# Enforce the strict type of this message if it is configured not to allow dynamic type.
+	if !dynamic_type:
+		msg_type = strict_type
 
 	# Send the message on all configured channels.
 	var custom_target_channels = loggie.get_domain_custom_target_channels(target_domain)
@@ -381,6 +395,32 @@ func msg(message = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 
 ## under some circumstances that are based on other settings.
 func preprocessed(shouldPreprocess : bool) -> LoggieMsg:
 	self.preprocess = shouldPreprocess
+	return self
+
+## Sets this message's [LoggieEnums.MsgType] to be strictly the provided value,
+## instead of dynamically decided by the log level at which it is being outputted.
+## [br][param loggie_enums_msgtype_key_or_value] should either be provided as a direct value of the enum,
+## (e.g. [enum LoggieEnum.MsgType.INFO]) or as a string matching one of the keys in that enum (e.g.
+## `"info"` or `"INFO"`, case-insensitive).
+func type(loggie_enums_msgtype_key_or_value : Variant) -> LoggieMsg:
+	var isValid = false
+	var _type : LoggieEnums.MsgType
+
+	if loggie_enums_msgtype_key_or_value is LoggieEnums.MsgType:
+		_type = loggie_enums_msgtype_key_or_value
+		isValid = true
+	elif loggie_enums_msgtype_key_or_value is String:
+		var uppercase_key = loggie_enums_msgtype_key_or_value.to_upper()
+		if LoggieEnums.MsgType.keys().has(uppercase_key):
+			_type = LoggieEnums.MsgType[uppercase_key]
+			isValid = true 
+	
+	if isValid:
+		dynamic_type = false
+		strict_type = _type
+	else:
+		push_error("Attempt to set LoggieMsg type to {value} - could not be converted to a proper [LoggieEnums.MsgType]. Either provide a [LoggieEnums.MsgType], or a string that matches a key in that enum (case-insensitive).".format({"value": str(loggie_enums_msgtype_key_or_value)}))
+
 	return self
 
 ## Adds this message's configured domain to the start of the given [param message] and returns the modifier version of it.
