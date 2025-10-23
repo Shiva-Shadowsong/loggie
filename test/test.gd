@@ -31,6 +31,11 @@ func setup_gui():
 	
 	%AcceptBtn.pressed.connect(on_accept_visual_test_case_pressed)
 	%RejectBtn.pressed.connect(on_reject_visual_test_case_pressed)
+	
+	%SmallLabel.meta_clicked.connect(func(meta : Variant):
+		print("Meta clicked:", meta)
+		OS.shell_open(str(meta))
+	)
 
 ## Frees all children of the %Content node.
 func purge_console_content() -> void:
