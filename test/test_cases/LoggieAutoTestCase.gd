@@ -69,7 +69,7 @@ func _finish():
 		Result.DidntRun:
 			msg = "[color=GOLD]☢️ Didn't run[/color]"
 	
-	msg = "\n[i][b][color=CORNFLOWER_BLUE]Case finished:[/color] [color=DARK_TURQUOISE]{caseName}[/color] ({msg})[/b][/i]".format({
+	msg = "[i][b][color=CORNFLOWER_BLUE]Case finished:[/color] [color=DARK_TURQUOISE]{caseName}[/color] ({msg})[/b][/i]".format({
 		"caseName" : self._to_string(),
 		"msg" : msg
 	})
