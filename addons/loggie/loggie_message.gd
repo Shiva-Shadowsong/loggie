@@ -61,6 +61,10 @@ var dynamic_type : bool = true
 ## to [param false].
 var strict_type : LoggieEnums.MsgType = LoggieEnums.MsgType.INFO
 
+## The environment in which this message should be outputted based on the context the output is being requested from.
+## (e.g. only in-engine (during tool scripts), or only ingame, or both).
+var environment_mode : LoggieEnums.MsgEnvironment = LoggieEnums.MsgEnvironment.BOTH
+
 func _init(message = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> void:
 	var args = [message, arg1, arg2, arg3, arg4, arg5]
 	self.content[0] = LoggieTools.concatenate_args(args)
@@ -157,6 +161,18 @@ func output(level : LoggieEnums.LogLevel, msg_type : LoggieEnums.MsgType = Loggi
 	if not loggie.is_domain_enabled(target_domain):
 		loggie.log_attempted.emit(self, message, LoggieEnums.LogAttemptResult.DOMAIN_DISABLED)
 		return
+
+	# We don't output the message if the environment the output is being requested from is not compatible with 
+	# the environment this message is configured to be outputted in.
+	match environment_mode:
+		LoggieEnums.MsgEnvironment.ENGINE:
+			if not Engine.is_editor_hint():
+				loggie.log_attempted.emit(self, message, LoggieEnums.LogAttemptResult.WRONG_ENVIRONMENT)
+				return
+		LoggieEnums.MsgEnvironment.RUNTIME:
+			if Engine.is_editor_hint():
+				loggie.log_attempted.emit(self, message, LoggieEnums.LogAttemptResult.WRONG_ENVIRONMENT)
+				return
 
 	# Enforce the strict type of this message if it is configured not to allow dynamic type.
 	if !dynamic_type:
@@ -379,6 +395,12 @@ func hseparator(size : int = 16, alternative_symbol : Variant = null) -> LoggieM
 func endseg() -> LoggieMsg:
 	self.content.push_back("")
 	self.current_segment_index = self.content.size() - 1
+	return self
+
+## Sets the environment in which this message should be outputted based on the context the output is being requested from.
+## (e.g. only in-engine (during tool scripts), or only ingame, or both).
+func env(mode : LoggieEnums.MsgEnvironment) -> LoggieMsg:
+	self.environment_mode = mode
 	return self
 
 ## Creates a new segment in this message and sets its content to the given message.
