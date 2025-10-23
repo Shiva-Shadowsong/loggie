@@ -65,6 +65,9 @@ var strict_type : LoggieEnums.MsgType = LoggieEnums.MsgType.INFO
 ## (e.g. only in-engine (during tool scripts), or only ingame, or both).
 var environment_mode : LoggieEnums.MsgEnvironment = LoggieEnums.MsgEnvironment.BOTH
 
+## If set to true, the [signal Loggie.log_attempted] signal will not be emitted when this message attempts to be outputted.
+var dont_emit_log_attempted_signal : bool = false
+
 func _init(message = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> void:
 	var args = [message, arg1, arg2, arg3, arg4, arg5]
 	self.content[0] = LoggieTools.concatenate_args(args)
@@ -154,12 +157,12 @@ func output(level : LoggieEnums.LogLevel, msg_type : LoggieEnums.MsgType = Loggi
 
 	# We don't output the message if the settings dictate that messages of that level shouldn't be outputted.
 	if level > loggie.settings.log_level:
-		loggie.log_attempted.emit(self, message, LoggieEnums.LogAttemptResult.LOG_LEVEL_INSUFFICIENT)
+		_emit_log_attempted_signal(LoggieEnums.LogAttemptResult.LOG_LEVEL_INSUFFICIENT)
 		return
 
 	# We don't output the message if the domain from which it comes is not enabled.
 	if not loggie.is_domain_enabled(target_domain):
-		loggie.log_attempted.emit(self, message, LoggieEnums.LogAttemptResult.DOMAIN_DISABLED)
+		_emit_log_attempted_signal(LoggieEnums.LogAttemptResult.DOMAIN_DISABLED)
 		return
 
 	# We don't output the message if the environment the output is being requested from is not compatible with 
@@ -167,11 +170,11 @@ func output(level : LoggieEnums.LogLevel, msg_type : LoggieEnums.MsgType = Loggi
 	match environment_mode:
 		LoggieEnums.MsgEnvironment.ENGINE:
 			if not Engine.is_editor_hint():
-				loggie.log_attempted.emit(self, message, LoggieEnums.LogAttemptResult.WRONG_ENVIRONMENT)
+				_emit_log_attempted_signal(LoggieEnums.LogAttemptResult.WRONG_ENVIRONMENT)
 				return
 		LoggieEnums.MsgEnvironment.RUNTIME:
 			if Engine.is_editor_hint():
-				loggie.log_attempted.emit(self, message, LoggieEnums.LogAttemptResult.WRONG_ENVIRONMENT)
+				_emit_log_attempted_signal(LoggieEnums.LogAttemptResult.WRONG_ENVIRONMENT)
 				return
 
 	# Enforce the strict type of this message if it is configured not to allow dynamic type.
@@ -187,7 +190,7 @@ func output(level : LoggieEnums.LogLevel, msg_type : LoggieEnums.MsgType = Loggi
 		var channel : LoggieMsgChannel = loggie.get_channel(channel_id)
 
 		if channel == null:
-			loggie.log_attempted.emit(self, message, LoggieEnums.LogAttemptResult.INVALID_CHANNEL)
+			_emit_log_attempted_signal(LoggieEnums.LogAttemptResult.INVALID_CHANNEL)
 			continue
 
 		# Preprocessing Stage:
@@ -202,7 +205,7 @@ func output(level : LoggieEnums.LogLevel, msg_type : LoggieEnums.MsgType = Loggi
 		channel.send(self, msg_type)
 		
 	# Emit signal deferred so if this is called from a thread, it doesn't cry about it.
-	loggie.call_deferred("emit_signal", "log_attempted", self, message, LoggieEnums.LogAttemptResult.SUCCESS)
+	_emit_log_attempted_signal(LoggieEnums.LogAttemptResult.SUCCESS, true)
 
 ## Outputs this message from Loggie as an Error type message.
 ## The [Loggie.settings.log_level] must be equal to or higher to the ERROR level for this to work.
@@ -444,6 +447,26 @@ func type(loggie_enums_msgtype_key_or_value : Variant) -> LoggieMsg:
 		push_error("Attempt to set LoggieMsg type to {value} - could not be converted to a proper [LoggieEnums.MsgType]. Either provide a [LoggieEnums.MsgType], or a string that matches a key in that enum (case-insensitive).".format({"value": str(loggie_enums_msgtype_key_or_value)}))
 
 	return self
+
+## If [param enabled], the [signal Loggie.log_attempted] signal will not be emitted when this message attempts to be outputted.
+func no_signal(enabled : bool = true) -> LoggieMsg:
+	dont_emit_log_attempted_signal = enabled
+	return self
+
+## Internal method. Emits the [signal Loggie.log_attempted] signal (unless that feature is disabled).
+## Used during [method output]. If [param call_deferred] is true, the string of the message's content will
+## be prepared immediately, but the emission of the signal will be deferred.
+func _emit_log_attempted_signal(result : LoggieEnums.LogAttemptResult, call_deferred : bool = false) -> void:
+	if dont_emit_log_attempted_signal:
+		return
+
+	var loggie = get_logger()
+	var string_content = self.string()
+
+	if call_deferred:
+		loggie.call_deferred("emit_signal", "log_attempted", self, string_content, result)
+	else:
+		loggie.log_attempted.emit(self, string_content, result)
 
 ## Adds this message's configured domain to the start of the given [param message] and returns the modifier version of it.
 func _apply_format_domain(message : String) -> String:
