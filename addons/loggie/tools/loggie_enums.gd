@@ -69,6 +69,7 @@ enum LogAttemptResult {
 	LOG_LEVEL_INSUFFICIENT, ## Message won't be logged because it was output at a log level higher than what Loggie is currently set to.
 	DOMAIN_DISABLED, ## Message won't be logged because it was outputted from a disabled domain.
 	INVALID_CHANNEL, ## Message won't be logged because the channel which was supposed to send it doesn't exist.
+	WRONG_ENVIRONMENT, ## Message won't be logged because the environment the output is being requested from is not compatible with the environment this message is configured to be outputted in.
 }
 
 ## Defines a list of possible ways to configure Loggie to check for updates.
@@ -77,4 +78,11 @@ enum UpdateCheckType {
 	CHECK_AND_SHOW_MSG, ## If the user wants Loggie to check for updates, and display info in a terminal message.
 	CHECK_DOWNLOAD_AND_SHOW_MSG, ## If the user wants Loggie to check for updates, download the update, and display info in a terminal message.
 	CHECK_AND_SHOW_UPDATER_WINDOW, ## If the user wants Loggie to check for updats, and display the updater window.
+}
+
+## Defines a lists of possible environments in which a [LoggieMsg] can be outputted.
+enum MsgEnvironment {
+	BOTH, ## The message will be outputted both in-engine (tool scripts) and when the project is running.
+	ENGINE, ## The message will be outputted only in-engine (tool scripts).
+	RUNTIME, ## The message will be outputted only when the project is running.
 }
