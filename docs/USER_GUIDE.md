@@ -17,12 +17,13 @@ Loggie has a [bunch of features](ALL_FEATURES.md) but it's always good to have s
 > [!TIP]
 > # ![labelimg](https://i.imgur.com/f8Li33A.png) Categorizing and Organizing Messages
 > 
-> > Messages are categorized by their log level and a domain they belong to. 
+> > Messages are categorized by their log level, message type, and a domain they belong to. 
 > > Such features are a core component of many logging systems.
 > > Learn how they work here:
 >
-> * 📚 [1 - Log Levels](features/LOG_LEVELS.md) *(est. 8-10 min.)*
-> * 📚 [2 - Domains](features/DOMAINS.md) *(est. 6-8 min.)*
+> * 📚 [1 - Log Levels](features/LOG_LEVELS.md) *(est. 3-4 min.)*
+> * 📚 [2 - Message Types](customization/MESSAGE_TYPES.md) *(est. 8-10 min.)*
+> * 📚 [3 - Domains](features/DOMAINS.md) *(est. 6-8 min.)*
 
 ---
 

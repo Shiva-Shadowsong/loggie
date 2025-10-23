@@ -20,6 +20,7 @@ This page is a hub for browsing all documented features and other articles relat
 * [Domains](features/DOMAINS.md)
 * [Log File Management and Storage](features/LOG_FILES_AND_STORAGE.md)
 * [Log Levels](features/LOG_LEVELS.md)
+* [Message Types](customization/MESSAGE_TYPES.md)
 * [Output Format Mode](features/OUTPUT_FORMAT_MODES.md)
 	* Plain
 	* BBCode (Rich)

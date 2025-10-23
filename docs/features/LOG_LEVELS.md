@@ -1,11 +1,15 @@
 # Log Levels
 
 Log levels are a common concept found in most loggers.
+
 They represent categories of importance for log messages, typically ordered from most critical to least critical. 
 
 They form a hierarchy that can help you, and the logger, better understand the significance of a message, and how to handle such a message internally.
 
-Different levels may be handled and outputted differently. More about that below.
+>[!IMPORTANT]
+>**The `LogLevel` is a different classification than [Message Type](../customization/MESSAGE_TYPES.md).** 
+>Even though they have identical keys, and may seem interchangeable, they are not used for the same purpose.
+>Read that article for more info.
 
 ### Available Levels
 
@@ -37,9 +41,9 @@ Alternatively, if you are [using Custom Settings](../customization/CUSTOM_SETTIN
 log_level = LoggieEnums.LogLevel.INFO
 ```
 
-✔️ Once this is set, messages outputted on the selected log level, or **any level lower than that**, will get logged.
+✔️ Once this is set, messages outputted on the selected log level, or **any level lower than that**, will be output.
 
-❌ Messages coming from levels higher than the enabled one will be discarded during preprocessing and won't be logged.
+❌ Messages coming from levels higher than the enabled one will be discarded during preprocessing and won't be output.
 
 >[!NOTE]
 >### How is this useful to me?
@@ -57,55 +61,10 @@ Loggie.error("Something is wrong!")
 Loggie.msg("Something is wrong!").bold().italic().error()
 ```
 
-> [!TIP]
-> [Learn more about composing messages here.](COMPOSE_AND_OUTPUT_MESSAGES.md)
-## Functionality Differences
-
-Some log levels are handled differently than others during output to the Godot terminal channel.
-
-| Level  | Note                                                                                                                                                                                                                                                                                                                                                                                   |     |
-| ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- |
-| ERROR  | **Has Toggle**<br>If the setting `Output Errors To Console` is set to `true`, error messages on the `terminal` channel will additionally get output with the `push_error` function, which will also generate an actual error in the Godot debugger tab *(recommended)*.<br><br>![../../assets/screenshots/show_error_toggle.png](../../assets/screenshots/show_error_toggle.png)<br>               |     |
-| WARN   | **Has Toggle**<br>If the setting `Output Warnings To Console` is set to `true`, warning messages on the `terminal` channel will additionally get output with the `push_warning` function, which will also generate an actual error in the Godot debugger tab *(recommended)*.<br><br>![../../assets/screenshots/show_warning_toggle.png](../../assets/screenshots/show_warning_toggle.png)<br><br> |     |
-| NOTICE | No special functionality.                                                                                                                                                                                                                                                                                                                                                              |     |
-| INFO   | No special functionality.                                                                                                                                                                                                                                                                                                                                                              |     |
-| DEBUG  | **Has Stack Tracing Feature**<br>If the setting `Debug Msgs Print Stack Trace` is set to `true`, debug messages on the `terminal` channel will additionally have a stack trace appended to them.<br><br>![../../assets/screenshots/show_stack_tracer.png](../../assets/screenshots/show_stack_tracer.png)<br>                                                                                      |     |
-## Formatting Styles
-
-By default, messages outputted on the existing levels will look like this:
-
-![](../../assets/screenshots/log_level_stylings.png)
-
-If you wish to change their style, it can be done by altering their format setting:
-**Project Settings -> Loggie -> Formats**
-
-The available variables for these fields are:
-
-| variable | meaning                                               |
-| -------- | ----------------------------------------------------- |
-| {msg}    | This will get replaced by the content of the message. |
-
-![](../../assets/screenshots/log_level_formats.png)
-
-If you are [using Custom Settings](../customization/CUSTOM_SETTINGS.md), you can do it with:
-
-```gdscript
-format_error_msg = "[b][color=red][ERROR]:[/color][/b] {msg}"
-format_warning_msg = "[b][color=orange][WARN]:[/color][/b] {msg}"
-format_notice_msg = "[b][color=cyan][NOTICE]:[/color][/b] {msg}"
-format_info_msg = "{msg}"
-format_debug_msg = "[b][color=pink][DEBUG]:[/color][/b] {msg}"
-```
-
->[!WARNING]
->##### Why did you use such stark ugly colors as defaults?
->
->Loggie was originally developed on Godot 4.3.
->
->Since messages outputted by Loggie are using `print_rich` - I opted to use colors which are officially supported by `print_rich` during internal handling of BBCode stripping, and the choices there are limited in Godot 4.3.
->
->In future versions of Godot, they may fix this to support a broader set / all colors - but for backwards compatibility, I'm keeping the defaults as is.
-
+>[!TIP]
+>If you want to output a message whose Message Type is different than the log level you want to output it on, you can use **Strict Message Typing**.
+>(e.g. output an `ERROR` **type** message to `DEBUG` **log level**.)
+>More info in the [Message Types](../customization/MESSAGE_TYPES.md) article.
 #### Related Articles:
 👀 **► [Browse All Features](../ALL_FEATURES.md)**  📚 ► [Next: Domains](DOMAINS.md)  
 
