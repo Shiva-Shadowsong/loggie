@@ -26,6 +26,10 @@ This page is a hub for browsing all documented features and other articles relat
 	* BBCode (Rich)
 	* ANSI
 	* Markdown
+* [Output Environment](features/OUTPUT_ENVIRONMENT.md)
+	* In-Engine Only
+	* Runtime Only
+	* Both
 * [Showing Local Device Specs](features/DEVICE_SPECS_OUTPUT.md)
 * [Showing Class Names of Callers](features/CLASS_NAME_DERIVATION.md)
 * [Stack Tracing](features/STACK_TRACING.md)
