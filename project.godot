@@ -26,9 +26,18 @@ config/icon="res://addons/loggie/assets/icon.png"
 
 [autoload]
 
-LoggieAutoloadedTalker="*res://test/testing_props/autoloads/LoggieAutoloadedTalker.gd"
+LoggieAutoloadedTalker="*res://test/testing_props/talkers/LoggieAutoloadedTalker.gd"
 Loggie="*res://addons/loggie/loggie.gd"
+
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
 
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/loggie/plugin.cfg")
+
+[loggie]
+
+general/show_system_specs=false
