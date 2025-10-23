@@ -63,8 +63,7 @@ func _init() -> void:
 
 	# Enforce certain settings if configured to do so.
 	if self.settings.enforce_optimal_settings_in_release_build == true and is_in_production():
-		self.settings.msg_format_mode = LoggieEnums.MsgFormatMode.PLAIN
-		self.settings.box_characters_mode = LoggieEnums.BoxCharactersMode.COMPATIBLE
+		apply_production_optimal_settings()
 
 	# Set the default custom string converter.
 	self.settings.custom_string_converter = LoggieTools.convert_to_string
@@ -284,3 +283,10 @@ func stack() -> LoggieMsg:
 		stack_msg.add(entry_msg)
 
 	return stack_msg
+
+## Changes the values of certain members of [member settings] to values which are optimal for
+## use in production builds. Used when [member LoggieSettings.enforce_optimal_settings_in_release_build]
+## needs to be enforced.
+func apply_production_optimal_settings():
+	self.settings.msg_format_mode = LoggieEnums.MsgFormatMode.PLAIN
+	self.settings.box_characters_mode = LoggieEnums.BoxCharactersMode.COMPATIBLE

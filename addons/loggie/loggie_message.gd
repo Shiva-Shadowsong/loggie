@@ -171,8 +171,8 @@ func output(level : LoggieEnums.LogLevel, msg_type : LoggieEnums.MsgType = Loggi
 
 		channel.send(self, msg_type)
 		
-		# Emit signal deferred so if this is called from a thread, it doesn't cry about it.
-		loggie.call_deferred("emit_signal", "log_attempted", self, message, LoggieEnums.LogAttemptResult.SUCCESS)
+	# Emit signal deferred so if this is called from a thread, it doesn't cry about it.
+	loggie.call_deferred("emit_signal", "log_attempted", self, message, LoggieEnums.LogAttemptResult.SUCCESS)
 
 ## Outputs this message from Loggie as an Error type message.
 ## The [Loggie.settings.log_level] must be equal to or higher to the ERROR level for this to work.

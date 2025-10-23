@@ -1,192 +1,328 @@
-## This script serves as a playground for testing out Loggie features.
-## It is not an actual test suite with assertions, but it can serve well
-## for testing core functionality during development.
 class_name LoggieTestPlayground extends Control
 
 ## Stores a duplicate of the [LoggieSettings] which are configured in [Loggie] in the moment this node becomes ready,
 ## so that you can modify `Loggie.settings` on the fly during this script while having a backup of the original state.
 var original_settings : LoggieSettings
 
-const SCRIPT_LOGGIE_TALKER = preload("res://test/testing_props/talkers/LoggieTalker.gd")
-const SCRIPT_LOGGIE_TALKER_CHILD = preload("res://test/testing_props/talkers/LoggieTalkerChild.gd")
-const SCRIPT_LOGGIE_TALKER_GRANDCHILD = preload("res://test/testing_props/talkers/LoggieTalkerGrandchild.gd")
-const SCRIPT_LOGGIE_TALKER_NAMED_GRANDCHILD = preload("res://test/testing_props/talkers/LoggieTalkerNamedGrandchild.gd")
-const SCRIPT_LOGGIE_TALKER_NAMED_CHILD = preload("res://test/testing_props/talkers/LoggieTalkerNamedChild.gd")
-
-func _init() -> void:
-	Loggie.msg("Test message from test.gd _init.").warn()
-
 func _ready() -> void:
 	original_settings = Loggie.settings.duplicate()
 	setup_gui()
 
-	#print_setting_values_from_project_settings()
-	#print_actual_current_settings()
-	#print_talker_scripts_data()
+# -----------------------------------------
+#region General GUI
+# -----------------------------------------
 
-	#test_all_log_level_outputs()
-	#test_decors()
-	#test_output_from_classes_of_various_inheritances_and_origins()
-	test_domains()
-	#test_segments()
-	#test_bbcode_to_markdown()
-	#test_discord_channel()
-	#test_slack_channel()
-	#test_update_widget()
-
+## Sets up the starting GUI of this node before anything else starts getting done.
+## Should be called during [method _ready].
 func setup_gui():
-	$Label.text = "Loggie {version}".format({"version": Loggie.get("version_manager").version if Loggie.get("version_manager") != null else "<?>"})
-	Loggie.msg("Edit the test.tscn _ready function and uncomment the calls to features you want to test out.").italic().color(Color.GRAY).preprocessed(false).info()
+	var test_channel = load("res://test/testing_props/TestChannel.gd").new()
+	Loggie.add_channel(test_channel)
 
-# -----------------------------------------
-#region Tests
-# -----------------------------------------
+	var console_channel : LoggieTestConsoleChannel = load("res://test/testing_props/test_console/LoggieTestConsoleChannel.gd").new()
+	console_channel.console = %LoggieTestConsole
+	Loggie.add_channel(console_channel)
 
-func test_all_log_level_outputs():
-	# Test all types of messages.
-	Loggie.msg("Test logging methods").box(25).info()
-	Loggie.msg("Test error.").error()
-	Loggie.msg("Test warning.").warn()
-	Loggie.msg("Test notice.").notice()
-	Loggie.msg("Test info").info()
-	Loggie.msg("Test", "info", "multi", "argument").info()
-	Loggie.msg("Test debug message.").debug()
-	print()
-
-	# Test shortcut wrappers.
-	Loggie.msg("Test logging method wrappers").box(25).info()
-	Loggie.error("Error wrapper test.")
-	Loggie.warn("Warn wrapper test.")
-	Loggie.notice("Notice wrapper test.")
-	Loggie.info("Info wrapper test.")
-	Loggie.debug("Debug wrapper test.")
-	print()
-
-func test_output_from_classes_of_various_inheritances_and_origins():
-	Loggie.msg("Test Talkers").box(25).info()
-	for proxy : LoggieEnums.NamelessClassExtensionNameProxy in LoggieEnums.NamelessClassExtensionNameProxy.values():
-		Loggie.class_names = {}
-		Loggie.settings.nameless_class_name_proxy = proxy
-
-		Loggie.msg("Using proxy: {proxy}".format({
-			"proxy": LoggieEnums.NamelessClassExtensionNameProxy.keys()[proxy]
-		})).header().info()
-
-		LoggieAutoloadedTalker.say("This is an autoload class.")
-
-		# Test outputting a message from a different script.
-		# If 'Loggie.settings.derive_and_show_class_names' is true, the name of the class should show up properly as prefix -
-		# But the way it is represented also depends on the `Loggie.settings.nameless_class_name_proxy`, in case the
-		# class_name is empty.
-		var talker = LoggieTalker.new()
-		talker.say("This is a named class that extends a base type (Node).")
-
-		# Test how it looks when code from an inner-class defined in LoggieTalker produces a log.
-		talker.say_from_inner("This is an inner-class defined in that class.")
-
-		# Test how it looks when a script that has a `class_name` and extends LoggieTalker produces a log.
-		SCRIPT_LOGGIE_TALKER_NAMED_CHILD.new().say("This is a named class that extends a named class and has its own implementation of a method.")
-
-		# Test how it looks when a script that has no `class_name` and extends LoggieTalker produces a log.
-		SCRIPT_LOGGIE_TALKER_CHILD.new().say("This is an unnamed class that extends a named class and has its own implementation of a method.")
-
-		# Test how it looks when a script that has a `class_name` and extends a LoggieTalker extender produces a log.
-		SCRIPT_LOGGIE_TALKER_NAMED_GRANDCHILD.new().say("This is a named class that extends a named class that extends a named class.")
-
-		# Test how it looks when a script that has no `class_name` and extends a LoggieTalker extender produces a log.
-		SCRIPT_LOGGIE_TALKER_GRANDCHILD.new().say("This is an unnamed class that extends an unnamed class that extends a named class.")
-
-		print()
-	print()
-	reset_settings()
-
-func test_domains():
-	Loggie.msg("Test Domains").box(25).info()
-	# Test outputting a message from an enabled custom domain.
-	Loggie.set_domain_enabled("Domain1", true)
-	Loggie.msg("> This message is coming from an enabled domain. (You should be seeing this)").domain("Domain1").info()
-
-	# Test outputting a message from a disabled domain.
-	Loggie.set_domain_enabled("Domain1", false)
-	Loggie.msg("Another similar message should appear below this notice if something is broken.").italic().color(Color.DIM_GRAY).notice()
-	Loggie.msg("> This message is coming from a disabled domain (You shouldn't be seeing this).").domain("Domain1").error()
+	%TitleScreen.show()
+	%TestingScreen.hide()
+	%BigLabel.text = "Loggie {version}".format({"version": Loggie.get("version_manager").version if Loggie.get("version_manager") != null else "<?>"})
+	%BeginTestingBtn.pressed.connect(func():
+		_enter_testing_phase(1)
+	)
 	
-	# Test outputting a message from a domain that is configured to use custom channels.
-	Loggie.set_domain_enabled("Domain3", true, "discord")
-	Loggie.msg("> This message should be visible on discord. (You should be seeing this)").domain("Domain3").info()
-	Loggie.set_domain_enabled("Domain4", true, ["discord", 53, Color.RED, "terminal"]) # Purposefully provide a partially incorrect value to test error handling.
-	Loggie.msg("> This message should be visible on discord and terminal. (You should be seeing this)").domain("Domain4").info()
+	%AcceptBtn.pressed.connect(on_accept_visual_test_case_pressed)
+	%RejectBtn.pressed.connect(on_reject_visual_test_case_pressed)
+
+## Frees all children of the %Content node.
+func purge_console_content() -> void:
+	for content in %Content.get_children():
+		content.free()
+
+## Configures the UI such that it shows/hides all appropriate nodes for the given
+## testing phase. Phases are:
+## [br]1 = Run Automated Tests
+## [br]2 = Configure UI so Visual Tests can start
+## [br]3 = Configure UI so final Visual Tests results can be shown.
+func _enter_testing_phase(phase : int) -> void:
+	%BeginTestingBtn.disabled = true
+	%TitleScreen.hide()
+	%TestingScreen.show()
+	%LoggieTestConsole.show()
+
+	if phase == 1:
+		%LeftPanel.hide()
+		%ConsoleBottomBar.hide()
+		%ProgressBar.hide()
+		%RejectBtn.hide()
+		%AcceptBtn.hide()
+		%ProceedToVisualTestsBtn.show()
+		_run_automated_tests()
+
+	if phase == 2:
+		purge_console_content()
+		%LeftPanel.show()
+		%ConsoleBottomBar.show()
+		%ProgressBar.show()
+		%RejectBtn.show()
+		%AcceptBtn.show()
+		%ProceedToVisualTestsBtn.hide()
+		
+	if phase == 3:
+		purge_console_content()
+		%LeftPanel.show()
+		%AcceptBtn.hide()
+		%RejectBtn.hide()
+		%ProceedToVisualTestsBtn.hide()
+		%ConsoleBottomBar.show()
+		_print_visual_tests_results_report()
+		
+#endregion
+# -----------------------------------------
+#region Visual Tests
+# -----------------------------------------
+
+## Internal method. 
+## Starts the process of showing and running visual test cases.
+## Called when the %ProceedToVisualTestsBtn is pressed.
+func _run_visual_tests() -> void:
+	print("---------------------------------------")
+	print("\t\tVisual Testing Started")
+	print("---------------------------------------")
+	print("Please follow the instructions in the app window and make sure to cover all tests.")
+	_create_visual_tests_list()
+	_enter_testing_phase(2)
+	on_visual_test_case_finished()
+
+## Internal method.
+## Populates the %VisualTestsMenu with one [VisualTestMenuEntry] UI
+## widget for each available test in %VisualTestCases.
+## Called during [method _run_visual_tests].
+func _create_visual_tests_list() -> void:
+	for child in %VisualTestsMenu.get_children():
+		child.queue_free()
+	
+	for child in %VisualTestCases.get_children():
+		if child is LoggieVisualTestCase:
+			var case : LoggieVisualTestCase = child
+			case.finished.connect(on_visual_test_case_finished)
+			case._console = %LoggieTestConsole
+			var entry : VisualTestsMenuEntry = load("res://test/testing_props/test_console/visual_tests_menu_btn.tscn").instantiate()
+			entry.connect_to_test_case(case)
+			entry.get_button().pressed.connect(func():
+				_run_visual_test_case(case)
+			)
+			%VisualTestsMenu.add_child(entry)
+
+## Internal method. Creates a final report about how the testing process and outputs it 
+## to the console, and to the %LoggieTestConsole. Should only be called by [method _enter_testing_phase].
+func _print_visual_tests_results_report():
+	print("---------------------------------------")
+	print("\t\tVisual Testing Finished")
+	print("---------------------------------------")
+	var states = {}
+	
+	for case : LoggieVisualTestCase in %VisualTestCases.get_children():
+		if !states.has(case.state):
+			states[case.state] = []
+		states[case.state].push_back(case)
+	
+	%LoggieTestConsole.add_text("[b][i]All visual tests have been covered.[/i][/b]")
+	
+	if states.has(LoggieVisualTestCase.State.Rejected) and states[LoggieVisualTestCase.State.Rejected].size() > 0:
+		%LoggieTestConsole.add_text("You have rejected the results of the following tests:")
+		for case : LoggieVisualTestCase in states[LoggieVisualTestCase.State.Rejected]:
+			%LoggieTestConsole.add_text("\t❌ {name}".format({"name": case.name}))
+		%LoggieTestConsole.add_text("\nPlease debug and fix the issues and re-run the test module.")
+		print_rich("[b][i]❌ Some of the test results were rejected - please fix the issues and re-run the test module.[/i][/b]")
+	else:
+		%LoggieTestConsole.add_text("[color=pale_green]You have accepted the results of every test. Great![/color]")
+		print_rich("[color=pale_green][b][i]✔️ All visual tests were accepted.[/i][/b][/color]")
+
+	%LoggieTestConsole.add_content(HSeparator.new())
+	%LoggieTestConsole.add_text("\n[color=gold]You may now close the window.[/color]")
+
+## A method that updates the %ProgressBar to reflect the progress of how many %VisualTestCases
+## are marked as accepted or rejected.
+func update_progress_bar() -> void:
+	%ProgressBar.max_value = %VisualTestCases.get_child_count()
+	var progress_value = 0
+	for child in %VisualTestCases.get_children():
+		if child is LoggieVisualTestCase:
+			var case : LoggieVisualTestCase = child
+			if case.state != LoggieVisualTestCase.State.Undecided:
+				progress_value += 1
+	%ProgressBar.value = progress_value
+
+## For all of the visual tests available in %VisualTestsMenu, returns the menu widget
+## of the first one whose state is still [enum LoggieVisualtestCase.State.Undecided].
+func _get_next_available_visual_test_case_entry() -> VisualTestsMenuEntry:
+	for child in %VisualTestsMenu.get_children():
+		if child is VisualTestsMenuEntry:
+			var entry : VisualTestsMenuEntry = child
+			if entry._case.state == LoggieVisualTestCase.State.Undecided:
+				return entry
+	return null
+
+## Executed when a visual test case emits its finished signal.
+func on_visual_test_case_finished() -> void:
+	# Search for next available test case.
+	var next_available_entry : VisualTestsMenuEntry = _get_next_available_visual_test_case_entry()
+	if next_available_entry == null:
+		# If none found, we are done testing, let's see results.
+		_enter_testing_phase(3)
+	else:
+		_run_visual_test_case(next_available_entry._case)
+	update_progress_bar()
+
+## Executed when a visual test case is marked as accepted by pressing the %AcceptBtn.
+func on_accept_visual_test_case_pressed() -> void:
+	if !%Content.has_meta("currently_running_test_case"):
+		return
+	var case : LoggieVisualTestCase = %Content.get_meta("currently_running_test_case")
+	case.accept()
+
+## Executed when a visual test case is marked as rejected by pressing the %RejectBtn.
+func on_reject_visual_test_case_pressed() -> void:
+	if !%Content.has_meta("currently_running_test_case"):
+		return
+	var case : LoggieVisualTestCase = %Content.get_meta("currently_running_test_case")
+	case.reject()
+	
+## A helper that runs the given visual test [param case].
+func _run_visual_test_case(case : LoggieVisualTestCase) -> void:
+	reset_settings()
+	purge_console_content()
+	case.run()
+	%Content.set_meta("currently_running_test_case", case)
+
+#endregion
+# -----------------------------------------
+#region Automated Tests
+# -----------------------------------------
+
+## Internal method. Loops through every available test (children of %AutoTestCases) and runs
+## each one of them, recording the results and printing useful messages along the way.
+## Should be called only by [method _enter_testing_phase].
+func _run_automated_tests():
+	print("---------------------------------------")
+	print("\t\tAutomated Testing Started")
+	print("---------------------------------------")
+
+	# Prepare results storage.
+	var results : Dictionary = {}
+	for result_type in LoggieAutoTestCase.Result.values():
+		results[result_type] = [] as Array[LoggieAutoTestCase]
+
+	# Run each case and store results.
+	for case : LoggieAutoTestCase in %AutoTestCases.get_children():
+		Loggie.settings = case.settings
+		case._console = %LoggieTestConsole
+		case.c_print("[i][b][color=CORNFLOWER_BLUE]Running case:[/color] [color=DARK_TURQUOISE]{caseName}[/color][/b][/i]".format({
+			"caseName" : case.get_script().get_global_name(),
+		}), true, false)
+		case._run_timeout_counter()
+		case.call_deferred("run")
+		await case.finished
+		results[case.result].push_back(case)
+		reset_settings()
+
+	# Account for tests that didn't run.
+	var disabled_cases : Array[LoggieAutoTestCase]
+	for node in %DisabledAutoTestCases.get_children():
+		if node is LoggieAutoTestCase:
+			disabled_cases.push_back(node)
+	results[LoggieAutoTestCase.Result.DidntRun] = disabled_cases
+
+	# Report Results.
+	var report : Dictionary = _print_automated_tests_results_report(results)
+	%LoggieTestConsole.add_text(report.conclusion)
+	%LoggieTestConsole.add_text(report.context)
+
+	if report.total_failed_tests == 0:
+		%LoggieTestConsole.add_text("[color=slate_gray]---------\nAutomated tests have finished.
+		If interested in inspecting them, verbose details are outputted to your main/Godot console.
+		When ready, please proceed to visual tests by clicking the button below.[/color]")
+		%ConsoleBottomBar.show()
+		%ProceedToVisualTestsBtn.pressed.connect(func():
+			_run_visual_tests()
+		, CONNECT_ONE_SHOT)
+	else:
+		%LoggieTestConsole.add_text("[color=salmon]---------\nAutomated tests have finished. Some tests failed to pass. 
+		More details in your main/Godot console.
+		Please fix, restart the test scene and retry.[/color]")
+
+## Internal method. Given a set of [param results] generated during [method _run_automated_tests], creates
+## a final report about how the testing process went, and also outputs it to the console.
+## Should only be called by [method _run_automated_tests].
+func _print_automated_tests_results_report(results : Dictionary) -> Dictionary:
+	print("---------------------------------------")
+	print("\t\tAutomated Testing Finished")
+	print("---------------------------------------")
+
+	var conclusion = ""
+	var conclusion_color = "pale_green"
+	var conclusion_icon = "✔️"
+	var context = ""
+
+	var failed_tests : Array[LoggieAutoTestCase] = results[LoggieAutoTestCase.Result.Fail]
+	var disabled_tests : Array[LoggieAutoTestCase]  = results[LoggieAutoTestCase.Result.DidntRun]
+	var timed_out_tests : Array[LoggieAutoTestCase]  = results[LoggieAutoTestCase.Result.TimedOut]
+	var successful_tests : Array[LoggieAutoTestCase]  = results[LoggieAutoTestCase.Result.Success]
+
+	var total_tests = %AutoTestCases.get_child_count()
+	var total_failed_tests : int = failed_tests.size() + timed_out_tests.size()
 
 
-func test_decors():
-	Loggie.msg("Test Decorations").box(25).info()
+	if disabled_tests.size() > 0:
+		conclusion_color = "gold"
+		conclusion_icon = "☢️"
+		context += "\n\t* [color=GOLD]☢️ {amount} tests were disabled. Please move all tests from 'DisabledAutoTestCases' to 'AutoTestCases' to try a full run.[/color]".format({
+			"amount": disabled_tests.size()
+		})
 
-	# Test outputting a box header.
-	Loggie.msg("Box Header Test").color("red").box().info()
+	if total_failed_tests > 0:
+		conclusion_color = "salmon"
+		conclusion_icon = "❌"
+		conclusion = "{amount} tests failed."
+		if failed_tests.size() > 0:
+			context += "\n\t* [color=SALMON]{amount} tests failed. Please debug and fix the issues that caused these tests to fail: {list}[/color]".format({
+				"amount": failed_tests.size(),
+				"list": failed_tests
+			})
+		if timed_out_tests.size() > 0:
+			context += "\n\t* [color=SALMON]{amount} tests timed out. They failed to call 'success()' or 'fail()' within the allotted amount of time. Please debug and fix the issues that caused these tests to time out: {list}[/color]".format({
+				"amount": timed_out_tests.size(),
+				"list": timed_out_tests
+			})
+	else:
+		if disabled_tests.size() == 0:
+			context += "\t* Looks like things should be good to go!"
 
-	# Test outputting a header, with a newline and a 30 character long horizontal separator.
-	Loggie.msg("Colored Header").header().color("yellow").nl().hseparator(30).info()
+	conclusion = "[b][i][color={color_str}]{icon} ({amount} / {total}) tests successful.[/color][/i][/b]".format({
+		"color_str": conclusion_color,
+		"icon": conclusion_icon,
+		"amount": successful_tests.size(),
+		"total": total_tests
+	})
 
-	# Test a supported color message of all types.
-	Loggie.msg("Supported color info.").color("cyan").info()
-	Loggie.msg("Supported color notice.").color("cyan").notice()
-	Loggie.msg("Supported color warning.").color("cyan").warn()
-	Loggie.msg("Supported color error.").color("cyan").error()
-	Loggie.msg("Supported color debug.").color("cyan").debug()
+	print_rich(conclusion)
+	print_rich(context)
 
-	# Test a godot colored message of all types.
-	# Godot-colors are colors defined as consts in the 'Color' class but not
-	# explicitly supported by 'print_rich'.
-	Loggie.msg("Custom colored info msg.").color(Color.SLATE_BLUE).info()
-	Loggie.msg("Custom colored notice.").color(Color.SLATE_BLUE).notice()
-	Loggie.msg("Custom colored warning.").color(Color.SLATE_BLUE).warn()
-	Loggie.msg("Custom colored error.").color(Color.SLATE_BLUE).error()
-	Loggie.msg("Custom colored debug.").color(Color.SLATE_BLUE).debug()
-
-	# Test a custom colored message.
-	# (Arbitrary hex codes).
-	Loggie.msg("Custom colored info msg.").color("#3afabc").info()
-	Loggie.msg("Custom colored notice.").color("#3afabc").notice()
-	Loggie.msg("Custom colored warning.").color("#3afabc").warn()
-	Loggie.msg("Custom colored error.").color("#3afabc").error()
-	Loggie.msg("Custom colored debug.").color("#3afabc").debug()
-
-	# Test pretty printing a dictionary.
-	var testDict = {
-		"a" : "Hello",
-		"b" : {
-			"c" : 1,
-			"d" : [1,2,3]
-		},
-		"c" : ["A", {"B" : "2"}, 3]
+	return {
+		"conclusion" : conclusion,
+		"context": context,
+		"total_failed_tests": total_failed_tests,
 	}
-	Loggie.msg(testDict).info()
 
+#endregion
+# -----------------------------------------
+#region Old Tests
+#   Some of these need to be converted to new [LoggieAutoTestCase] or [LoggieVisualTestCase].
+#   For now they remain here to be called manually when needed.
+# -----------------------------------------
 
-func test_segments():
-	# Test basic segmenting.
-	var msg = Loggie.msg("Segment 1 *").endseg().add(" Segment 2 *").endseg().add(" Segment 3").info()
-
-	# Print the 2nd segment of that segmented message:
-	Loggie.info("Segment 1 is:", msg.string(1))
-
-	# Test messages where each segment has different styles.
-	Loggie.msg("SegmentKey:").bold().color(Color.ORANGE).msg("SegmentValue").color(Color.DIM_GRAY).info()
-	Loggie.msg("SegHeader").header().color(Color.ORANGE).space().msg("SegPlain ").msg("SegGrayItalic").italic().color(Color.DIM_GRAY).prefix("PREFIX: ").suffix(" - SUFFIX").debug()
-
-	print("\n\n")
-	Loggie.msg("Segment1: ").color("orange").msg("Segment2").info()
-
-func test_bbcode_to_markdown():
-	var msg = Loggie.msg("Hello world").italic().color(Color.RED).msg(" - part 2 is bold").bold()
-	print("Text to convert:\n{msg}".format({"msg": msg.string()}))
-
-	#var converted_text = LoggieTools.convert_BBCode_to_markdown(msg.string())
-
-	# Print with standard print to see what the actual output looks like without Loggie interfering with any other conversion.
-	#print("Converted:\n[", converted_text, "]")
-
-func test_discord_channel():
+## Tests sending a 2k characters long message to the DIscord channel.
+## Functional but deprecated. Needs to be ported into a [LoggieAutoTestCase].
+func _test_discord_channel():
 	# Standard test with decorations.
 	Loggie.msg("Hello world").italic().msg(" - from Godot!").bold().channel("discord").info()
 
@@ -194,7 +330,9 @@ func test_discord_channel():
 	var msg_2k_long = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, quis gravida magna mi a libero. Fusce vulputate eleifend sapien. Vestibulum purus quam, scelerisque ut, mollis sed, nonummy id, metus. Nullam accumsan lorem in dui. Cras ultricies mi eu turpis hendrerit fringilla. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In ac dui quis mi consectetuer lacinia. Nam pretium turpis et arcu. Duis arcu tortor, suscipit eget, imperdiet nec, imperdiet iaculis, ipsum. Sed aliquam ultrices mauris. Integer ante arcu, accumsan a, consectetuer eget, posuere ut, mauris. Praesent adipiscing. Phasellus ullamcorper ipsum rutrum nunc. Nunc nonummy metus. Vestibzzz"
 	Loggie.msg(msg_2k_long, msg_2k_long).channel("discord").info()
 
-func test_slack_channel():
+## Tests sending a 2k characters long message to a Slack channel.
+## Functional but deprecated. Needs to be ported into a [LoggieAutoTestCase].
+func _test_slack_channel():
 	# Standard test.
 	Loggie.msg("Hello world").italic().msg(" - from Godot!").bold().channel("slack").info()
 
@@ -202,9 +340,10 @@ func test_slack_channel():
 	var msg_2k_long = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, quis gravida magna mi a libero. Fusce vulputate eleifend sapien. Vestibulum purus quam, scelerisque ut, mollis sed, nonummy id, metus. Nullam accumsan lorem in dui. Cras ultricies mi eu turpis hendrerit fringilla. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In ac dui quis mi consectetuer lacinia. Nam pretium turpis et arcu. Duis arcu tortor, suscipit eget, imperdiet nec, imperdiet iaculis, ipsum. Sed aliquam ultrices mauris. Integer ante arcu, accumsan a, consectetuer eget, posuere ut, mauris. Praesent adipiscing. Phasellus ullamcorper ipsum rutrum nunc. Nunc nonummy metus. Vestibzzz"
 	Loggie.msg(msg_2k_long, msg_2k_long).channel("slack").info()
 
-func test_update_widget():
+## A helper method useful when the Updater window widget needs to be tested.
+func _test_update_widget():
 	Loggie.version_manager = LoggieVersionManager.new()
-	Loggie.version_manager.connect_logger(Loggie) 
+	Loggie.version_manager.connect_logger(Loggie)
 	Loggie.version_manager.update_ready.connect(func():
 		var popup : Window = Loggie.version_manager.create_and_show_updater_widget(Loggie.version_manager._update)
 		var widget = popup.get_children().front()
@@ -216,20 +355,6 @@ func test_update_widget():
 # -----------------------------------------
 #region Helpers
 # -----------------------------------------
-
-## Prints helpful data about some test-related scripts.
-func print_talker_scripts_data() -> void:
-	var scripts = [
-		SCRIPT_LOGGIE_TALKER,
-		SCRIPT_LOGGIE_TALKER_CHILD,
-		SCRIPT_LOGGIE_TALKER_NAMED_CHILD,
-		SCRIPT_LOGGIE_TALKER_GRANDCHILD,
-		SCRIPT_LOGGIE_TALKER_NAMED_GRANDCHILD
-	]
-	for script in scripts:
-		var script_specs : LoggieSystemSpecsMsg = LoggieSystemSpecsMsg.new()
-		script_specs.use_logger(Loggie)
-		script_specs.embed_script_data(script).info()
 
 ## Prints the values of all LoggieSettings settings obtained from Project Settings.
 ## Deliberately uses [method print] instead of Loggie output methods.
@@ -250,8 +375,15 @@ func print_actual_current_settings():
 	Loggie.msg(settings_dict).info()
 	print()
 
+## Resets the [LoggieSettings] on the [Loggie] singleton to the same settings that it used to have
+## when this node just initialized. Also resets the settings of the "test_console" Loggie channel
+## if one is configured.
 func reset_settings():
 	Loggie.settings = original_settings.duplicate()
+	var test_channel : LoggieTestConsoleChannel = Loggie.get_channel("test_console")
+	if test_channel and test_channel.has_method("reset"):
+		test_channel.reset()
+		
 
 #endregion
 # -----------------------------------------

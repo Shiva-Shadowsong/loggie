@@ -31,6 +31,7 @@ This page is a hub for browsing all documented features and other articles relat
 * [Support for Non-Godot Editors](features/USE_WITH_NONGODOT_EDITORS.md)
 * [Timestamps](features/TIMESTAMPS.md)
 * [Utility Tools](features/TOOLS.md)
+* [Testing and Creating Test Cases](features/DEVELOPER_TESTS.md)
 
 # ![](../assets/icons/features.png)  Customization
 
