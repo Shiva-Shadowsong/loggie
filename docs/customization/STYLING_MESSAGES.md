@@ -160,6 +160,14 @@ Loggie.msg("Before").suffix("After").info()
 ```
 
 ---
+##### link(url : String, color : String | Color = null)
+> Makes the current content of the message a hyperlink, linking to the provided URL. Optionally, you can provide a color for the link, to avoid calling `color(color)` later on the message.
+
+```gdscript
+Loggie.msg("Visit godot's website!").link("https://godotengine.org/", "blue").info() # A blue link
+```
+
+---
 > [!TIP]
 > ### 🎉 Let's go! 🥳 
 > You're on your way to becoming a Loggie pro!
