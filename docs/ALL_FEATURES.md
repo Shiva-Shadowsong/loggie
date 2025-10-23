@@ -35,8 +35,9 @@ This page is a hub for browsing all documented features and other articles relat
 * [Stack Tracing](features/STACK_TRACING.md)
 * [Support for Non-Godot Editors](features/USE_WITH_NONGODOT_EDITORS.md)
 * [Timestamps](features/TIMESTAMPS.md)
-* [Utility Tools](features/TOOLS.md)
 * [Testing and Creating Test Cases](features/DEVELOPER_TESTS.md)
+* [Using and Preventing the log_attempted Signal](customization/LOG_ATTEMPTED_SIGNAL.md)
+* [Utility Tools](features/TOOLS.md)
 
 # ![](../assets/icons/features.png)  Customization
 
