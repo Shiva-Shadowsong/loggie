@@ -289,6 +289,19 @@ func italic() -> LoggieMsg:
 	self.content[current_segment_index] = "[i]{msg}[/i]".format({"msg": self.content[current_segment_index]})
 	return self
 
+## Makes the current segment of this message a hyperlink to the given [param url].
+## Optionally, you can provide a [param color], as the same type of parameter that [method color] uses,
+## to colorize the link. This is a shortcut for additionally calling [method color] on the link.
+## [br][br]If the link doesn't work when rendered inside of a [RichTextLabel], you may need to connect to the [signal RichTextLabel.meta_clicked] signal,
+## and handle the opening of the link there. Read the docs of that signal for more info.
+## [br][br][WARNING]: Appending URLs to messages is potentially dangerous. 
+## Please read this article for more info: https://docs.godotengine.org/en/latest/tutorials/ui/bbcode_in_richtextlabel.html#handling-user-input-safely
+func link(url : String, _color : Variant = null) -> LoggieMsg:
+	self.content[current_segment_index] = "[url={url}]{msg}[/url]".format({"url": url, "msg": self.content[current_segment_index]})
+	if _color:
+		self.color(_color)
+	return self
+
 ## Stylizes the current segment of this message as a header.
 func header() -> LoggieMsg:
 	var loggie = get_logger()
