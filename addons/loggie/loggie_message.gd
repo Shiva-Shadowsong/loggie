@@ -466,6 +466,19 @@ func no_signal(enabled : bool = true) -> LoggieMsg:
 	dont_emit_log_attempted_signal = enabled
 	return self
 
+## Applies the [LoggiePreset] with the given [param id] to this message.
+## [br]If [param apply_only_to_current_segment] is [param true], the styles from the preset will only be
+## applied to the current content segment of this message. Otherwise, the entire content of this message
+## will be collapsed into a single segment, and the styles will be applied to that.
+func preset(id : String, apply_only_to_current_segment : bool = false) -> LoggieMsg:
+	var loggie = get_logger()
+	var preset_to_use : LoggiePreset = loggie.preset(id)
+	if preset_to_use:
+		preset_to_use.apply_to(self, apply_only_to_current_segment)
+	else:
+		push_error("Attempt to obtain LoggiePreset with ID {id} returned null. Something went terribly wrong, as this should usually be impossible.")
+	return self
+
 ## Internal method. Emits the [signal Loggie.log_attempted] signal (unless that feature is disabled).
 ## Used during [method output]. If [param call_deferred] is true, the string of the message's content will
 ## be prepared immediately, but the emission of the signal will be deferred.

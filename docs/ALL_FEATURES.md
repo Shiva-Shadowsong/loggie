@@ -20,13 +20,13 @@ This page is a hub for browsing all documented features and other articles relat
 * [Domains](features/DOMAINS.md)
 * [Log File Management and Storage](features/LOG_FILES_AND_STORAGE.md)
 * [Log Levels](features/LOG_LEVELS.md)
-* [Message Types](customization/MESSAGE_TYPES.md)
+* 🆕 [Message Types](customization/MESSAGE_TYPES.md)
 * [Output Format Mode](features/OUTPUT_FORMAT_MODES.md)
 	* Plain
 	* BBCode (Rich)
 	* ANSI
 	* Markdown
-* [Output Environment](features/OUTPUT_ENVIRONMENT.md)
+* 🆕 [Output Environment](features/OUTPUT_ENVIRONMENT.md)
 	* In-Engine Only
 	* Runtime Only
 	* Both
@@ -35,17 +35,18 @@ This page is a hub for browsing all documented features and other articles relat
 * [Stack Tracing](features/STACK_TRACING.md)
 * [Support for Non-Godot Editors](features/USE_WITH_NONGODOT_EDITORS.md)
 * [Timestamps](features/TIMESTAMPS.md)
-* [Testing and Creating Test Cases](features/DEVELOPER_TESTS.md)
-* [Using and Preventing the log_attempted Signal](customization/LOG_ATTEMPTED_SIGNAL.md)
+* 🆕 [Testing and Creating Test Cases](features/DEVELOPER_TESTS.md)
+* 🆕 [Using and Preventing the log_attempted Signal](customization/LOG_ATTEMPTED_SIGNAL.md)
 * [Utility Tools](features/TOOLS.md)
 
 # ![](../assets/icons/features.png)  Customization
 
 * [Creating Custom Channels](customization/ADDING_CUSTOM_CHANNELS.md)
+* 🆕 [Creating Message Presets](customization/MESSAGE_PRESETS.md)
+* [Changing How Messages Are Formatted](customization/MESSAGE_FORMATS.md)
+* [Changing the "Loggie" Singleton Name](customization/SINGLETON_NAME.md)
 * [Using a Custom Loggie Settings File](customization/CUSTOM_SETTINGS.md)
 * [Using a Custom String Convertor](customization/CUSTOM_STRING_CONVERSION.md)
-* [Change How Messages Are Formatted](customization/MESSAGE_FORMATS.md)
-* [Changing the "Loggie" Singleton Name](customization/SINGLETON_NAME.md)
 
 # ![](../assets/icons/features.png)  Technical Articles
 

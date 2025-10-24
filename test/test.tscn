@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://2lnj7kmdncy0"]
+[gd_scene load_steps=26 format=3 uid="uid://2lnj7kmdncy0"]
 
 [ext_resource type="Script" uid="uid://dcmt6ghlwq62h" path="res://test/test.gd" id="1_jlagr"]
 [ext_resource type="Texture2D" uid="uid://2fr6et0qni2y" path="res://addons/loggie/assets/icon.png" id="2_ukv03"]
@@ -19,6 +19,7 @@
 [ext_resource type="Script" uid="uid://odkbgy6djd2q" path="res://test/test_cases/automatic/TestEnforceStrictMsgType.gd" id="17_258bh"]
 [ext_resource type="Script" uid="uid://dh8tccwebbdfv" path="res://test/test_cases/automatic/TestNoSignal.gd" id="18_yj84r"]
 [ext_resource type="Script" uid="uid://rukx4yg7oal2" path="res://test/test_cases/automatic/TestLinks.gd" id="19_76tuw"]
+[ext_resource type="Script" uid="uid://douupagx1p0le" path="res://test/test_cases/automatic/TestPresets.gd" id="20_m3s2k"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v2t6q"]
 bg_color = Color(0.105882354, 0.09803922, 0.14117648, 1)
@@ -366,6 +367,9 @@ script = ExtResource("18_yj84r")
 
 [node name="TestLinks" type="Node" parent="Tests/Automated/AutoTestCases"]
 script = ExtResource("19_76tuw")
+
+[node name="TestPresets" type="Node" parent="Tests/Automated/AutoTestCases"]
+script = ExtResource("20_m3s2k")
 
 [node name="DisabledAutoTestCases" type="Node3D" parent="Tests/Automated"]
 unique_name_in_owner = true
