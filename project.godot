@@ -41,3 +41,4 @@ enabled=PackedStringArray("res://addons/loggie/plugin.cfg")
 [loggie]
 
 general/show_system_specs=false
+general/remove_settings_if_plugin_disabled=false
