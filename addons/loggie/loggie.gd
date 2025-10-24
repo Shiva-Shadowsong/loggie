@@ -36,6 +36,10 @@ var available_channels = {}
 ## version of this instance.
 var version_manager : LoggieVersionManager = LoggieVersionManager.new()
 
+## Stores a reference to each [LoggiePreset] that was created.
+## The key is the ID (string) of the preset, and the value is the [LoggieMsg] that was saved as a preset.
+var presets : Dictionary = {}
+
 func _init() -> void:
 	# Connect the version manager to this logger.
 	version_manager.connect_logger(self)
@@ -203,6 +207,21 @@ func add_channel(channel : LoggieMsgChannel):
 		push_error("Attempt to add a channel with ID {ID} failed, a channel with that ID already exists in Loggie.".format({
 			"ID": channel.ID
 		}))
+
+## Gets a [LoggiePreset] message with the given ID, or creates one if it doesn't exist and returns it.
+## The ID cannot be an empty string.
+func preset(id : String) -> LoggiePreset:
+	if id.is_empty():
+		push_error("Attempt to create or get a LoggiePreset with an empty ID - not allowed.")
+		return null
+	
+	if presets.has(id):
+		return presets[id]
+	else:
+		var newPreset : LoggiePreset = LoggiePreset.new()
+		newPreset.use_logger(self)
+		presets[id] = newPreset
+		return newPreset
 
 ## Creates a new [LoggieMsg] out of the given [param msg] and extra arguments (by converting them to strings and concatenating them to the msg).
 ## You may continue to modify the [LoggieMsg] with additional functions from that class, then when you are ready to output it, use methods like:
