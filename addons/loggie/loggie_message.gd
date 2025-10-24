@@ -89,7 +89,8 @@ func use_logger(logger_to_use : Variant) -> LoggieMsg:
 		var initial_args = self.get_meta("initial_args")
 		if initial_args is Array:
 			var converter_fn = self._logger.settings.custom_string_converter if is_instance_valid(self._logger) and is_instance_valid(self._logger.settings) else null
-			self.content[0] = LoggieTools.concatenate_args(initial_args, converter_fn)
+			if converter_fn != LoggieTools.convert_to_string:
+				self.content[0] = LoggieTools.concatenate_args(initial_args, converter_fn)
 		self.remove_meta("initial_args") # Clean up.
 
 	return self
