@@ -2,7 +2,7 @@
 
 `LoggieTools` is a class that comes installed with `Loggie`, and is filled with static globally accessible methods that could be useful to you while developing Loggie or even something entirely unrelated.
 
-Here I will only give a brief overview of some of the useful tools, but I encourage you to open the in-engine documentation of the `LoggieTools` class and check out everything that's available:
+Here I will only give a brief overview of some of the useful tools, but I suggest you to open the in-engine documentation of the `LoggieTools` class and check out everything that's available:
 
 ---
 ### Named Colors Dictionary

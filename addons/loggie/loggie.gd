@@ -7,15 +7,14 @@ extends Node
 
 ## The current version of Loggie.
 ## Needs to be updated manually when changing the version.
-var version : LoggieVersion = LoggieVersion.new(2,0)
+var version : LoggieVersion = LoggieVersion.new(3,0)
 
 ## Emitted any time Loggie attempts to log a message.
 ## Useful for capturing the messages that pass through Loggie.
 ## [br][param msg] is the message Loggie attempted to log (before any preprocessing).
-## [br][param preprocessed_content] is what the string content of that message contained after the preprocessing step, 
-## which is what ultimately gets logged.
+## [br][param msg_string] is a shortcut providing the string content of that message.
 ## [br][param result] describes the final result of the attempt to log that message.
-signal log_attempted(msg : LoggieMsg, preprocessed_content : String, result : LoggieEnums.LogAttemptResult)
+signal log_attempted(msg : LoggieMsg, msg_string : String, result : LoggieEnums.LogAttemptResult)
 
 ## A reference to the settings of this Loggie. Read more about [LoggieSettings].
 var settings : LoggieSettings
@@ -36,6 +35,10 @@ var available_channels = {}
 ## Stores a reference to a [LoggieVersionManager] that will be used to manage the
 ## version of this instance.
 var version_manager : LoggieVersionManager = LoggieVersionManager.new()
+
+## Stores a reference to each [LoggiePreset] that was created.
+## The key is the ID (string) of the preset, and the value is the [LoggieMsg] that was saved as a preset.
+var presets : Dictionary = {}
 
 func _init() -> void:
 	# Connect the version manager to this logger.
@@ -63,8 +66,7 @@ func _init() -> void:
 
 	# Enforce certain settings if configured to do so.
 	if self.settings.enforce_optimal_settings_in_release_build == true and is_in_production():
-		self.settings.msg_format_mode = LoggieEnums.MsgFormatMode.PLAIN
-		self.settings.box_characters_mode = LoggieEnums.BoxCharactersMode.COMPATIBLE
+		apply_production_optimal_settings()
 
 	# Set the default custom string converter.
 	self.settings.custom_string_converter = LoggieTools.convert_to_string
@@ -206,6 +208,21 @@ func add_channel(channel : LoggieMsgChannel):
 			"ID": channel.ID
 		}))
 
+## Gets a [LoggiePreset] message with the given ID, or creates one if it doesn't exist and returns it.
+## The ID cannot be an empty string.
+func preset(id : String) -> LoggiePreset:
+	if id.is_empty():
+		push_error("Attempt to create or get a LoggiePreset with an empty ID - not allowed.")
+		return null
+	
+	if presets.has(id):
+		return presets[id]
+	else:
+		var newPreset : LoggiePreset = LoggiePreset.new()
+		newPreset.use_logger(self)
+		presets[id] = newPreset
+		return newPreset
+
 ## Creates a new [LoggieMsg] out of the given [param msg] and extra arguments (by converting them to strings and concatenating them to the msg).
 ## You may continue to modify the [LoggieMsg] with additional functions from that class, then when you are ready to output it, use methods like:
 ## [method LoggieMsg.info], [method LoggieMsg.warn], etc.
@@ -284,3 +301,10 @@ func stack() -> LoggieMsg:
 		stack_msg.add(entry_msg)
 
 	return stack_msg
+
+## Changes the values of certain members of [member settings] to values which are optimal for
+## use in production builds. Used when [member LoggieSettings.enforce_optimal_settings_in_release_build]
+## needs to be enforced.
+func apply_production_optimal_settings():
+	self.settings.msg_format_mode = LoggieEnums.MsgFormatMode.PLAIN
+	self.settings.box_characters_mode = LoggieEnums.BoxCharactersMode.COMPATIBLE

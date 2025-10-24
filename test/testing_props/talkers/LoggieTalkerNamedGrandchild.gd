@@ -6,3 +6,11 @@ class_name LoggieTalkerNamedGrandchild extends "res://test/testing_props/talkers
 ## Outputs an info message.
 func say(msg : String):
 	Loggie.msg(msg).info()
+
+## Outputs an info message from an [InnerTalkerTwo].
+func say_from_inner_two(msg : String):
+	InnerTalkerTwo.new().say(msg)
+
+class InnerTalkerTwo extends RefCounted:
+	func say(msg : String):
+		Loggie.msg(msg).info()

@@ -30,8 +30,21 @@ Default format: `"[{day}.{month}.{year} {hour}:{minute}:{second}]"`
 For a message printed on 25th April 2025, at 1:40 PM, you'll see:
 Example: `[25.04.2025 13:40:23]`
 
-| {day} | {month} | {year} | {hour} | {minute} | {second} |
-| ----- | ------- | ------ | ------ | -------- | -------- |
+There are also additional variables that can be used which are not featured in the default format, if you need to measure the time elapsed since the application started, or milisecond precision.
+
+| Variable | Meaning |
+| -------- | ------- |
+| {day} | The day when the message was logged. (01-31) |
+| {month} | The month when the message was logged. (01-12) |
+| {year} | The year when the message was logged. (e.g. 2025) |
+| {hour} | The hour when the message was logged. (00-23) |
+| {minute} | The minute when the message was logged. (00-59) |
+| {second} | The second when the message was logged. (00-59) |
+| {milisecond} | The milisecond when the message was logged. (000-999) |
+| {startup_hour} | Hours elapsed since the application started. (00-23) |
+| {startup_minute} | Minutes elapsed since the application started. (00-59) |
+| {startup_second} | Seconds elapsed since the application started. (00-59) |
+| {startup_millisecond} | Milliseconds elapsed since the application started. (000-999) |
 
 All of these variables are provided as strings which contain a number.  
 Frontal padding with a 0 is applied if the number is single digit.  

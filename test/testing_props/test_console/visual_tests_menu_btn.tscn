@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3 uid="uid://sqjwqlq4dnoo"]
+
+[ext_resource type="Script" uid="uid://cgnrc3vjhc1hl" path="res://test/testing_props/test_console/visual_tests_menu_btn.gd" id="1_r0bal"]
+
+[node name="HBoxContainer" type="HBoxContainer"]
+script = ExtResource("1_r0bal")
+
+[node name="Checkbox" type="CheckBox" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
+
+[node name="Button" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "test_name"

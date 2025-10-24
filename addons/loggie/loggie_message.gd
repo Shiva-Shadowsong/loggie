@@ -49,8 +49,29 @@ var custom_preprocess_flags : int = -1
 ## You need to call it at least once for this to have any results.
 var last_preprocess_result : String = ""
 
+## Stores the integer value of a [enum LoggieEnums.LogLevel], matching the log level
+## this message was most recently outputted at. If value is `-1`, the message was never
+## outputted yet.
+var last_outputted_at_log_level : int = -1
+
 ## Whether this message should append the stack trace during preprocessing.
 var appends_stack : bool = false
+
+## Controls whether the [enum LoggieEnums.MsgType] of this message, during [method output], 
+## will be decided dynamically, based on the [enum LoggieEnums.LogLevel] the message is being output at.
+## If disabled, the [member strict_type] will be used instead.
+var dynamic_type : bool = true
+
+## The [LoggieEnums.MsgType] this message will be considered typed as, if [member dynamic_type] is set
+## to [param false].
+var strict_type : LoggieEnums.MsgType = LoggieEnums.MsgType.INFO
+
+## The environment in which this message should be outputted based on the context the output is being requested from.
+## (e.g. only in-engine (during tool scripts), or only ingame, or both).
+var environment_mode : LoggieEnums.MsgEnvironment = LoggieEnums.MsgEnvironment.BOTH
+
+## If set to true, the [signal Loggie.log_attempted] signal will not be emitted when this message attempts to be outputted.
+var dont_emit_log_attempted_signal : bool = false
 
 func _init(message = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> void:
 	var args = [message, arg1, arg2, arg3, arg4, arg5]
@@ -73,36 +94,38 @@ func use_logger(logger_to_use : Variant) -> LoggieMsg:
 		var initial_args = self.get_meta("initial_args")
 		if initial_args is Array:
 			var converter_fn = self._logger.settings.custom_string_converter if is_instance_valid(self._logger) and is_instance_valid(self._logger.settings) else null
-			self.content[0] = LoggieTools.concatenate_args(initial_args, converter_fn)
+			if converter_fn != LoggieTools.convert_to_string:
+				self.content[0] = LoggieTools.concatenate_args(initial_args, converter_fn)
+		self.remove_meta("initial_args") # Clean up.
 
 	return self
 
 ## Sets the list of channels this message should be sent to when outputted.
 ## [param channels] should either be provided as a single channel ID (String), or
 ## as an array of channel IDs (Array of strings).
-func channel(channels : Variant):
+func channel(channels : Variant) -> LoggieMsg:
 	if typeof(channels) != TYPE_ARRAY and typeof(channels) != TYPE_PACKED_STRING_ARRAY:
 		channels = [str(channels)]
 	self.used_channels = channels
 	return self
 
 ## Returns a processed version of the content of this message, which has modifications applied to
-## it based on the requested [param level] and other settings defined by the provided preprocess [param flags].
+## it based on the requested [param type] and other settings defined by the provided preprocess [param flags].
 ## Available preprocess flags are found in [enum LoggieEnums.PreprocessStep].
-func get_preprocessed(flags : int, level : LoggieEnums.LogLevel) -> String:
+func get_preprocessed(flags : int, _level : LoggieEnums.LogLevel, type : LoggieEnums.MsgType) -> String:
 	var loggie = get_logger()
 	var message = self.string()
 
-	match level:
-		LoggieEnums.LogLevel.ERROR:
+	match type:
+		LoggieEnums.MsgType.ERROR:
 			message = loggie.settings.format_error_msg.format({"msg": message})
-		LoggieEnums.LogLevel.WARN:
+		LoggieEnums.MsgType.WARN:
 			message = loggie.settings.format_warning_msg.format({"msg": message})
-		LoggieEnums.LogLevel.NOTICE:
+		LoggieEnums.MsgType.NOTICE:
 			message = loggie.settings.format_notice_msg.format({"msg": message})
-		LoggieEnums.LogLevel.INFO:
+		LoggieEnums.MsgType.INFO:
 			message = loggie.settings.format_info_msg.format({"msg": message})
-		LoggieEnums.LogLevel.DEBUG:
+		LoggieEnums.MsgType.DEBUG:
 			message = loggie.settings.format_debug_msg.format({"msg": message})
 
 	if (flags & LoggieEnums.PreprocessStep.APPEND_DOMAIN_NAME != 0) and !self.domain_name.is_empty():
@@ -114,17 +137,18 @@ func get_preprocessed(flags : int, level : LoggieEnums.LogLevel) -> String:
 	if (flags & LoggieEnums.PreprocessStep.APPEND_TIMESTAMPS != 0):
 		message = _apply_format_timestamp(message)
 
-	if self.appends_stack or (loggie.settings.debug_msgs_print_stack_trace and level == LoggieEnums.LogLevel.DEBUG):
+	if self.appends_stack or (loggie.settings.debug_msgs_print_stack_trace and type == LoggieEnums.MsgType.DEBUG):
 		message = _apply_format_stack(message)
 
 	return message
 
 ## Outputs the given string [param message] at the given output [param level] to the standard output using either [method print_rich] or [method print].
 ## The domain from which the message is considered to be coming can be provided via [param target_domain].
-## The classification of the message can be provided via [param msg_type], as certain types need extra handling and treatment.
+## The message type can be provided via [param msg_type], but it will be ignored if [member dynamic_type] is false,
+## in which case, the [member strict_type] will be used.
 ## It also does a number of changes to the given [param msg] based on various Loggie settings.
 ## Designed to be called internally. You should consider using [method info], [method error], [method warn], [method notice], [method debug] instead.
-func output(level : LoggieEnums.LogLevel, msg_type : LoggieEnums.MsgType = LoggieEnums.MsgType.STANDARD) -> void:
+func output(level : LoggieEnums.LogLevel, msg_type : LoggieEnums.MsgType = LoggieEnums.MsgType.INFO) -> void:
 	var loggie = get_logger()
 	var message = self.string()
 	var target_domain = self.domain_name
@@ -140,13 +164,29 @@ func output(level : LoggieEnums.LogLevel, msg_type : LoggieEnums.MsgType = Loggi
 
 	# We don't output the message if the settings dictate that messages of that level shouldn't be outputted.
 	if level > loggie.settings.log_level:
-		loggie.log_attempted.emit(self, message, LoggieEnums.LogAttemptResult.LOG_LEVEL_INSUFFICIENT)
+		_emit_log_attempted_signal(LoggieEnums.LogAttemptResult.LOG_LEVEL_INSUFFICIENT)
 		return
 
 	# We don't output the message if the domain from which it comes is not enabled.
 	if not loggie.is_domain_enabled(target_domain):
-		loggie.log_attempted.emit(self, message, LoggieEnums.LogAttemptResult.DOMAIN_DISABLED)
+		_emit_log_attempted_signal(LoggieEnums.LogAttemptResult.DOMAIN_DISABLED)
 		return
+
+	# We don't output the message if the environment the output is being requested from is not compatible with 
+	# the environment this message is configured to be outputted in.
+	match environment_mode:
+		LoggieEnums.MsgEnvironment.ENGINE:
+			if not Engine.is_editor_hint():
+				_emit_log_attempted_signal(LoggieEnums.LogAttemptResult.WRONG_ENVIRONMENT)
+				return
+		LoggieEnums.MsgEnvironment.RUNTIME:
+			if Engine.is_editor_hint():
+				_emit_log_attempted_signal(LoggieEnums.LogAttemptResult.WRONG_ENVIRONMENT)
+				return
+
+	# Enforce the strict type of this message if it is configured not to allow dynamic type.
+	if !dynamic_type:
+		msg_type = strict_type
 
 	# Send the message on all configured channels.
 	var custom_target_channels = loggie.get_domain_custom_target_channels(target_domain)
@@ -157,7 +197,7 @@ func output(level : LoggieEnums.LogLevel, msg_type : LoggieEnums.MsgType = Loggi
 		var channel : LoggieMsgChannel = loggie.get_channel(channel_id)
 
 		if channel == null:
-			loggie.log_attempted.emit(self, message, LoggieEnums.LogAttemptResult.INVALID_CHANNEL)
+			_emit_log_attempted_signal(LoggieEnums.LogAttemptResult.INVALID_CHANNEL)
 			continue
 
 		# Preprocessing Stage:
@@ -165,14 +205,15 @@ func output(level : LoggieEnums.LogLevel, msg_type : LoggieEnums.MsgType = Loggi
 		#   Otherwise, simply concatenate together all the [member content].
 		if self.preprocess:
 			var flags = self.custom_preprocess_flags if self.custom_preprocess_flags != -1 else channel.preprocess_flags
-			self.last_preprocess_result = get_preprocessed(flags, level)
+			self.last_preprocess_result = get_preprocessed(flags, level, msg_type)
 		else:
 			self.last_preprocess_result = self.string()
 
+		self.last_outputted_at_log_level = int(level)
 		channel.send(self, msg_type)
 		
-		# Emit signal deferred so if this is called from a thread, it doesn't cry about it.
-		loggie.call_deferred("emit_signal", "log_attempted", self, message, LoggieEnums.LogAttemptResult.SUCCESS)
+	# Emit signal deferred so if this is called from a thread, it doesn't cry about it.
+	_emit_log_attempted_signal(LoggieEnums.LogAttemptResult.SUCCESS, true)
 
 ## Outputs this message from Loggie as an Error type message.
 ## The [Loggie.settings.log_level] must be equal to or higher to the ERROR level for this to work.
@@ -183,19 +224,19 @@ func error() -> LoggieMsg:
 ## Outputs this message from Loggie as an Warning type message.
 ## The [Loggie.settings.log_level] must be equal to or higher to the WARN level for this to work.
 func warn() -> LoggieMsg:
-	output(LoggieEnums.LogLevel.WARN, LoggieEnums.MsgType.WARNING)
+	output(LoggieEnums.LogLevel.WARN, LoggieEnums.MsgType.WARN)
 	return self
 
 ## Outputs this message from Loggie as an Notice type message.
 ## The [Loggie.settings.log_level] must be equal to or higher to the NOTICE level for this to work.
 func notice() -> LoggieMsg:
-	output(LoggieEnums.LogLevel.NOTICE)
+	output(LoggieEnums.LogLevel.NOTICE, LoggieEnums.MsgType.NOTICE)
 	return self
 
 ## Outputs this message from Loggie as an Info type message.
 ## The [Loggie.settings.log_level] must be equal to or higher to the INFO level for this to work.
 func info() -> LoggieMsg:
-	output(LoggieEnums.LogLevel.INFO)
+	output(LoggieEnums.LogLevel.INFO, LoggieEnums.MsgType.INFO)
 	return self
 
 ## Outputs this message from Loggie as a Debug type message.
@@ -256,6 +297,19 @@ func italic() -> LoggieMsg:
 	self.content[current_segment_index] = "[i]{msg}[/i]".format({"msg": self.content[current_segment_index]})
 	return self
 
+## Makes the current segment of this message a hyperlink to the given [param url].
+## Optionally, you can provide a [param color], as the same type of parameter that [method color] uses,
+## to colorize the link. This is a shortcut for additionally calling [method color] on the link.
+## [br][br]If the link doesn't work when rendered inside of a [RichTextLabel], you may need to connect to the [signal RichTextLabel.meta_clicked] signal,
+## and handle the opening of the link there. Read the docs of that signal for more info.
+## [br][br][WARNING]: Appending URLs to messages is potentially dangerous. 
+## Please read this article for more info: https://docs.godotengine.org/en/latest/tutorials/ui/bbcode_in_richtextlabel.html#handling-user-input-safely
+func link(url : String, _color : Variant = null) -> LoggieMsg:
+	self.content[current_segment_index] = "[url={url}]{msg}[/url]".format({"url": url, "msg": self.content[current_segment_index]})
+	if _color:
+		self.color(_color)
+	return self
+
 ## Stylizes the current segment of this message as a header.
 func header() -> LoggieMsg:
 	var loggie = get_logger()
@@ -272,7 +326,7 @@ func stack(enabled : bool = true) -> LoggieMsg:
 ## Constructs a decorative box with the given horizontal padding around the current segment
 ## of this message. Messages containing a box are not going to be preprocessed, so they are best
 ## used only as a special header or decoration.
-func box(h_padding : int = 4):
+func box(h_padding : int = 4) -> LoggieMsg:
 	var loggie = get_logger()
 	var stripped_content = LoggieTools.remove_BBCode(self.content[current_segment_index]).strip_edges(true, true)
 	var content_length = stripped_content.length()
@@ -367,6 +421,12 @@ func endseg() -> LoggieMsg:
 	self.current_segment_index = self.content.size() - 1
 	return self
 
+## Sets the environment in which this message should be outputted based on the context the output is being requested from.
+## (e.g. only in-engine (during tool scripts), or only ingame, or both).
+func env(mode : LoggieEnums.MsgEnvironment) -> LoggieMsg:
+	self.environment_mode = mode
+	return self
+
 ## Creates a new segment in this message and sets its content to the given message.
 ## Acts as a shortcut for calling [method endseg] + [method add].
 func msg(message = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 = null) -> LoggieMsg:
@@ -382,6 +442,65 @@ func msg(message = "", arg1 = null, arg2 = null, arg3 = null, arg4 = null, arg5 
 func preprocessed(shouldPreprocess : bool) -> LoggieMsg:
 	self.preprocess = shouldPreprocess
 	return self
+
+## Sets this message's [LoggieEnums.MsgType] to be strictly the provided value,
+## instead of dynamically decided by the log level at which it is being outputted.
+## [br][param loggie_enums_msgtype_key_or_value] should either be provided as a direct value of the enum,
+## (e.g. [enum LoggieEnum.MsgType.INFO]) or as a string matching one of the keys in that enum (e.g.
+## `"info"` or `"INFO"`, case-insensitive).
+func type(loggie_enums_msgtype_key_or_value : Variant) -> LoggieMsg:
+	var isValid = false
+	var _type : LoggieEnums.MsgType
+
+	if loggie_enums_msgtype_key_or_value is LoggieEnums.MsgType:
+		_type = loggie_enums_msgtype_key_or_value
+		isValid = true
+	elif loggie_enums_msgtype_key_or_value is String:
+		var uppercase_key = loggie_enums_msgtype_key_or_value.to_upper()
+		if LoggieEnums.MsgType.keys().has(uppercase_key):
+			_type = LoggieEnums.MsgType[uppercase_key]
+			isValid = true 
+	
+	if isValid:
+		dynamic_type = false
+		strict_type = _type
+	else:
+		push_error("Attempt to set LoggieMsg type to {value} - could not be converted to a proper [LoggieEnums.MsgType]. Either provide a [LoggieEnums.MsgType], or a string that matches a key in that enum (case-insensitive).".format({"value": str(loggie_enums_msgtype_key_or_value)}))
+
+	return self
+
+## If [param enabled], the [signal Loggie.log_attempted] signal will not be emitted when this message attempts to be outputted.
+func no_signal(enabled : bool = true) -> LoggieMsg:
+	dont_emit_log_attempted_signal = enabled
+	return self
+
+## Applies the [LoggiePreset] with the given [param id] to this message.
+## [br]If [param apply_only_to_current_segment] is [param true], the styles from the preset will only be
+## applied to the current content segment of this message. Otherwise, the entire content of this message
+## will be collapsed into a single segment, and the styles will be applied to that.
+func preset(id : String, apply_only_to_current_segment : bool = false) -> LoggieMsg:
+	var loggie = get_logger()
+	var preset_to_use : LoggiePreset = loggie.preset(id)
+	if preset_to_use:
+		preset_to_use.apply_to(self, apply_only_to_current_segment)
+	else:
+		push_error("Attempt to obtain LoggiePreset with ID {id} returned null. Something went terribly wrong, as this should usually be impossible.")
+	return self
+
+## Internal method. Emits the [signal Loggie.log_attempted] signal (unless that feature is disabled).
+## Used during [method output]. If [param call_deferred] is true, the string of the message's content will
+## be prepared immediately, but the emission of the signal will be deferred.
+func _emit_log_attempted_signal(result : LoggieEnums.LogAttemptResult, call_deferred : bool = false) -> void:
+	if dont_emit_log_attempted_signal:
+		return
+
+	var loggie = get_logger()
+	var string_content = self.string()
+
+	if call_deferred:
+		loggie.call_deferred("emit_signal", "log_attempted", self, string_content, result)
+	else:
+		loggie.log_attempted.emit(self, string_content, result)
 
 ## Adds this message's configured domain to the start of the given [param message] and returns the modifier version of it.
 func _apply_format_domain(message : String) -> String:
@@ -415,10 +534,28 @@ func _apply_format_timestamp(message : String) -> String:
 	var format_dict : Dictionary = Time.get_datetime_dict_from_system(loggie.settings.timestamps_use_utc)
 	for field in ["month", "day", "hour", "minute", "second"]:
 		format_dict[field] = "%02d" % format_dict[field]
+
+	# Add the millisecond
+	var unix_time: float = Time.get_unix_time_from_system()
+	var millisecond: int = int((unix_time - int(unix_time)) * 1000.0)
+	format_dict["millisecond"] = "%03d" % millisecond
+	
+	# Add the startup time to the format dictionary.
+	var elapsed_millisecond: int = Time.get_ticks_msec()
+	var startup_hour: int = elapsed_millisecond / 3_600_000
+	var startup_minute: int = (elapsed_millisecond % 3_600_000) / 60_000
+	var startup_second: int = (elapsed_millisecond % 60_000) / 1000
+	var startup_millisecond: int = elapsed_millisecond % 1000
+	format_dict["startup_hour"] = "%02d" % startup_hour
+	format_dict["startup_minute"] = "%02d" % startup_minute
+	format_dict["startup_second"] = "%02d" % startup_second
+	format_dict["startup_millisecond"] = "%03d" % startup_millisecond
+
 	message = "{formatted_time} {msg}".format({
 		"formatted_time" : loggie.settings.format_timestamp.format(format_dict),
 		"msg" : message
 	})
+	
 	return message
 
 ## Adds the stack trace to the given [param message] and returns the modified version of it.

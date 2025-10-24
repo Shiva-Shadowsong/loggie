@@ -2,13 +2,13 @@
 class_name LoggieEditorPlugin extends EditorPlugin
 
 func _enter_tree():
-	add_autoload_singleton(LoggieSettings.loggie_singleton_name, "res://addons/loggie/loggie.gd")
 	add_loggie_project_settings()
 	Engine.set_meta("LoggieEditorPlugin", self)
 	if Engine.is_editor_hint():
 		Engine.set_meta("LoggieEditorInterfaceBaseControl", EditorInterface.get_base_control())
 	
 func _enable_plugin() -> void:
+	add_autoload_singleton(LoggieSettings.loggie_singleton_name, "res://addons/loggie/loggie.gd")
 	add_loggie_project_settings()
 
 func _disable_plugin() -> void:
