@@ -4,11 +4,11 @@ Whenever a message attempts to be outputted, regardless of whether the attempt i
 
 You can connect to this signal and do something in such cases, like in this example:
 
-```swift
-// Connect to the signal:
+```gdscript
+## Connect to the signal:
 Loggie.log_attempted.connect(on_log_attempted)
 
-// Do something when signal is received:
+## Do something when signal is received:
 func on_log_attempted(msg : LoggieMsg, msg_string : String, result : LoggieEnums.LogAttemptResult):
 	if result != LoggieEnums.LogAttemptResult.SUCCESS:
 		push_error("Tried outputting a message '", msg_string, "', but it didn't work! Reason:", result)

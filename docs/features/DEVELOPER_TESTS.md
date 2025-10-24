@@ -51,7 +51,7 @@ To create your own test, first decide whether you want to make an automated or a
 
 First, create a new script in `project_directory/test/test_cases/automatic/`.
 
-```swift
+```gdscript
 class_name MyTestName extends LoggieAutoTestCase
 
 func run() -> void:
@@ -86,7 +86,7 @@ If you need to temporarily disable some of the tests, move them to the `Disabled
 
 First, create a new script in `project_directory/test/test_cases/visual/`.
 
-```swift
+```gdscript
 class_name VMyTestName extends LoggieVisualTestCase
 
 func _init() -> void:
@@ -105,7 +105,7 @@ You define an override for the `run()` method, and in it, define whatever your t
 You have access to the console UI through the `_console` variable of your test.
 Two helper methods have been added to let you quickly add text or any arbitrary node to the console:
 
-```swift
+```gdscript
 ## Add some text (bbcode supported):
 _console.add_text("hello")
 
@@ -140,7 +140,7 @@ It only emits a signal `message_received(msg : LoggieMsg, type : LoggieEnums.Msg
 You can use it to test how messages will look when they arrive at their desired channels after they go through all the internal phases of preprocessing and other checks.
 
 You can access the channel like so:
-```swift
+```gdscript
 var test_channel : LoggieMsgChannel = Loggie.get_channel("test_channel")
 test_channel.preprocess_flags = LoggieEnums.PreprocessStep.APPEND_TIMESTAMPS # Set custom preprocess flags? 
 ```
