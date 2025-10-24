@@ -7,7 +7,7 @@ extends Node
 
 ## The current version of Loggie.
 ## Needs to be updated manually when changing the version.
-var version : LoggieVersion = LoggieVersion.new(2,0)
+var version : LoggieVersion = LoggieVersion.new(3,0)
 
 ## Emitted any time Loggie attempts to log a message.
 ## Useful for capturing the messages that pass through Loggie.
