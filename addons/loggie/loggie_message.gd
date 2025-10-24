@@ -49,6 +49,11 @@ var custom_preprocess_flags : int = -1
 ## You need to call it at least once for this to have any results.
 var last_preprocess_result : String = ""
 
+## Stores the integer value of a [enum LoggieEnums.LogLevel], matching the log level
+## this message was most recently outputted at. If value is `-1`, the message was never
+## outputted yet.
+var last_outputted_at_log_level : int = -1
+
 ## Whether this message should append the stack trace during preprocessing.
 var appends_stack : bool = false
 
@@ -204,6 +209,7 @@ func output(level : LoggieEnums.LogLevel, msg_type : LoggieEnums.MsgType = Loggi
 		else:
 			self.last_preprocess_result = self.string()
 
+		self.last_outputted_at_log_level = int(level)
 		channel.send(self, msg_type)
 		
 	# Emit signal deferred so if this is called from a thread, it doesn't cry about it.
