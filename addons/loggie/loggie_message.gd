@@ -96,7 +96,7 @@ func use_logger(logger_to_use : Variant) -> LoggieMsg:
 ## Sets the list of channels this message should be sent to when outputted.
 ## [param channels] should either be provided as a single channel ID (String), or
 ## as an array of channel IDs (Array of strings).
-func channel(channels : Variant):
+func channel(channels : Variant) -> LoggieMsg:
 	if typeof(channels) != TYPE_ARRAY and typeof(channels) != TYPE_PACKED_STRING_ARRAY:
 		channels = [str(channels)]
 	self.used_channels = channels
@@ -318,7 +318,7 @@ func stack(enabled : bool = true) -> LoggieMsg:
 ## Constructs a decorative box with the given horizontal padding around the current segment
 ## of this message. Messages containing a box are not going to be preprocessed, so they are best
 ## used only as a special header or decoration.
-func box(h_padding : int = 4):
+func box(h_padding : int = 4) -> LoggieMsg:
 	var loggie = get_logger()
 	var stripped_content = LoggieTools.remove_BBCode(self.content[current_segment_index]).strip_edges(true, true)
 	var content_length = stripped_content.length()
