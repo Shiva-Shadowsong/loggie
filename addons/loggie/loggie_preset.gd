@@ -65,12 +65,6 @@ func apply_to(msg : LoggieMsg, only_to_current_segment : bool = false) -> Loggie
 	return msg
 
 ## Overrides the parent class method by the same name to disable its functionality.
-## Presets cannot have their content modified.
-func add(message : Variant = null, arg1 : Variant = null, arg2 : Variant = null, arg3 : Variant = null, arg4 : Variant = null, arg5 : Variant = null) -> LoggieMsg:
-	push_warning("Attempt to call LoggieMsg.add on a LoggiePreset. This is not allowed. Presets cannot have string content.")
-	return self
-
-## Overrides the parent class method by the same name to disable its functionality.
 ## Presets cannot have additional segments added.
 func endseg() -> LoggieMsg:
 	push_warning("Attempt to call LoggieMsg.endseg on a LoggiePreset. This is not allowed. Presets shouldn't have more than 1 string content segment.")
