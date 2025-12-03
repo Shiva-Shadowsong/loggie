@@ -487,6 +487,32 @@ func preset(id : String, apply_only_to_current_segment : bool = false) -> Loggie
 		push_error("Attempt to obtain LoggiePreset with ID {id} returned null. Something went terribly wrong, as this should usually be impossible.")
 	return self
 
+## Calls [method String.format] with the provided parameters on the current segment of this message.[br]
+## See also [method format_all] and [method format_seg] for different options.[br]
+## See [method String.format] for more information about how this works.[br]
+func format(values: Variant, placeholder: String = "{_}") -> LoggieMsg:
+	format_seg(current_segment_index, values, placeholder)
+	return self
+
+## Calls [method String.format] with the provided parameters on every segment of this message.[br]
+## See also [method format] and [method format_seg] for different options.[br]
+## See [method String.format] for more information about how this works.[br]
+func format_all(values: Variant, placeholder: String = "{_}") -> LoggieMsg:
+	for segment_index in content.size():
+		format_seg(segment_index, values, placeholder)
+	return self
+
+## Calls [method String.format] with the provided parameters on the segment of this message under
+## the provided [param segment_index].[br]
+## See also [method format] and [method format_seg] for different options.[br]
+## See [method String.format] for more information about how this works.[br]
+func format_seg(segment_index : int, values: Variant, placeholder: String = "{_}") -> LoggieMsg:
+	if segment_index < 0 or segment_index > (content.size() - 1):
+		push_error("Attempt to access a message segment with invalid index {index}.".format({"index": segment_index}))
+	else:
+		content[segment_index] = content[segment_index].format(values, placeholder)
+	return self
+
 ## Internal method. Emits the [signal Loggie.log_attempted] signal (unless that feature is disabled).
 ## Used during [method output]. If [param call_deferred] is true, the string of the message's content will
 ## be prepared immediately, but the emission of the signal will be deferred.
